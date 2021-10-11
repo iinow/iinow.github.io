@@ -51,3 +51,5 @@ self.addEventListener('fetch', (evt) => {
     )
   )
 })
+
+console.log('pushManager', self.registration.pushManager)
