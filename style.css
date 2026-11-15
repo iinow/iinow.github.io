@@ -142,7 +142,7 @@ main { padding: 0 1rem; }
 .prose p, .prose > ul, .prose > ol, .prose blockquote, .prose pre, .prose > figure, .prose > img { margin-top: 0.9rem; }
 .prose ul:not([class]) { list-style: disc; padding-left: 1.3rem; }
 .prose ol:not([class]) { list-style: decimal; padding-left: 1.4rem; }
-.prose li:not([class]) + li { margin-top: 0.25rem; }
+.prose ul:not([class]) > li + li, .prose ol:not([class]) > li + li { margin-top: 0.25rem; }
 .prose blockquote { margin-left: 0; margin-right: 0; padding: 0.1rem 0 0.1rem 1rem; border-left: 4px solid var(--sun); color: var(--muted); }
 .prose blockquote p:first-child { margin-top: 0; }
 .prose code { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.9em; background: var(--surface); border: 1px solid var(--line); border-radius: 0.35rem; padding: 0.1em 0.35em; }
