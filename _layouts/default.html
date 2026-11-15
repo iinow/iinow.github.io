@@ -29,52 +29,45 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script>try{if(localStorage.getItem("side")==="closed")document.documentElement.classList.add("side-closed")}catch(e){}</script>
 <link rel="stylesheet" href="/style.css?v={{ site.time | date: '%s' }}">
 </head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>
 
 <header class="top">
-  <div class="top-left">
-    <button class="burger" id="burger" type="button" aria-label="메뉴 열기" aria-haspopup="dialog" aria-controls="drawer">
-      <span></span><span></span><span></span>
-    </button>
-    <a class="logo" href="/" aria-label="iinow 처음으로">iinow</a>
-  </div>
-  <nav aria-label="주요 메뉴">
-    <a href="/#posts">글</a>
-    <a href="/#repos">저장소</a>
-    <a href="#contact">연락</a>
-  </nav>
+  <button class="burger" id="burger" type="button" aria-label="메뉴 접기" aria-expanded="true" aria-controls="side">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="logo" href="/" aria-label="iinow 처음으로">iinow</a>
 </header>
 
-<dialog class="drawer" id="drawer" aria-label="메뉴">
-  <div class="drawer-head">
-    <a class="logo" href="/">iinow</a>
-    <form method="dialog"><button class="drawer-close" aria-label="메뉴 닫기">닫기</button></form>
-  </div>
+<div class="side-backdrop" id="side-backdrop"></div>
+<aside class="side" id="side" aria-label="메뉴">
   <nav aria-label="전체 메뉴">
-    <ul class="drawer-main">
+    <ul class="side-main">
       <li><a href="/"{% if page.url == '/' %} aria-current="page"{% endif %}>처음</a></li>
       <li><a href="/#posts">글 목록</a></li>
       <li><a href="/#repos">공개 저장소</a></li>
       <li><a href="#contact">연락</a></li>
     </ul>
     <h2>글 {{ site.posts | size }}개</h2>
-    <ul class="drawer-posts">
+    <ul class="side-posts">
       {%- for post in site.posts %}
       <li><a href="{{ post.url }}"{% if page.url == post.url %} aria-current="page"{% endif %}><time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>{{ post.title | escape }}</a></li>
       {%- endfor %}
     </ul>
-    <p class="drawer-foot"><a href="/feed.xml">RSS 구독</a></p>
+    <p class="side-foot"><a href="/feed.xml">RSS 구독</a></p>
   </nav>
-</dialog>
+</aside>
 
+<div class="page">
 <main id="main">
 {{ content }}
 </main>
 
 <footer id="contact">
+  <div class="foot-in">
   <h2>연락</h2>
   <ul>
     <li><a href="mailto:dev.iinow.o@gmail.com">dev.iinow.o@gmail.com</a></li>
@@ -82,7 +75,9 @@
     <li><a href="https://devnot.tistory.com">devnot.tistory.com</a></li>
   </ul>
   <p class="copy">© {{ site.time | date: '%Y' }} Joonha</p>
+  </div>
 </footer>
+</div>
 
 <dialog id="viewer" aria-label="크게 보기">
   <form method="dialog"><button class="close" aria-label="닫기">닫기</button></form>

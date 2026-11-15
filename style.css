@@ -12,6 +12,8 @@
   --body: 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   --wrap: 68rem;
   --text: 42rem;
+  --top-h: 3.75rem;
+  --side-w: 17rem;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -51,19 +53,14 @@ ul, ol { padding: 0; list-style: none; }
 
 /* 상단 */
 .top {
-  position: sticky; top: 0; z-index: 5;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0.75rem max(1rem, calc((100vw - var(--wrap)) / 2));
+  position: sticky; top: 0; z-index: 5; height: var(--top-h);
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0 1rem;
   background: color-mix(in srgb, var(--paper) 88%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
 .logo { font-family: var(--display); font-size: 1.5rem; color: var(--ink); text-decoration: none; line-height: 1; }
-.top nav { display: flex; gap: 1.25rem; }
-.top nav a { color: var(--ink); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
-.top nav a:hover { color: var(--teal); }
-
-.top-left { display: flex; align-items: center; gap: 0.75rem; }
 .burger { display: grid; gap: 5px; width: 2.5rem; height: 2.5rem; padding: 0 0.55rem; align-content: center; background: var(--surface); border: 2px solid var(--ink); border-radius: 0.75rem; cursor: pointer; }
 .burger span { display: block; height: 2.5px; border-radius: 2px; background: var(--ink); transition: width 0.15s; }
 .burger span:nth-child(2) { width: 70%; }
@@ -71,24 +68,37 @@ ul, ol { padding: 0; list-style: none; }
 .burger:hover { background: var(--sun); border-color: #1b1e3c; }
 .burger:hover span { background: #1b1e3c; }
 
-/* 왼쪽 메뉴 */
-.drawer { margin: 0; inset: 0 auto 0 0; height: 100dvh; max-height: none; width: min(22rem, 86vw); max-width: none; padding: 1.25rem 1.25rem 2rem; background: var(--paper); color: var(--ink); border: 0; border-right: 2px solid var(--ink); border-radius: 0; overflow-y: auto; }
-.drawer[open] { animation: drawer-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.drawer::backdrop { background: rgba(15, 17, 36, 0.55); animation: fade-in 0.22s; }
-@keyframes drawer-in { from { transform: translateX(-100%); } }
+/* 왼쪽 메뉴: 넓은 화면은 펼친 채로 붙어 있고, 좁은 화면은 햄버거로 덮어 연다 */
+.side {
+  position: fixed; z-index: 4; left: 0; top: var(--top-h); bottom: 0; width: var(--side-w);
+  padding: 1.25rem 0.75rem 2rem; overflow-y: auto;
+  background: var(--paper); border-right: 1px solid var(--line);
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.22s;
+}
+.side-main a { display: block; padding: 0.5rem 0.75rem; border-radius: 0.6rem; font-size: 1.05rem; font-weight: 800; color: var(--ink); text-decoration: none; }
+.side a:hover { background: var(--surface); }
+.side a[aria-current] { background: var(--sun); color: #1b1e3c; }
+.side h2 { margin: 1.25rem 0 0.4rem; padding: 1rem 0.75rem 0; border-top: 1px solid var(--line); font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.side-posts a { display: block; padding: 0.55rem 0.75rem; border-radius: 0.6rem; color: var(--ink); text-decoration: none; font-size: 0.95rem; font-weight: 600; line-height: 1.45; }
+.side-posts time { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.side-posts a[aria-current] time { color: #1b1e3c; }
+.side-foot { margin-top: 1.25rem; padding: 0 0.75rem; font-size: 0.9rem; }
+.side-backdrop { display: none; }
+.page { transition: margin-left 0.22s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+@media (min-width: 1000px) {
+  .page { margin-left: var(--side-w); }
+  .side-closed .page { margin-left: 0; }
+  .side-closed .side { transform: translateX(-100%); visibility: hidden; }
+}
+@media (max-width: 999.98px) {
+  .side { z-index: 21; top: 0; width: min(20rem, 86vw); padding-top: 1.5rem; border-right: 2px solid var(--ink); transform: translateX(-100%); visibility: hidden; }
+  .side-main a { font-size: 1.2rem; padding: 0.55rem 0.75rem; }
+  .side-open .side { transform: none; visibility: visible; }
+  .side-open .side-backdrop { display: block; position: fixed; inset: 0; z-index: 20; background: rgba(15, 17, 36, 0.55); animation: fade-in 0.22s; }
+  .side-open body { overflow: hidden; }
+}
 @keyframes fade-in { from { opacity: 0; } }
-.drawer-head { display: flex; justify-content: space-between; align-items: center; }
-.drawer-close { font: inherit; font-size: 0.9rem; font-weight: 700; color: var(--ink); background: var(--surface); border: 2px solid var(--ink); border-radius: 999px; padding: 0.3rem 0.9rem; cursor: pointer; }
-.drawer-close:hover { background: var(--sun); color: #1b1e3c; border-color: #1b1e3c; }
-.drawer-main { margin-top: 1.5rem; }
-.drawer-main a { display: block; padding: 0.55rem 0.75rem; border-radius: 0.6rem; font-size: 1.2rem; font-weight: 800; color: var(--ink); text-decoration: none; }
-.drawer a:hover { background: var(--surface); }
-.drawer a[aria-current] { background: var(--sun); color: #1b1e3c; }
-.drawer h2 { margin: 1.75rem 0 0.5rem; padding: 1rem 0.75rem 0; border-top: 1px solid var(--line); font-size: 0.9rem; font-weight: 700; color: var(--muted); }
-.drawer-posts a { display: block; padding: 0.6rem 0.75rem; border-radius: 0.6rem; color: var(--ink); text-decoration: none; font-weight: 600; line-height: 1.45; }
-.drawer-posts time { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
-.drawer-posts a[aria-current] time { color: #1b1e3c; }
-.drawer-foot { margin-top: 1.5rem; padding: 0 0.75rem; font-size: 0.95rem; }
 
 main { padding: 0 1rem; }
 
@@ -238,7 +248,8 @@ figcaption { margin-top: 0.75rem; color: var(--muted); max-width: var(--text); f
 .ry { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* 바닥 */
-footer { background: #1b1e3c; color: #eceefa; padding: clamp(2.5rem, 6vw, 4rem) max(1rem, calc((100vw - var(--wrap)) / 2)); }
+footer { background: #1b1e3c; color: #eceefa; padding: clamp(2.5rem, 6vw, 4rem) 1rem; }
+.foot-in { max-width: var(--wrap); margin: 0 auto; }
 footer ul { margin-top: 1.25rem; display: grid; gap: 0.4rem; }
 footer a { color: var(--sun); font-size: 1.15rem; font-weight: 600; }
 .copy { margin-top: 2.5rem; color: #a3a8c8; font-size: 0.9rem; }
@@ -258,7 +269,6 @@ dialog img { border-radius: 0.75rem; background: #fff; }
   .ls { grid-column: 1; }
   .repos li a { grid-template-columns: 1fr auto; }
   .ry { display: none; }
-  .top > nav { display: none; }
   .prose table { font-size: 0.9rem; }
 }
 

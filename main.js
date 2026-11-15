@@ -148,13 +148,38 @@ viewer.addEventListener('click', (e) => {
 })
 
 // ── 왼쪽 메뉴 ──
-const drawer = document.getElementById('drawer')
+// 넓은 화면: 기본 펼침, 햄버거로 접고 펴며 상태를 기억한다.
+// 좁은 화면: 기본 숨김, 햄버거로 덮어 열고 바깥·Esc·링크로 닫는다.
+const side = document.getElementById('side')
 const burger = document.getElementById('burger')
-if (drawer && burger) {
-  burger.addEventListener('click', () => drawer.showModal())
-  if (location.hash === '#menu') drawer.showModal() // 주소 끝에 #menu 를 붙이면 열린 채로 뜬다
-  drawer.addEventListener('click', (e) => {
-    // 바깥(배경)을 누르거나 메뉴 안 링크를 누르면 닫는다
-    if (e.target === drawer || e.target.closest('a')) drawer.close()
+if (side && burger) {
+  const root = document.documentElement
+  const wide = matchMedia('(min-width: 1000px)')
+  const isOpen = () => (wide.matches ? !root.classList.contains('side-closed') : root.classList.contains('side-open'))
+  const sync = () => {
+    const open = isOpen()
+    burger.setAttribute('aria-expanded', open)
+    burger.setAttribute('aria-label', open ? '메뉴 접기' : '메뉴 펼치기')
+    side.inert = !open
+  }
+  const set = (open) => {
+    if (wide.matches) {
+      root.classList.toggle('side-closed', !open)
+      try { localStorage.setItem('side', open ? 'open' : 'closed') } catch (e) {}
+    } else {
+      root.classList.toggle('side-open', open)
+    }
+    sync()
+  }
+  burger.addEventListener('click', () => set(!isOpen()))
+  document.getElementById('side-backdrop').addEventListener('click', () => set(false))
+  side.addEventListener('click', (e) => {
+    if (!wide.matches && e.target.closest('a')) set(false)
   })
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !wide.matches && isOpen()) { set(false); burger.focus() }
+  })
+  wide.addEventListener('change', () => { root.classList.remove('side-open'); sync() })
+  if (location.hash === '#menu' && !wide.matches) set(true)
+  sync()
 }
