@@ -38,4 +38,4 @@ git add -A && git commit -m "글: 카프카 재시도" && git push
 | `_layouts/post.html` | 글 화면 틀 |
 | `style.css`, `main.js` | 모양, 애니메이션·탭·크게 보기 |
 
-첫 화면 히어로(합쳐지는 애니메이션)는 lite-oc 글 전용이다. 다른 글을 앞세우려면 `index.html` 의 `<section class="hero">` 와 `main.js` 의 `SERVICES` 를 고친다.
+합쳐지는 애니메이션은 lite-oc 글 안에 있다 (`<div class="stage">`, 목록은 `main.js` 의 `SERVICES`).

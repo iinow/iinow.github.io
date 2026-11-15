@@ -3,7 +3,7 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister())).catch(() => {})
 }
 
-// ── 히어로: 따로 띄우던 서비스가 상자 하나로 들어간다 ──
+// ── lite-oc 글: 따로 띄우던 서비스가 상자 하나로 들어간다 ──
 const SERVICES = [
   'PostgreSQL', 'Mosquitto MQTT', 'S3 저장소', 'SQS 큐', 'nginx 프록시', 'edge nginx',
   'Tailscale', '백오피스', '태블릿 화면', '세션 만료 작업', 'CCTV 중계',
@@ -78,8 +78,13 @@ if (cloud) {
 
   replay.addEventListener('click', play)
   replay.disabled = true
-  if (document.readyState === 'complete') play()
-  else addEventListener('load', play)
+  // 무대가 화면에 들어오면 한 번 재생
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => {
+      if (es.some((e) => e.isIntersecting)) { io.disconnect(); play() }
+    }, { threshold: 0.6 })
+    io.observe(box)
+  } else play()
 }
 
 // ── 화면 탭: <div class="shots"> 마다 따로 동작 ──

@@ -95,7 +95,7 @@ main { padding: 0 1rem; }
 /* 히어로 */
 .hero {
   max-width: var(--wrap); margin: 0 auto;
-  padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(3rem, 7vw, 5rem);
+  padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(2.5rem, 6vw, 4rem);
   display: grid; gap: clamp(2rem, 5vw, 3.5rem);
 }
 .hero h1 {
@@ -163,7 +163,10 @@ main { padding: 0 1rem; }
 .summary { margin-top: 1.25rem; font-size: 1.15rem; }
 
 .prose > * { max-width: var(--text); }
-.prose > .facts, .prose > .shots, .prose > .wide, .prose > .loop { max-width: none; }
+.prose > .facts, .prose > .shots, .prose > .wide, .prose > .loop, .prose > .stage { max-width: none; }
+.prose > .stage { margin-top: 1.25rem; }
+.stage .sr-only { margin: 0; }
+
 .prose h2 { font-size: 1.4rem; font-weight: 800; margin-top: 2.75rem; line-height: 1.35; }
 .prose h3 { font-size: 1.15rem; font-weight: 800; margin-top: 2rem; }
 .prose p, .prose > ul, .prose > ol, .prose blockquote, .prose pre, .prose > figure, .prose > img { margin-top: 0.9rem; }
