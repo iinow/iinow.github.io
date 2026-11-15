@@ -17,10 +17,10 @@ summary: 모델이 도구를 부르면 실행하고, 결과를 돌려주고, 다
 
 <ol class="loop" aria-label="에이전트 반복 순서">
   <li>질문</li>
-  <li>model 노드</li>
-  <li class="hot">도구 호출 있음?</li>
-  <li class="hot">tools 노드</li>
-  <li>다시 model</li>
+  <li>model</li>
+  <li class="hot">도구 호출?</li>
+  <li class="hot">tools</li>
+  <li>model</li>
   <li>답변</li>
 </ol>
 
