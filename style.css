@@ -136,7 +136,7 @@ main { padding: 0 1rem; }
 .summary { margin-top: 1.25rem; font-size: 1.15rem; }
 
 .prose > * { max-width: var(--text); }
-.prose > .facts, .prose > .shots, .prose > .wide { max-width: none; }
+.prose > .facts, .prose > .shots, .prose > .wide, .prose > .loop { max-width: none; }
 .prose h2 { font-size: 1.4rem; font-weight: 800; margin-top: 2.75rem; line-height: 1.35; }
 .prose h3 { font-size: 1.15rem; font-weight: 800; margin-top: 2rem; }
 .prose p, .prose > ul, .prose > ol, .prose blockquote, .prose pre, .prose > figure, .prose > img { margin-top: 0.9rem; }
@@ -163,8 +163,9 @@ main { padding: 0 1rem; }
 .facts dd { margin: 0; font-family: var(--display); font-size: 2.6rem; line-height: 1.15; }
 .facts small { font-family: var(--body); font-size: 1rem; font-weight: 700; margin-left: 0.2rem; }
 
-.loop { counter-reset: s; display: flex; flex-wrap: wrap; gap: 0.5rem 0; margin-top: 1.25rem; }
-.loop li { counter-increment: s; display: flex; align-items: center; font-weight: 700; font-size: 0.95rem; background: var(--surface); border: 1.5px solid var(--ink); border-radius: 999px; padding: 0.4rem 0.9rem 0.4rem 0.45rem; margin-right: 1.5rem; position: relative; }
+.loop { counter-reset: s; display: flex; align-items: center; overflow-x: auto; padding: 0.25rem 0.25rem 0.5rem; margin-top: 1.25rem; }
+.loop li:last-child { margin-right: 0; }
+.loop li { counter-increment: s; flex: none; white-space: nowrap; display: flex; align-items: center; font-weight: 700; font-size: 0.95rem; background: var(--surface); border: 1.5px solid var(--ink); border-radius: 999px; padding: 0.4rem 0.9rem 0.4rem 0.45rem; margin-right: 1.5rem; position: relative; }
 .loop li::before { content: counter(s); display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--ink); color: var(--paper); font-size: 0.8rem; margin-right: 0.5rem; }
 .loop li:not(:last-child)::after { content: ''; position: absolute; right: -1.5rem; width: 1.5rem; height: 1.5px; background: var(--ink); }
 .loop li.hot { background: var(--sun); color: #1b1e3c; border-color: #1b1e3c; }
