@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R9M0ZHQR66"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-R9M0ZHQR66');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+{%- if page.layout == 'post' %}
+<title>{{ page.title | escape }} | iinow</title>
+{%- elsif page.title %}
+<title>{{ page.title | escape }} | iinow</title>
+{%- else %}
+<title>iinow | {{ site.tagline }}, Go 와 LLM 에이전트 백엔드 블로그</title>
+{%- endif %}
+{%- assign desc = page.summary | default: site.description | strip_html | strip_newlines | truncate: 160 %}
+{%- assign img = page.image | default: '/img/og.png' | absolute_url %}
+<meta name="description" content="{{ desc | escape }}">
+<meta name="author" content="{{ site.author }}">
+<meta name="robots" content="{% if page.noindex %}noindex{% else %}index, follow, max-image-preview:large{% endif %}">
+<link rel="canonical" href="{{ page.url | absolute_url }}">
+<meta property="og:site_name" content="{{ site.title }}">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="{{ page.title | default: site.tagline | escape }}">
+<meta property="og:description" content="{{ desc | escape }}">
+<meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
+<meta property="og:url" content="{{ page.url | absolute_url }}">
+<meta property="og:image" content="{{ img }}">
+<meta name="twitter:card" content="summary_large_image">
+{%- if page.layout == 'post' %}
+<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
+<meta property="article:author" content="{{ site.author }}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": {{ page.title | jsonify }},
+  "description": {{ desc | jsonify }},
+  "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
+  "dateModified": {{ page.last_modified_at | default: page.date | date_to_xmlschema | jsonify }},
+  "inLanguage": "ko",
+  "image": {{ img | jsonify }},
+  "mainEntityOfPage": {{ page.url | absolute_url | jsonify }},
+  "author": { "@type": "Person", "name": {{ site.author | jsonify }}, "url": "https://github.com/iinow" },
+  "publisher": { "@type": "Person", "name": {{ site.author | jsonify }} }
+}
+</script>
+{%- else %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": {{ site.title | jsonify }},
+  "description": {{ site.description | jsonify }},
+  "url": {{ site.url | append: '/' | jsonify }},
+  "inLanguage": "ko",
+  "author": { "@type": "Person", "name": {{ site.author | jsonify }}, "url": "https://github.com/iinow", "sameAs": ["https://github.com/iinow", "https://devnot.tistory.com"] }
+}
+</script>
+{%- endif %}
+{%- if site.google_site_verification %}
+<meta name="google-site-verification" content="{{ site.google_site_verification }}">
+{%- endif %}
+{%- if site.naver_site_verification %}
+<meta name="naver-site-verification" content="{{ site.naver_site_verification }}">
+{%- endif %}
+<meta name="theme-color" content="#1B1E3C">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/atom+xml" title="iinow" href="/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script>try{if(localStorage.getItem("side")==="closed")document.documentElement.classList.add("side-closed")}catch(e){}</script>
+<link rel="stylesheet" href="/style.css?v={{ site.time | date: '%s' }}">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="top">
+  <button class="burger" id="burger" type="button" aria-label="메뉴 접기" aria-expanded="true" aria-controls="side">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="logo" href="/" aria-label="iinow 처음으로">iinow</a>
+</header>
+
+<div class="side-backdrop" id="side-backdrop"></div>
+<aside class="side" id="side" aria-label="메뉴">
+  <nav aria-label="전체 메뉴">
+    <ul class="side-main">
+      <li><a href="/"{% if page.url == '/' %} aria-current="page"{% endif %}>처음</a></li>
+      <li><a href="/#posts">글 목록</a></li>
+      <li><a href="/#repos">공개 저장소</a></li>
+      <li><a href="#contact">연락</a></li>
+    </ul>
+    <h2>글 {{ site.posts | size }}개</h2>
+    <ul class="side-posts">
+      {%- for post in site.posts %}
+      <li><a href="{{ post.url }}"{% if page.url == post.url %} aria-current="page"{% endif %}><time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>{{ post.title | escape }}</a></li>
+      {%- endfor %}
+    </ul>
+    <p class="side-foot"><a href="/feed.xml">RSS 구독</a></p>
+  </nav>
+</aside>
+
+<div class="page">
+<main id="main">
+{{ content }}
+</main>
+
+<footer id="contact">
+  <div class="foot-in">
+  <h2>연락</h2>
+  <ul>
+    <li><a href="mailto:dev.iinow.o@gmail.com">dev.iinow.o@gmail.com</a></li>
+    <li><a href="https://github.com/iinow">github.com/iinow</a></li>
+    <li><a href="https://devnot.tistory.com">devnot.tistory.com</a></li>
+  </ul>
+  <p class="copy">© {{ site.time | date: '%Y' }} Joonha</p>
+  </div>
+</footer>
+</div>
+
+<dialog id="viewer" aria-label="크게 보기">
+  <form method="dialog"><button class="close" aria-label="닫기">닫기</button></form>
+  <img id="viewer-img" src="" alt="">
+</dialog>
+
+<script src="/main.js?v={{ site.time | date: '%s' }}"></script>
+</body>
+</html>

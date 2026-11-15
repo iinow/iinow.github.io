@@ -1,0 +1,43 @@
+---
+layout: default
+---
+<section class="hero">
+  <div class="hero-text">
+    <h1>서버를 만들고, 줄이고, 적어 둡니다</h1>
+    <p class="lead">백엔드 개발자 Joonha 입니다. 서버를 만들고, 만든 걸 더 단순하게 고치는 일을 좋아합니다. 요즘은 Go 와 LLM 에이전트를 붙들고 있습니다.</p>
+    <p class="hero-links">
+      <a class="btn" href="#posts">글 읽기</a>
+      <a class="plain" href="https://github.com/iinow">GitHub 보기</a>
+    </p>
+  </div>
+</section>
+
+<section class="list" id="posts">
+  <h2>글</h2>
+  <ul>
+    {%- for post in site.posts %}
+    <li>
+      <a href="{{ post.url }}">
+        <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+        <span class="lt">{{ post.title | escape }}</span>
+        {%- if post.summary %}
+        <span class="ls">{{ post.summary | strip_html | truncate: 110 }}</span>
+        {%- endif %}
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+
+<section class="repos" id="repos">
+  <h2>공개 저장소</h2>
+  <ul>
+    <li><a href="https://github.com/iinow/ex-langgraph"><span class="rn">ex-langgraph</span><span class="rl">Go</span><span class="ry">2026</span></a></li>
+    <li><a href="https://github.com/iinow/typescript-batch-csv"><span class="rn">typescript-batch-csv</span><span class="rl">TypeScript</span><span class="ry">2026</span></a></li>
+    <li><a href="https://github.com/iinow/spring-elastic-apm"><span class="rn">spring-elastic-apm</span><span class="rl">Java</span><span class="ry">2025</span></a></li>
+    <li><a href="https://github.com/iinow/kafka"><span class="rn">kafka</span><span class="rl">Kotlin</span><span class="ry">2025</span></a></li>
+    <li><a href="https://github.com/iinow/spring-security-oauth-study"><span class="rn">spring-security-oauth-study</span><span class="rl">Java</span><span class="ry">2023</span></a></li>
+    <li><a href="https://github.com/iinow/oidc-demo"><span class="rn">oidc-demo</span><span class="rl">Java</span><span class="ry">2023</span></a></li>
+  </ul>
+  <p><a class="plain" href="https://github.com/iinow?tab=repositories">저장소 전체 보기</a></p>
+</section>
