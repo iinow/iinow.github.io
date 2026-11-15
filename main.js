@@ -138,3 +138,14 @@ document.querySelectorAll('.prose img').forEach((img) => {
 viewer.addEventListener('click', (e) => {
   if (e.target === viewer) viewer.close()
 })
+
+// ── 왼쪽 메뉴 ──
+const drawer = document.getElementById('drawer')
+const burger = document.getElementById('burger')
+if (drawer && burger) {
+  burger.addEventListener('click', () => drawer.showModal())
+  drawer.addEventListener('click', (e) => {
+    // 바깥(배경)을 누르거나 메뉴 안 링크를 누르면 닫는다
+    if (e.target === drawer || e.target.closest('a')) drawer.close()
+  })
+}
