@@ -28,6 +28,13 @@ git add -A && git commit -m "글: 카프카 재시도" && git push
 | 탭으로 넘기는 화면 캡처 | `_posts/2026-11-15-lite-oc.md` 의 `<div class="shots">` 를 복사 |
 | 작은 회색 글 | 문단 바로 아래 줄에 `{: .note}` |
 
+## 검색 노출
+
+- 글마다 제목·설명(`summary`)·대표 주소·공유 그림·구조화 데이터가 자동으로 붙는다. `summary` 를 꼭 쓴다 (검색 결과 설명으로 쓰인다, 160자쯤).
+- 공유 그림을 바꾸려면 글 머리에 `image: /img/영문-주소/a.png`. 없으면 `img/og.png`.
+- `sitemap.xml`, `robots.txt`, `feed.xml` 은 자동.
+- 구글 서치 콘솔·네이버 서치어드바이저 확인 코드는 `_config.yml` 의 `google_site_verification`, `naver_site_verification` 에 넣는다.
+
 ## 파일
 
 | 파일 | 하는 일 |
