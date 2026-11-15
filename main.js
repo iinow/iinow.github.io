@@ -78,13 +78,16 @@ if (cloud) {
 
   replay.addEventListener('click', play)
   replay.disabled = true
-  // 무대가 화면에 들어오면 한 번 재생
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((es) => {
-      if (es.some((e) => e.isIntersecting)) { io.disconnect(); play() }
-    }, { threshold: 0.6 })
-    io.observe(box)
-  } else play()
+  // 상자가 화면에 들어오면 한 번 재생
+  const tryPlay = () => {
+    const r = box.getBoundingClientRect()
+    if (r.top > innerHeight - r.height * 0.5 || r.bottom < 0) return
+    removeEventListener('scroll', tryPlay)
+    play()
+  }
+  addEventListener('scroll', tryPlay, { passive: true })
+  if (document.readyState === 'complete') tryPlay()
+  else addEventListener('load', tryPlay)
 }
 
 // ── 화면 탭: <div class="shots"> 마다 따로 동작 ──
