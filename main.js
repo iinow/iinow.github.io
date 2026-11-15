@@ -144,6 +144,7 @@ const drawer = document.getElementById('drawer')
 const burger = document.getElementById('burger')
 if (drawer && burger) {
   burger.addEventListener('click', () => drawer.showModal())
+  if (location.hash === '#menu') drawer.showModal() // 주소 끝에 #menu 를 붙이면 열린 채로 뜬다
   drawer.addEventListener('click', (e) => {
     // 바깥(배경)을 누르거나 메뉴 안 링크를 누르면 닫는다
     if (e.target === drawer || e.target.closest('a')) drawer.close()
