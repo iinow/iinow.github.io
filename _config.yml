@@ -1,0 +1,14 @@
+title: iinow
+tagline: Joonha 의 개발 기록
+description: 백엔드 개발자 Joonha 의 블로그.
+url: https://iinow.github.io
+lang: ko
+timezone: Asia/Seoul
+permalink: /posts/:slug/
+markdown: kramdown
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+exclude:
+  - README.md
+  - scripts

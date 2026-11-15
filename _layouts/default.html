@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R9M0ZHQR66"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-R9M0ZHQR66');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+{%- if page.layout == 'post' %}
+<title>{{ page.title | escape }} | iinow</title>
+{%- else %}
+<title>iinow | {{ site.tagline }}</title>
+{%- endif %}
+{%- assign desc = page.summary | default: site.description %}
+<meta name="description" content="{{ desc | strip_html | escape }}">
+<meta property="og:title" content="{{ page.title | default: site.title | escape }}">
+<meta property="og:description" content="{{ desc | strip_html | escape }}">
+<meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
+<meta property="og:url" content="{{ page.url | absolute_url }}">
+<meta name="theme-color" content="#1B1E3C">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/atom+xml" title="iinow" href="/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/style.css?v={{ site.time | date: '%s' }}">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="top">
+  <a class="logo" href="/" aria-label="iinow 처음으로">iinow</a>
+  <nav aria-label="주요 메뉴">
+    <a href="/#posts">글</a>
+    <a href="/#repos">저장소</a>
+    <a href="#contact">연락</a>
+  </nav>
+</header>
+
+<main id="main">
+{{ content }}
+</main>
+
+<footer id="contact">
+  <h2>연락</h2>
+  <ul>
+    <li><a href="mailto:dev.iinow.o@gmail.com">dev.iinow.o@gmail.com</a></li>
+    <li><a href="https://github.com/iinow">github.com/iinow</a></li>
+    <li><a href="https://devnot.tistory.com">devnot.tistory.com</a></li>
+  </ul>
+  <p class="copy">© {{ site.time | date: '%Y' }} Joonha</p>
+</footer>
+
+<dialog id="viewer" aria-label="크게 보기">
+  <form method="dialog"><button class="close" aria-label="닫기">닫기</button></form>
+  <img id="viewer-img" src="" alt="">
+</dialog>
+
+<script src="/main.js?v={{ site.time | date: '%s' }}"></script>
+</body>
+</html>
