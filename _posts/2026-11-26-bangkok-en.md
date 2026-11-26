@@ -2,7 +2,8 @@
 layout: post
 title: Six days in Bangkok, with Muang Boran and the Maeklong railway
 summary: I spent six days in Bangkok. The only things I booked ahead were Muang Boran tickets and a half-day tour of the Damnoen Saduak floating market and the Maeklong railway. I saw Muang Boran, Wat Arun and Wat Pho, ate noodles, and watched a train roll through a market built on its tracks. The rest of the days went on walking the city and browsing markets and night markets.
-image: /img/bangkok-2026/07-muang-boran-pavilion.jpg
+image: /img/og/bangkok-en.png
+image_alt: Six days in Bangkok, with Muang Boran and the Maeklong railway
 category: Travel
 lang: en
 ref: bangkok

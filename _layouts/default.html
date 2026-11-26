@@ -39,8 +39,16 @@
 {%- else %}
 <title>iinow | {{ page.tagline | default: site.tagline }}</title>
 {%- endif %}
-{%- assign desc = page.summary | default: page.description | default: site.description | strip_html | strip_newlines | truncate: 160 %}
-{%- assign img = page.image | default: '/img/og.png' | absolute_url %}
+{%- assign desc_raw = page.summary | default: page.description | default: site.description | strip_html | strip_newlines | strip -%}
+{%- assign desc = desc_raw | truncate: 160 -%}
+{%- assign og_desc = desc_raw | truncate: 300 -%}
+{%- assign og_title = page.title | default: page.tagline | default: site.tagline -%}
+{%- assign img_path = page.image | default: '/img/og.png' -%}
+{%- assign img = img_path | absolute_url -%}
+{%- assign img_alt = page.image_alt | default: og_title -%}
+{%- assign img_w = page.image_width | default: 1200 -%}
+{%- assign img_h = page.image_height | default: 630 -%}
+{%- assign img_ext = img_path | split: '.' | last | downcase -%}
 <meta name="description" content="{{ desc | escape }}">
 <meta name="author" content="{{ site.author }}">
 <meta name="robots" content="{% if page.noindex %}noindex{% else %}index, follow, max-image-preview:large{% endif %}">
@@ -61,21 +69,39 @@
 {%- endif %}{% else %}{% if alt_en %}
 <meta property="og:locale:alternate" content="en_US">
 {%- endif %}{% endif %}
-<meta property="og:title" content="{{ page.title | default: page.tagline | default: site.tagline | escape }}">
-<meta property="og:description" content="{{ desc | escape }}">
+<meta property="og:title" content="{{ og_title | escape }}">
+<meta property="og:description" content="{{ og_desc | escape }}">
 <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
 <meta property="og:url" content="{{ page.url | absolute_url }}">
 <meta property="og:image" content="{{ img }}">
+<meta property="og:image:secure_url" content="{{ img }}">
+{%- if img_ext == 'png' %}
+<meta property="og:image:type" content="image/png">
+{%- elsif img_ext == 'jpg' or img_ext == 'jpeg' %}
+<meta property="og:image:type" content="image/jpeg">
+{%- elsif img_ext == 'webp' %}
+<meta property="og:image:type" content="image/webp">
+{%- endif %}
+<meta property="og:image:width" content="{{ img_w }}">
+<meta property="og:image:height" content="{{ img_h }}">
+<meta property="og:image:alt" content="{{ img_alt | escape }}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title | escape }}">
+<meta name="twitter:description" content="{{ og_desc | escape }}">
+<meta name="twitter:image" content="{{ img }}">
+<meta name="twitter:image:alt" content="{{ img_alt | escape }}">
 {%- if page.layout == 'post' %}
 <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
 <meta property="article:author" content="{{ site.author }}">
+{%- if page.category %}
+<meta property="article:section" content="{{ page.category }}">
+{%- endif %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   "headline": {{ page.title | jsonify }},
-  "description": {{ desc | jsonify }},
+  "description": {{ desc_raw | jsonify }},
   "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
   "dateModified": {{ page.last_modified_at | default: page.date | date_to_xmlschema | jsonify }},
   "inLanguage": "{{ lang }}",
