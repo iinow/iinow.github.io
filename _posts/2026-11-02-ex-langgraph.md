@@ -3,6 +3,8 @@ layout: post
 title: Go 로 LangGraph 식 에이전트를 짜고, 작은 모델에게 맡겨 봤다
 summary: 모델이 도구를 부르면 실행하고, 결과를 돌려주고, 다시 묻는다. 이 반복을 Go 와 Eino 로 직접 짰습니다. 그리고 노트북에서 도는 3b 짜리 모델에게 맡겼더니 어디서 넘어지는지, 코드로 어떻게 받쳐 줬는지 적었습니다.
 category: 개발
+lang: ko
+ref: ex-langgraph
 ---
 
 <dl class="facts">

@@ -1,0 +1,54 @@
+---
+layout: default
+lang: en
+ref: home
+permalink: /en/
+tagline: Development and everyday notes by Joonha
+summary: Notes on building things, from development logs to trips and small everyday moments — written by Joonha, a backend developer.
+---
+{%- assign posts_en = site.posts | where: 'lang', 'en' -%}
+<section class="hero">
+  <div class="hero-text">
+    <h1>Build, travel, and write it down</h1>
+    <p class="lead">I'm Joonha, a backend developer. I keep the things I want to remember here — notes from building software, trips, and the small everyday moments in between.</p>
+    <p class="hero-links">
+      <a class="btn" href="#posts">Read the posts</a>
+      <a class="plain" href="https://github.com/iinow">View GitHub</a>
+    </p>
+  </div>
+</section>
+
+<section class="list" id="posts">
+  <h2>Posts</h2>
+  <div class="filter" role="group" aria-label="Filter posts by category" data-all="All">
+    <button type="button" data-cat="All" class="on" aria-pressed="true">All</button>
+    <button type="button" data-cat="Dev" aria-pressed="false">Dev</button>
+    <button type="button" data-cat="Travel" aria-pressed="false">Travel</button>
+  </div>
+  <ul>
+    {%- for post in posts_en %}
+    <li data-cat="{{ post.category }}">
+      <a href="{{ post.url }}">
+        <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+        <span class="lt">{{ post.title | escape }}{% if post.category %}<span class="cat" data-cat="{{ post.category }}">{{ post.category }}</span>{% endif %}</span>
+        {%- if post.summary %}
+        <span class="ls">{{ post.summary | strip_html | truncate: 110 }}</span>
+        {%- endif %}
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+
+<section class="repos" id="repos">
+  <h2>Repositories</h2>
+  <ul>
+    <li><a href="https://github.com/iinow/ex-langgraph"><span class="rn">ex-langgraph</span><span class="rl">Go</span><span class="ry">2026</span></a></li>
+    <li><a href="https://github.com/iinow/typescript-batch-csv"><span class="rn">typescript-batch-csv</span><span class="rl">TypeScript</span><span class="ry">2026</span></a></li>
+    <li><a href="https://github.com/iinow/spring-elastic-apm"><span class="rn">spring-elastic-apm</span><span class="rl">Java</span><span class="ry">2025</span></a></li>
+    <li><a href="https://github.com/iinow/kafka"><span class="rn">kafka</span><span class="rl">Kotlin</span><span class="ry">2025</span></a></li>
+    <li><a href="https://github.com/iinow/spring-security-oauth-study"><span class="rn">spring-security-oauth-study</span><span class="rl">Java</span><span class="ry">2023</span></a></li>
+    <li><a href="https://github.com/iinow/oidc-demo"><span class="rn">oidc-demo</span><span class="rl">Java</span><span class="ry">2023</span></a></li>
+  </ul>
+  <p><a class="plain" href="https://github.com/iinow?tab=repositories">All repositories</a></p>
+</section>

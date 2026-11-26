@@ -1,5 +1,26 @@
 <!DOCTYPE html>
-<html lang="ko">
+{%- assign lang = page.lang | default: site.lang | default: 'ko' -%}
+{%- assign is_en = false -%}
+{%- if lang == 'en' -%}{%- assign is_en = true -%}{%- endif -%}
+{%- assign home = '/' -%}
+{%- if is_en -%}{%- assign home = '/en/' -%}{%- endif -%}
+{%- if is_en -%}
+  {%- assign side_posts = site.posts | where: 'lang', 'en' -%}
+{%- else -%}
+  {%- assign side_posts = site.posts | where_exp: 'p', "p.lang != 'en'" -%}
+{%- endif -%}
+{%- assign all_docs = site.pages | concat: site.posts -%}
+{%- assign alt_ko = nil -%}{%- assign alt_en = nil -%}
+{%- if page.ref -%}
+  {%- assign same_ref = all_docs | where: 'ref', page.ref -%}
+  {%- for d in same_ref -%}
+    {%- assign dlang = d.lang | default: 'ko' -%}
+    {%- if dlang == 'en' -%}{%- assign alt_en = d -%}{%- else -%}{%- assign alt_ko = d -%}{%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign ko_url = alt_ko.url | default: '/' -%}
+{%- assign en_url = alt_en.url | default: '/en/' -%}
+<html lang="{{ lang }}">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-R9M0ZHQR66"></script>
@@ -16,17 +37,31 @@
 {%- elsif page.title %}
 <title>{{ page.title | escape }} | iinow</title>
 {%- else %}
-<title>iinow | {{ site.tagline }}</title>
+<title>iinow | {{ page.tagline | default: site.tagline }}</title>
 {%- endif %}
-{%- assign desc = page.summary | default: site.description | strip_html | strip_newlines | truncate: 160 %}
+{%- assign desc = page.summary | default: page.description | default: site.description | strip_html | strip_newlines | truncate: 160 %}
 {%- assign img = page.image | default: '/img/og.png' | absolute_url %}
 <meta name="description" content="{{ desc | escape }}">
 <meta name="author" content="{{ site.author }}">
 <meta name="robots" content="{% if page.noindex %}noindex{% else %}index, follow, max-image-preview:large{% endif %}">
 <link rel="canonical" href="{{ page.url | absolute_url }}">
+{%- if alt_ko %}
+<link rel="alternate" hreflang="ko" href="{{ alt_ko.url | absolute_url }}">
+{%- endif %}
+{%- if alt_en %}
+<link rel="alternate" hreflang="en" href="{{ alt_en.url | absolute_url }}">
+{%- endif %}
+{%- if alt_ko and alt_en %}
+<link rel="alternate" hreflang="x-default" href="{{ alt_ko.url | absolute_url }}">
+{%- endif %}
 <meta property="og:site_name" content="{{ site.title }}">
-<meta property="og:locale" content="ko_KR">
-<meta property="og:title" content="{{ page.title | default: site.tagline | escape }}">
+<meta property="og:locale" content="{% if is_en %}en_US{% else %}ko_KR{% endif %}">
+{%- if is_en %}{% if alt_ko %}
+<meta property="og:locale:alternate" content="ko_KR">
+{%- endif %}{% else %}{% if alt_en %}
+<meta property="og:locale:alternate" content="en_US">
+{%- endif %}{% endif %}
+<meta property="og:title" content="{{ page.title | default: page.tagline | default: site.tagline | escape }}">
 <meta property="og:description" content="{{ desc | escape }}">
 <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
 <meta property="og:url" content="{{ page.url | absolute_url }}">
@@ -43,7 +78,7 @@
   "description": {{ desc | jsonify }},
   "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
   "dateModified": {{ page.last_modified_at | default: page.date | date_to_xmlschema | jsonify }},
-  "inLanguage": "ko",
+  "inLanguage": "{{ lang }}",
   "image": {{ img | jsonify }},
   "mainEntityOfPage": {{ page.url | absolute_url | jsonify }},
   "author": { "@type": "Person", "name": {{ site.author | jsonify }}, "url": "https://github.com/iinow" },
@@ -57,8 +92,8 @@
   "@type": "Blog",
   "name": {{ site.title | jsonify }},
   "description": {{ site.description | jsonify }},
-  "url": {{ site.url | append: '/' | jsonify }},
-  "inLanguage": "ko",
+  "url": {{ page.url | absolute_url | jsonify }},
+  "inLanguage": "{{ lang }}",
   "author": { "@type": "Person", "name": {{ site.author | jsonify }}, "url": "https://github.com/iinow", "sameAs": ["https://github.com/iinow", "https://devnot.tistory.com", "https://www.instagram.com/iinow.o/"] }
 }
 </script>
@@ -83,31 +118,36 @@
 <link rel="stylesheet" href="/style.css?v={{ site.time | date: '%s' }}">
 </head>
 <body>
-<a class="skip" href="#main">본문으로 건너뛰기</a>
+<a class="skip" href="#main">{% if is_en %}Skip to content{% else %}본문으로 건너뛰기{% endif %}</a>
 
 <header class="top">
-  <button class="burger" id="burger" type="button" aria-label="메뉴 접기" aria-expanded="true" aria-controls="side">
+  <button class="burger" id="burger" type="button" aria-label="{% if is_en %}Collapse menu{% else %}메뉴 접기{% endif %}" data-label-open="{% if is_en %}Expand menu{% else %}메뉴 펼치기{% endif %}" data-label-close="{% if is_en %}Collapse menu{% else %}메뉴 접기{% endif %}" aria-expanded="true" aria-controls="side">
     <span></span><span></span><span></span>
   </button>
-  <a class="logo" href="/" aria-label="iinow 처음으로">iinow</a>
+  <a class="logo" href="{{ home }}" aria-label="{% if is_en %}iinow, home{% else %}iinow 처음으로{% endif %}">iinow</a>
+  <nav class="lang" aria-label="{% if is_en %}Language{% else %}언어{% endif %}">
+    <a href="{{ ko_url }}" lang="ko" hreflang="ko"{% unless is_en %} aria-current="true"{% endunless %}>KO</a>
+    <span class="sep" aria-hidden="true">|</span>
+    <a href="{{ en_url }}" lang="en" hreflang="en"{% if is_en %} aria-current="true"{% endif %}>EN</a>
+  </nav>
 </header>
 
 <div class="side-backdrop" id="side-backdrop"></div>
-<aside class="side" id="side" aria-label="메뉴">
-  <nav aria-label="전체 메뉴">
+<aside class="side" id="side" aria-label="{% if is_en %}Menu{% else %}메뉴{% endif %}">
+  <nav aria-label="{% if is_en %}Site menu{% else %}전체 메뉴{% endif %}">
     <ul class="side-main">
-      <li><a href="/"{% if page.url == '/' %} aria-current="page"{% endif %}>처음</a></li>
-      <li><a href="/#posts">글 목록</a></li>
-      <li><a href="/#repos">공개 저장소</a></li>
-      <li><a href="#contact">연락</a></li>
+      <li><a href="{{ home }}"{% if page.url == home %} aria-current="page"{% endif %}>{% if is_en %}Home{% else %}처음{% endif %}</a></li>
+      <li><a href="{{ home }}#posts">{% if is_en %}Posts{% else %}글 목록{% endif %}</a></li>
+      <li><a href="{{ home }}#repos">{% if is_en %}Repositories{% else %}공개 저장소{% endif %}</a></li>
+      <li><a href="#contact">{% if is_en %}Contact{% else %}연락{% endif %}</a></li>
     </ul>
-    <h2>글 {{ site.posts | size }}개</h2>
+    <h2>{% if is_en %}{{ side_posts | size }} post{% if side_posts.size != 1 %}s{% endif %}{% else %}글 {{ side_posts | size }}개{% endif %}</h2>
     <ul class="side-posts">
-      {%- for post in site.posts %}
+      {%- for post in side_posts %}
       <li><a href="{{ post.url }}"{% if page.url == post.url %} aria-current="page"{% endif %}><time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>{{ post.title | escape }}</a></li>
       {%- endfor %}
     </ul>
-    <p class="side-foot"><a href="/feed.xml">RSS 구독</a></p>
+    <p class="side-foot"><a href="/feed.xml">{% if is_en %}Subscribe via RSS{% else %}RSS 구독{% endif %}</a></p>
   </nav>
 </aside>
 
@@ -118,7 +158,7 @@
 
 <footer id="contact">
   <div class="foot-in">
-  <h2>연락</h2>
+  <h2>{% if is_en %}Contact{% else %}연락{% endif %}</h2>
   <ul>
     <li><a href="mailto:dev.iinow.o@gmail.com"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="5" width="18.4" height="14" rx="2.6"/><path d="M3.7 6.7 12 12.9l8.3-6.2"/></svg><span>dev.iinow.o@gmail.com</span></a></li>
     <li><a href="https://github.com/iinow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>github.com/iinow</span></a></li>
@@ -130,8 +170,8 @@
 </footer>
 </div>
 
-<dialog id="viewer" aria-label="크게 보기">
-  <form method="dialog"><button class="close" aria-label="닫기">닫기</button></form>
+<dialog id="viewer" aria-label="{% if is_en %}View larger{% else %}크게 보기{% endif %}">
+  <form method="dialog"><button class="close" aria-label="{% if is_en %}Close{% else %}닫기{% endif %}">{% if is_en %}Close{% else %}닫기{% endif %}</button></form>
   <img id="viewer-img" src="" alt="">
 </dialog>
 

@@ -8,18 +8,27 @@ if ('caches' in window) {
 }
 
 // ── lite-oc 글: 따로 띄우던 서비스가 상자 하나로 들어간다 ──
-const SERVICES = [
-  'PostgreSQL', 'Mosquitto MQTT', 'S3 저장소', 'SQS 큐', 'nginx 프록시', 'edge nginx',
-  'Tailscale', '백오피스', '태블릿 화면', '세션 만료 작업', 'CCTV 중계',
-  'Jaeger', 'Prometheus', 'Grafana', 'Loki', 'Alloy', 'Dozzle',
-]
+const EN = (document.documentElement.getAttribute('lang') || '').toLowerCase().startsWith('en')
+const SERVICES = EN
+  ? [
+      'PostgreSQL', 'Mosquitto MQTT', 'S3 storage', 'SQS queue', 'nginx proxy', 'edge nginx',
+      'Tailscale', 'Back office', 'Tablet screen', 'Session expiry job', 'CCTV relay',
+      'Jaeger', 'Prometheus', 'Grafana', 'Loki', 'Alloy', 'Dozzle',
+    ]
+  : [
+      'PostgreSQL', 'Mosquitto MQTT', 'S3 저장소', 'SQS 큐', 'nginx 프록시', 'edge nginx',
+      'Tailscale', '백오피스', '태블릿 화면', '세션 만료 작업', 'CCTV 중계',
+      'Jaeger', 'Prometheus', 'Grafana', 'Loki', 'Alloy', 'Dozzle',
+    ]
 const cloud = document.getElementById('cloud')
 if (cloud) {
   const box = document.getElementById('box')
   const countEl = document.getElementById('count')
   const replay = document.getElementById('replay')
+  const unitEl = box.querySelector('.count .unit')
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
   const TOTAL = SERVICES.length + 1 // + Go 서버 자신
+  const unit = (n) => (EN ? (n === 1 ? 'service' : 'services') : '개')
 
   const chips = SERVICES.map((name) => {
     const el = document.createElement('span')
@@ -32,6 +41,7 @@ if (cloud) {
   function finish() {
     chips.forEach((c) => c.classList.add('gone'))
     countEl.textContent = '1'
+    if (EN && unitEl) unitEl.textContent = unit(1)
     box.classList.add('done')
     replay.disabled = false
   }
@@ -39,6 +49,7 @@ if (cloud) {
   function reset() {
     chips.forEach((c) => c.classList.remove('gone'))
     countEl.textContent = String(TOTAL)
+    if (EN && unitEl) unitEl.textContent = unit(TOTAL)
     box.classList.remove('done')
   }
 
@@ -71,6 +82,7 @@ if (cloud) {
           fly.remove()
           left -= 1
           countEl.textContent = String(left)
+          if (EN && unitEl) unitEl.textContent = unit(left)
           box.classList.remove('hit')
           void box.offsetWidth
           box.classList.add('hit')
@@ -111,7 +123,7 @@ document.querySelectorAll('.shots').forEach((shots) => {
     img.classList.add('swap')
     next.onload = () => {
       img.src = tab.dataset.img
-      img.alt = tab.textContent + ' 화면'
+      img.alt = tab.textContent + (EN ? ' screen' : ' 화면')
       if (cap) cap.textContent = tab.dataset.cap || ''
       img.classList.remove('swap')
     }
@@ -136,7 +148,7 @@ const viewerImg = document.getElementById('viewer-img')
 document.querySelectorAll('.prose img').forEach((img) => {
   img.tabIndex = 0
   img.setAttribute('role', 'button')
-  img.setAttribute('aria-label', (img.alt || '그림') + ' 크게 보기')
+  img.setAttribute('aria-label', (img.alt || (EN ? 'Image' : '그림')) + (EN ? ', view larger' : ' 크게 보기'))
   const open = () => {
     viewerImg.src = img.src
     viewerImg.alt = img.alt
@@ -156,25 +168,26 @@ const filterBar = document.querySelector('.filter')
 if (filterBar) {
   const items = [...document.querySelectorAll('.list li[data-cat]')]
   const buttons = [...filterBar.querySelectorAll('button[data-cat]')]
+  const allCat = filterBar.dataset.all || '전체'
   const apply = (cat) => {
     buttons.forEach((b) => {
       const on = b.dataset.cat === cat
       b.classList.toggle('on', on)
       b.setAttribute('aria-pressed', String(on))
     })
-    items.forEach((li) => { li.hidden = cat !== '전체' && li.dataset.cat !== cat })
+    items.forEach((li) => { li.hidden = cat !== allCat && li.dataset.cat !== cat })
   }
   filterBar.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-cat]')
     if (!btn) return
     const cat = btn.dataset.cat
     apply(cat)
-    const url = location.pathname + (cat === '전체' ? '' : '?cat=' + encodeURIComponent(cat)) + '#posts'
+    const url = location.pathname + (cat === allCat ? '' : '?cat=' + encodeURIComponent(cat)) + '#posts'
     try { history.replaceState(null, '', url) } catch (err) {}
   })
   // 글 안의 분류 표시에서 /?cat=… 로 들어온 경우
   const want = new URLSearchParams(location.search).get('cat')
-  apply(buttons.some((b) => b.dataset.cat === want) ? want : '전체')
+  apply(buttons.some((b) => b.dataset.cat === want) ? want : allCat)
 }
 
 // ── 왼쪽 메뉴 ──
@@ -189,7 +202,7 @@ if (side && burger) {
   const sync = () => {
     const open = isOpen()
     burger.setAttribute('aria-expanded', open)
-    burger.setAttribute('aria-label', open ? '메뉴 접기' : '메뉴 펼치기')
+    burger.setAttribute('aria-label', open ? (burger.dataset.labelClose || '메뉴 접기') : (burger.dataset.labelOpen || '메뉴 펼치기'))
     side.inert = !open
   }
   const set = (open) => {

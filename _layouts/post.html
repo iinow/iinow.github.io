@@ -1,9 +1,28 @@
 ---
 layout: default
 ---
+{%- assign is_en = false -%}
+{%- if page.lang == 'en' -%}{%- assign is_en = true -%}{%- endif -%}
+{%- assign home = '/' -%}
+{%- if is_en -%}{%- assign home = '/en/' -%}{%- endif -%}
+{%- if is_en -%}
+  {%- assign pool = site.posts | where: 'lang', 'en' -%}
+{%- else -%}
+  {%- assign pool = site.posts | where_exp: 'p', "p.lang != 'en'" -%}
+{%- endif -%}
+{%- assign older_post = nil -%}{%- assign newer_post = nil -%}{%- assign seen = false -%}
+{%- for p in pool -%}
+  {%- if p.url == page.url -%}
+    {%- assign seen = true -%}
+  {%- elsif seen -%}
+    {%- if older_post == nil -%}{%- assign older_post = p -%}{%- endif -%}
+  {%- else -%}
+    {%- assign newer_post = p -%}
+  {%- endif -%}
+{%- endfor -%}
 <article class="post">
   <header class="post-head">
-    <p class="date"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: '%Y년 %-m월 %-d일' }}</time>{%- if page.category %}<a class="cat" href="/?cat={{ page.category | url_encode }}#posts">{{ page.category }}</a>{%- endif %}</p>
+    <p class="date"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{% if is_en %}{{ page.date | date: '%b %-d, %Y' }}{% else %}{{ page.date | date: '%Y년 %-m월 %-d일' }}{% endif %}</time>{%- if page.category %}<a class="cat" href="{{ home }}?cat={{ page.category | url_encode }}#posts">{{ page.category }}</a>{%- endif %}</p>
     <h1>{{ page.title | escape }}</h1>
     {%- if page.summary %}
     <p class="summary">{{ page.summary }}</p>
@@ -14,13 +33,13 @@ layout: default
 {{ content }}
   </div>
 
-  <nav class="pager" aria-label="다른 글">
-    {%- if page.previous %}
-    <a class="prev" href="{{ page.previous.url }}"><span>이전 글</span>{{ page.previous.title | escape }}</a>
+  <nav class="pager" aria-label="{% if is_en %}More posts{% else %}다른 글{% endif %}">
+    {%- if older_post %}
+    <a class="prev" href="{{ older_post.url }}"><span>{% if is_en %}Previous post{% else %}이전 글{% endif %}</span>{{ older_post.title | escape }}</a>
     {%- endif %}
-    {%- if page.next %}
-    <a class="next" href="{{ page.next.url }}"><span>다음 글</span>{{ page.next.title | escape }}</a>
+    {%- if newer_post %}
+    <a class="next" href="{{ newer_post.url }}"><span>{% if is_en %}Next post{% else %}다음 글{% endif %}</span>{{ newer_post.title | escape }}</a>
     {%- endif %}
-    <a class="all" href="/#posts">글 목록으로</a>
+    <a class="all" href="{{ home }}#posts">{% if is_en %}All posts{% else %}글 목록으로{% endif %}</a>
   </nav>
 </article>
