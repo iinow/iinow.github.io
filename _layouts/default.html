@@ -16,7 +16,7 @@
 {%- elsif page.title %}
 <title>{{ page.title | escape }} | iinow</title>
 {%- else %}
-<title>iinow | {{ site.tagline }}, Go 와 LLM 에이전트 백엔드 블로그</title>
+<title>iinow | {{ site.tagline }}</title>
 {%- endif %}
 {%- assign desc = page.summary | default: site.description | strip_html | strip_newlines | truncate: 160 %}
 {%- assign img = page.image | default: '/img/og.png' | absolute_url %}
