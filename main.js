@@ -228,6 +228,7 @@ if (mermaidCodes.length) {
     }
   }
   // 좁은 화면에서 글자를 뭉개지 않게: 그림이 상자보다 넓으면 원래 크기로 두고 가로 스크롤한다.
+  // 넓은 화면에서는 Mermaid 가 붙인 max-width 를 그대로 두어 상자 폭에 맞춰 줄인다.
   const fit = (holder) => {
     const svg = holder.querySelector('svg')
     if (!svg) return
@@ -235,14 +236,16 @@ if (mermaidCodes.length) {
     const box = holder.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
     const vb = svg.viewBox && svg.viewBox.baseVal
     const natural = vb && vb.width ? vb.width : svg.getBoundingClientRect().width
-    if (box > 0 && natural > box + 1) {
+    if (box > 0 && box < 640 && natural > box + 1) {
+      if (!svg.dataset.ownMax) svg.dataset.ownMax = svg.style.maxWidth || 'none'
       svg.style.maxWidth = 'none'
       svg.style.width = natural + 'px'
       svg.style.minWidth = natural + 'px'
-    } else {
-      svg.style.maxWidth = ''
+    } else if (svg.dataset.ownMax) {
+      svg.style.maxWidth = svg.dataset.ownMax === 'none' ? '' : svg.dataset.ownMax
       svg.style.width = ''
       svg.style.minWidth = ''
+      delete svg.dataset.ownMax
     }
   }
   const render = async () => {
