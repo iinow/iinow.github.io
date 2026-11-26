@@ -10,9 +10,9 @@ permalink: /en/posts/bangkok/
 ---
 
 <dl class="facts">
-  <div><dt>Duration</dt><dd>5<small>nights</small> 6<small>days</small></dd></div>
+  <div><dt>Duration</dt><dd class="long">5 nights<small> · 6 days</small></dd></div>
   <div><dt>City</dt><dd>Bangkok</dd></div>
-  <div><dt>Main stops</dt><dd>Muang Boran<small> · Maeklong</small></dd></div>
+  <div><dt>Main stops</dt><dd class="long">Muang Boran<small> · Maeklong</small></dd></div>
   <div><dt>Photos</dt><dd>39</dd></div>
 </dl>
 

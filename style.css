@@ -69,11 +69,11 @@ ul, ol { padding: 0; list-style: none; }
 .burger:hover span { background: #1b1e3c; }
 
 /* 언어 전환 KO | EN */
-.lang { margin-left: auto; display: inline-flex; align-items: center; gap: 0.15rem; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.01em; }
+.lang { margin-left: auto; display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.01em; }
 .lang a { display: inline-block; padding: 0.22rem 0.6rem; border-radius: 999px; color: var(--muted); text-decoration: none; border: 1.5px solid transparent; transition: color 0.15s, background 0.15s, border-color 0.15s; }
 .lang a:hover { color: var(--ink); border-color: var(--line); }
 .lang a[aria-current='true'] { color: #1b1e3c; background: var(--sun); border-color: #1b1e3c; }
-.lang .sep { color: var(--muted); opacity: 0.45; font-weight: 600; }
+.lang .sep { color: var(--muted); opacity: 0.6; font-weight: 600; }
 
 /* 왼쪽 메뉴: 넓은 화면은 펼친 채로 붙어 있고, 좁은 화면은 햄버거로 덮어 연다 */
 .side {
@@ -208,6 +208,7 @@ main { padding: 0 1rem; }
 .facts div { padding: 1.1rem 1.25rem; background: var(--surface); }
 .facts dt { font-size: 0.9rem; color: var(--muted); font-weight: 600; }
 .facts dd { margin: 0; font-family: var(--display); font-size: 2.6rem; line-height: 1.15; }
+.facts dd.long { font-size: 1.5rem; line-height: 1.3; }
 .facts small { font-family: var(--body); font-size: 1rem; font-weight: 700; margin-left: 0.2rem; }
 
 .loop { counter-reset: s; display: flex; align-items: center; overflow-x: auto; padding: 0.25rem 0.25rem 0.5rem; margin-top: 1.25rem; }
