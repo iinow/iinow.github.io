@@ -201,6 +201,7 @@ main { padding: 0 1rem; }
 .prose table { width: 100%; border-collapse: collapse; margin-top: 1.25rem; font-size: 0.97rem; }
 .prose th, .prose td { text-align: left; padding: 0.7rem 0.75rem 0.7rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 .prose th { font-size: 0.9rem; color: var(--muted); border-bottom: 2px solid var(--ink); }
+.prose th code, .prose td code { white-space: nowrap; }
 .prose td:first-child { font-weight: 700; }
 .prose td:last-child { font-weight: 600; }
 /* 글 안의 머메이드 그림: main.js 가 code.language-mermaid 를 옮겨 그린다 */

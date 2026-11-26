@@ -130,11 +130,11 @@ tasks.named("compileJava") {
 
 `configOptions` 가 많아 보이지만, Boot 4 에서 실제로 갈리는 것은 세 가지입니다.
 
-| 옵션 | 값 | 하는 일 |
-|---|---|---|
-| `useSpringBoot4` | `true` | Spring Boot 4.x / Spring Framework 7 용 코드와 의존성. `useJakartaEe` 가 자동으로 켜지고, `useSpringBoot3` 는 자동으로 꺼진다 |
-| `useJackson3` | `true` | Jackson 3(`tools.jackson`) 기준으로 import 와 애노테이션을 만든다. `useSpringBoot4=true` 가 필수 |
-| `openApiNullable` | `false` | nullable 필드를 `JsonNullable<T>` 로 감쌀지. 기본값이 `true` |
+| 옵션 | 하는 일 |
+|---|---|
+| `useSpringBoot4 = true` | Spring Boot 4.x / Spring Framework 7 용 코드와 의존성. `useJakartaEe` 가 자동으로 켜지고, `useSpringBoot3` 는 자동으로 꺼진다 |
+| `useJackson3 = true` | Jackson 3(`tools.jackson`) 기준으로 import 와 애노테이션을 만든다. `useSpringBoot4=true` 가 필수 |
+| `openApiNullable = false` | nullable 필드를 `JsonNullable<T>` 로 감쌀지. 기본값이 `true` |
 
 그림으로 보면 이렇게 갈립니다.
 

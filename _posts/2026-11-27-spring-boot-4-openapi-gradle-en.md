@@ -132,11 +132,11 @@ To check the spec before generating, run `./gradlew openApiValidate`. Failing on
 
 The `configOptions` map looks long, but on Boot 4 only three entries change the outcome.
 
-| Option | Value | What it does |
-|---|---|---|
-| `useSpringBoot4` | `true` | Code and dependencies for Spring Boot 4.x / Spring Framework 7. Turns `useJakartaEe` on and `useSpringBoot3` off by itself |
-| `useJackson3` | `true` | Imports and annotations for Jackson 3 (`tools.jackson`). Requires `useSpringBoot4=true` |
-| `openApiNullable` | `false` | Whether nullable fields are wrapped in `JsonNullable<T>`. Defaults to `true` |
+| Option | What it does |
+|---|---|
+| `useSpringBoot4 = true` | Code and dependencies for Spring Boot 4.x / Spring Framework 7. Turns `useJakartaEe` on and `useSpringBoot3` off by itself |
+| `useJackson3 = true` | Imports and annotations for Jackson 3 (`tools.jackson`). Requires `useSpringBoot4=true` |
+| `openApiNullable = false` | Whether nullable fields are wrapped in `JsonNullable<T>`. Defaults to `true` |
 
 Drawn out:
 
