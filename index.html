@@ -14,12 +14,17 @@ layout: default
 
 <section class="list" id="posts">
   <h2>글</h2>
+  <div class="filter" role="group" aria-label="글 분류">
+    <button type="button" data-cat="전체" class="on" aria-pressed="true">전체</button>
+    <button type="button" data-cat="개발" aria-pressed="false">개발</button>
+    <button type="button" data-cat="여행" aria-pressed="false">여행</button>
+  </div>
   <ul>
     {%- for post in site.posts %}
-    <li>
+    <li data-cat="{{ post.category }}">
       <a href="{{ post.url }}">
         <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
-        <span class="lt">{{ post.title | escape }}</span>
+        <span class="lt">{{ post.title | escape }}{% if post.category %}<span class="cat" data-cat="{{ post.category }}">{{ post.category }}</span>{% endif %}</span>
         {%- if post.summary %}
         <span class="ls">{{ post.summary | strip_html | truncate: 110 }}</span>
         {%- endif %}

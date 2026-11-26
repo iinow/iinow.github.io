@@ -231,6 +231,15 @@ figcaption { margin-top: 0.75rem; color: var(--muted); max-width: var(--text); f
 
 /* 글 목록 */
 .list { max-width: var(--wrap); margin: 0 auto; padding: clamp(2.5rem, 6vw, 4rem) 0; border-top: 2px solid var(--ink); }
+.filter { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.25rem; }
+.filter button { font: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; color: var(--ink); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; padding: 0.4rem 1rem; }
+.filter button:hover { border-color: var(--ink); }
+.filter button.on[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.cat { display: inline-block; font-size: 0.78rem; font-weight: 700; line-height: 1.35; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0.1rem 0.5rem; vertical-align: 0.15em; text-decoration: none; }
+.lt .cat { margin-left: 0.5rem; }
+a.cat:hover { border-color: var(--ink); color: var(--ink); }
+.date .cat { margin-left: 0.5rem; font-weight: 700; }
+.list li[hidden] { display: none; }
 .list ul { margin-top: 1.5rem; border-top: 1px solid var(--line); }
 .list li a { display: grid; grid-template-columns: 7rem 1fr; gap: 0.25rem 1rem; padding: 1.1rem 0.5rem; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: background 0.15s, padding-left 0.15s; }
 .list li a:hover { background: var(--surface); padding-left: 1rem; }

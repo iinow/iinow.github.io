@@ -3,7 +3,7 @@ layout: default
 ---
 <article class="post">
   <header class="post-head">
-    <p class="date"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: '%Y년 %-m월 %-d일' }}</time></p>
+    <p class="date"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: '%Y년 %-m월 %-d일' }}</time>{%- if page.category %}<a class="cat" href="/?cat={{ page.category | url_encode }}#posts">{{ page.category }}</a>{%- endif %}</p>
     <h1>{{ page.title | escape }}</h1>
     {%- if page.summary %}
     <p class="summary">{{ page.summary }}</p>

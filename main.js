@@ -147,6 +147,32 @@ viewer.addEventListener('click', (e) => {
   if (e.target === viewer) viewer.close()
 })
 
+// ── 글 목록 분류(개발·여행) 거르기 ──
+const filterBar = document.querySelector('.filter')
+if (filterBar) {
+  const items = [...document.querySelectorAll('.list li[data-cat]')]
+  const buttons = [...filterBar.querySelectorAll('button[data-cat]')]
+  const apply = (cat) => {
+    buttons.forEach((b) => {
+      const on = b.dataset.cat === cat
+      b.classList.toggle('on', on)
+      b.setAttribute('aria-pressed', String(on))
+    })
+    items.forEach((li) => { li.hidden = cat !== '전체' && li.dataset.cat !== cat })
+  }
+  filterBar.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-cat]')
+    if (!btn) return
+    const cat = btn.dataset.cat
+    apply(cat)
+    const url = location.pathname + (cat === '전체' ? '' : '?cat=' + encodeURIComponent(cat)) + '#posts'
+    try { history.replaceState(null, '', url) } catch (err) {}
+  })
+  // 글 안의 분류 표시에서 /?cat=… 로 들어온 경우
+  const want = new URLSearchParams(location.search).get('cat')
+  apply(buttons.some((b) => b.dataset.cat === want) ? want : '전체')
+}
+
 // ── 왼쪽 메뉴 ──
 // 넓은 화면: 기본 펼침, 햄버거로 접고 펴며 상태를 기억한다.
 // 좁은 화면: 기본 숨김, 햄버거로 덮어 열고 바깥·Esc·링크로 닫는다.
