@@ -28,7 +28,7 @@ In one sentence: **I write the SQL, and the tool writes the typed Go around it.*
 
 Against the alternatives:
 
-| | database/sql by hand | ORM | sqlc |
+| Item | database/sql by hand | ORM | sqlc |
 |---|---|---|---|
 | SQL | you write it | the tool builds it | you write it |
 | Result types | you match `Scan` order | runtime reflection | generated structs |
@@ -56,14 +56,14 @@ sql:
         emit_json_tags: true
 ```
 
-| Key | Value | What it does |
-|---|---|---|
-| `engine` | `postgresql` | parses schema and queries as PostgreSQL |
-| `schema` | `sql/schema.sql` | table definitions; a table missing here cannot be used in a query |
-| `queries` | `queries` | directory of `.sql` files that start with `-- name:` |
-| `package` / `out` | `db` / `internal/db` | package name and output directory |
-| `sql_package` | `database/sql` | which layer the generated code uses; `pgx/v5` gives pgx's own types |
-| `emit_json_tags` | `true` | adds `json` tags to structs |
+| Key | What it does |
+|---|---|
+| `engine: postgresql` | parses schema and queries as PostgreSQL |
+| `schema: sql/schema.sql` | table definitions; a table missing here cannot be used in a query |
+| `queries: queries` | directory of `.sql` files that start with `-- name:` |
+| `package: db`, `out: internal/db` | package name and output directory |
+| `sql_package: database/sql` | which layer the generated code uses; `pgx/v5` gives pgx's own types |
+| `emit_json_tags: true` | adds `json` tags to structs |
 
 `overrides` handles per-column exceptions. The audit column `updated_by` is internal bookkeeping and has no business in an API response, so eleven tables hide it with `json:"-"`.
 
@@ -197,7 +197,7 @@ Because `sql_package` is `database/sql`, the generated code only knows the stand
 One `*db.Queries` is built and handed to the router; handlers receive only that.
 
 ```go
-router := NewRouter(cfg, queries, mqttHub, mqttService, s3Store, voiceStore, llmClient, automationEngine)
+router := NewRouter(cfg, queries, mqttHub, mqttService, /* ... */)
 ```
 
 ```go

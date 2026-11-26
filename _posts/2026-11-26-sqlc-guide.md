@@ -27,7 +27,7 @@ ref: sqlc-guide
 
 ORM 과 비교하면 이렇게 갈립니다.
 
-| | database/sql 직접 | ORM | sqlc |
+| 항목 | database/sql 직접 | ORM | sqlc |
 |---|---|---|---|
 | SQL | 내가 쓴다 | 도구가 만든다 | 내가 쓴다 |
 | 결과 타입 | `Scan` 순서를 손으로 맞춘다 | 런타임 리플렉션 | 생성된 구조체 |
@@ -55,14 +55,14 @@ sql:
         emit_json_tags: true
 ```
 
-| 항목 | 값 | 하는 일 |
-|---|---|---|
-| `engine` | `postgresql` | 스키마와 쿼리를 PostgreSQL 문법으로 해석한다 |
-| `schema` | `sql/schema.sql` | 테이블 정의. 여기 없는 테이블은 쿼리에서 쓸 수 없다 |
-| `queries` | `queries` | `-- name:` 으로 시작하는 `.sql` 파일을 모아 둔 디렉터리 |
-| `package` / `out` | `db` / `internal/db` | 생성될 패키지 이름과 위치 |
-| `sql_package` | `database/sql` | 생성 코드가 쓸 계층. `pgx/v5` 로 두면 pgx 자체 타입으로 나온다 |
-| `emit_json_tags` | `true` | 구조체에 `json` 태그를 붙인다 |
+| 항목 | 하는 일 |
+|---|---|
+| `engine: postgresql` | 스키마와 쿼리를 PostgreSQL 문법으로 해석한다 |
+| `schema: sql/schema.sql` | 테이블 정의. 여기 없는 테이블은 쿼리에서 쓸 수 없다 |
+| `queries: queries` | `-- name:` 으로 시작하는 `.sql` 파일을 모아 둔 디렉터리 |
+| `package: db`, `out: internal/db` | 생성될 패키지 이름과 위치 |
+| `sql_package: database/sql` | 생성 코드가 쓸 계층. `pgx/v5` 로 두면 pgx 자체 타입으로 나온다 |
+| `emit_json_tags: true` | 구조체에 `json` 태그를 붙인다 |
 
 `overrides` 로 컬럼 단위 예외를 둡니다. 감사용 컬럼 `updated_by` 는 내부 기록이라 API 응답에 나갈 이유가 없어서, 열한 개 테이블 모두 `json:"-"` 로 덮었습니다.
 
@@ -196,7 +196,7 @@ queries := db.New(sqldb)
 `*db.Queries` 하나를 만들어 라우터에 넘기고, 핸들러는 그것만 받습니다.
 
 ```go
-router := NewRouter(cfg, queries, mqttHub, mqttService, s3Store, voiceStore, llmClient, automationEngine)
+router := NewRouter(cfg, queries, mqttHub, mqttService, /* ... */)
 ```
 
 ```go
