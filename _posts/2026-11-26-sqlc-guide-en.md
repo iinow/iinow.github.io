@@ -253,7 +253,7 @@ A single statement is atomic on its own, so there is nothing to commit or roll b
 ## What actually bites
 
 - **Commit all of `internal/db` after `generate`.** Commit the query file but forget `models.go` and the build still passes while the struct drifts away from the schema.
-- **The schema file lives apart from the migrations.** Runtime migrations are goose, 164 of them; `generate` reads `sql/schema.sql`, one file that flattens them. Add a migration and skip this file, and `generate` passes without knowing the new column exists.
+- **The schema file lives apart from the migrations.** Runtime migrations are goose, numbered up to 164; `generate` reads `sql/schema.sql`, one file that flattens them. Add a migration and skip this file, and `generate` passes without knowing the new column exists.
 - **Never edit generated files.** The next `generate` erases it. Change the query or the config instead.
 - **Split queries instead of building dynamic SQL.** The moment you concatenate an `ORDER BY`, the type checking is gone. Three sort orders means three queries.
 - **The query name is the span name.** It is read in logs and traces, so name it after what it does, `ListUsersPage` rather than `List2`.
