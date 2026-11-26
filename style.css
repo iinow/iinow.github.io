@@ -180,7 +180,7 @@ main { padding: 0 1rem; }
 .summary { margin-top: 1.25rem; font-size: 1.15rem; }
 
 .prose > * { max-width: var(--text); }
-.prose > .facts, .prose > .shots, .prose > .wide, .prose > .loop, .prose > .stage { max-width: none; }
+.prose > .facts, .prose > .shots, .prose > .wide, .prose > .loop, .prose > .stage, .prose > .mermaid { max-width: none; }
 .prose > .stage { margin-top: 1.25rem; }
 .stage .sr-only { margin: 0; }
 
@@ -203,6 +203,10 @@ main { padding: 0 1rem; }
 .prose th { font-size: 0.9rem; color: var(--muted); border-bottom: 2px solid var(--ink); }
 .prose td:first-child { font-weight: 700; }
 .prose td:last-child { font-weight: 600; }
+/* 글 안의 머메이드 그림: main.js 가 code.language-mermaid 를 옮겨 그린다 */
+.prose > .mermaid { margin-top: 1.25rem; padding: 1.1rem 1rem; background: var(--surface); border: 2px solid var(--ink); border-radius: 1rem; overflow-x: auto; }
+.prose .mermaid svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.prose .mermaid:not([data-processed]) { white-space: pre; font-size: .875rem; color: var(--muted); }
 
 .facts { margin: 2.5rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1px; border: 2px solid var(--ink); border-radius: 1.25rem; background: var(--line); overflow: hidden; }
 .facts div { padding: 1.1rem 1.25rem; background: var(--surface); }
@@ -290,6 +294,7 @@ dialog img { border-radius: 0.75rem; background: #fff; }
   .repos li a { grid-template-columns: 1fr auto; }
   .ry { display: none; }
   .prose table { font-size: 0.9rem; }
+  .prose > .mermaid { padding: 0.85rem 0.7rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

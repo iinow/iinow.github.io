@@ -56,12 +56,29 @@ permalink: /en/posts/kafka-retry/
 | 쓰고 싶은 것 | 쓰는 법 |
 |---|---|
 | 그림 | `![설명](/img/영문-주소/a.png)`. 누르면 크게 보인다 |
+| 그래프·흐름도 | 그림 파일 대신 `mermaid` 코드 블록 (아래 「그래프·흐름도는 머메이드로」) |
 | 그림 + 설명 | `<figure><img src="..." alt="..."><figcaption>설명</figcaption></figure>` |
 | 숫자 요약 칸 | `<dl class="facts"><div><dt>이름</dt><dd>12<small>일</small></dd></div>…</dl>` |
 | 알약 목록 | 목록 바로 아래 줄에 `{: .stack}` |
 | 순서 흐름 | `<ol class="loop"><li>…</li><li class="hot">강조</li></ol>` |
 | 탭으로 넘기는 화면 캡처 | `_posts/2026-11-15-lite-oc.md` 의 `<div class="shots">` 를 복사 |
 | 작은 회색 글 | 문단 바로 아래 줄에 `{: .note}` |
+
+### 그래프·흐름도는 머메이드로
+
+**기본 그래프·흐름도는 그림 파일로 굽지 말고 `mermaid` 코드 블록(` ``` ` 세 개 + `mermaid`)으로 그린다.** 글 안에 그 블록이 있을 때만 `main.js` 가 Mermaid 11(jsDelivr CDN)을 내려받아 SVG 로 바꾸므로, 머메이드가 없는 글에는 네트워크 비용도 붙지 않는다. 색은 사이트 변수(`--ink`·`--paper`·`--surface`·`--line`)를 읽어 맞추고, OS 가 다크 모드로 바뀌면 다시 그린다. 좁은 화면에서는 그림이 상자보다 넓을 때 글자를 줄이지 않고 가로로 스크롤된다.
+
+````markdown
+```mermaid
+flowchart LR
+  A["OpenAPI 스펙"] --> B["openApiGenerate"] --> C["compileJava"]
+```
+````
+
+- 종류는 `flowchart`, `sequenceDiagram`, `classDiagram`, `stateDiagram-v2`, `erDiagram`, `gantt` 등 Mermaid 가 아는 것이면 된다.
+- 딱지 글자는 따옴표로 감싼다(`A["build/generated/openapi"]`). 그래야 `()`·`:`·`<br/>` 가 문법으로 읽히지 않는다.
+- 사진·스크린샷처럼 머메이드로 그릴 수 없는 것만 `img/<영문-주소>/` 에 넣는다.
+- CDN 이 막히면 블록은 원래 코드 그대로 보인다 (`main.js` 가 되돌린다).
 
 ## 링크 미리보기 · 검색 노출
 
@@ -110,7 +127,7 @@ python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retrie
 | `en/index.html` | 영어 첫 화면 (`All / Dev / Travel`) |
 | `_layouts/default.html` | 공통 머리·메뉴·바닥. `og:*`·`twitter:*`·`hreflang`·JSON-LD 생성 |
 | `_layouts/post.html` | 글 화면 틀 (분류 링크, 이전·다음 글) |
-| `style.css`, `main.js` | 모양, 애니메이션·탭·크게 보기 |
+| `style.css`, `main.js` | 모양, 애니메이션·탭·크게 보기, 머메이드 그림 |
 | `img/og/` | 페이지별 링크 미리보기 카드(1200×630). `img/og.png` 는 사이트 기본 카드 |
 | `img/<주소>/` | 글에 넣는 사진·그림 |
 | `scripts/new-post.sh` | 새 글 파일 + 카드 생성 |

@@ -163,6 +163,137 @@ viewer.addEventListener('click', (e) => {
   if (e.target === viewer) viewer.close()
 })
 
+// ── 글 안의 ```mermaid 블록: 코드가 아니라 그림으로 ──
+// Kramdown 은 ```mermaid 를 <pre><code class="language-mermaid"> 로 남긴다.
+// 그 블록이 있는 글에서만 Mermaid 를 내려받아 그리고, 없으면 아무것도 하지 않는다.
+const mermaidCodes = [...document.querySelectorAll('.prose pre > code.language-mermaid')]
+if (mermaidCodes.length) {
+  const dark = matchMedia('(prefers-color-scheme: dark)')
+  const diagrams = mermaidCodes.map((code) => {
+    const holder = document.createElement('div')
+    holder.className = 'mermaid'
+    holder.textContent = code.textContent
+    // Rouge 가 <div class="language-mermaid highlighter-rouge">…</div> 로 감싸 두므로 그 껍데기까지 걷어낸다.
+    const block = code.closest('.highlighter-rouge') || code.parentElement
+    block.replaceWith(holder)
+    return { holder, source: code.textContent }
+  })
+  let mermaid = null
+  let busy = false
+  // 사이트 색(--ink, --paper …)을 그대로 읽어 와 그림 색을 맞춘다. 다크 모드면 다크 값이 온다.
+  const palette = () => {
+    const css = getComputedStyle(document.documentElement)
+    const v = (name, fallback) => css.getPropertyValue(name).trim() || fallback
+    const ink = v('--ink', '#1b1e3c')
+    const paper = v('--paper', '#eef0f8')
+    const surface = v('--surface', '#ffffff')
+    const line = v('--line', '#d3d7e8')
+    return {
+      fontFamily: "'Pretendard Variable', Pretendard, sans-serif",
+      fontSize: '15px',
+      background: paper,
+      primaryColor: surface,
+      primaryTextColor: ink,
+      primaryBorderColor: ink,
+      secondaryColor: '#ffc93c',
+      secondaryTextColor: '#1b1e3c',
+      secondaryBorderColor: '#1b1e3c',
+      tertiaryColor: paper,
+      tertiaryTextColor: ink,
+      tertiaryBorderColor: line,
+      lineColor: ink,
+      textColor: ink,
+      mainBkg: surface,
+      nodeBorder: ink,
+      clusterBkg: paper,
+      clusterBorder: line,
+      edgeLabelBackground: paper,
+      titleColor: ink,
+      noteBkgColor: '#ffc93c',
+      noteTextColor: '#1b1e3c',
+      noteBorderColor: '#1b1e3c',
+      actorBkg: surface,
+      actorTextColor: ink,
+      actorBorder: ink,
+      actorLineColor: ink,
+      signalColor: ink,
+      signalTextColor: ink,
+      labelBoxBkgColor: surface,
+      labelBoxBorderColor: ink,
+      labelTextColor: ink,
+      loopTextColor: ink,
+      activationBkgColor: paper,
+      activationBorderColor: ink,
+      sequenceNumberColor: '#1b1e3c',
+    }
+  }
+  // 좁은 화면에서 글자를 뭉개지 않게: 그림이 상자보다 넓으면 원래 크기로 두고 가로 스크롤한다.
+  const fit = (holder) => {
+    const svg = holder.querySelector('svg')
+    if (!svg) return
+    const cs = getComputedStyle(holder)
+    const box = holder.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+    const vb = svg.viewBox && svg.viewBox.baseVal
+    const natural = vb && vb.width ? vb.width : svg.getBoundingClientRect().width
+    if (box > 0 && natural > box + 1) {
+      svg.style.maxWidth = 'none'
+      svg.style.width = natural + 'px'
+      svg.style.minWidth = natural + 'px'
+    } else {
+      svg.style.maxWidth = ''
+      svg.style.width = ''
+      svg.style.minWidth = ''
+    }
+  }
+  const render = async () => {
+    if (busy) return
+    busy = true
+    try {
+      if (!mermaid) {
+        const mod = await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+        mermaid = mod.default
+      }
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'base',
+        themeVariables: palette(),
+        securityLevel: 'strict',
+        flowchart: { curve: 'basis', useMaxWidth: true, padding: 14, nodeSpacing: 42, rankSpacing: 48 },
+        sequence: { useMaxWidth: true, mirrorActors: false },
+      })
+      for (const d of diagrams) {
+        d.holder.removeAttribute('data-processed')
+        d.holder.textContent = d.source
+      }
+      // 한 그림이 깨져도 나머지는 그린다
+      await mermaid.run({ nodes: diagrams.map((d) => d.holder), suppressErrors: true })
+      diagrams.forEach((d) => fit(d.holder))
+    } catch (e) {
+      // 내려받기가 막히면 원래 코드 블록으로 되돌린다
+      console.warn('mermaid: ' + (e && e.message))
+      for (const d of diagrams) {
+        if (d.holder.querySelector('svg')) continue
+        const pre = document.createElement('pre')
+        const code = document.createElement('code')
+        code.className = 'language-mermaid'
+        code.textContent = d.source
+        pre.appendChild(code)
+        d.holder.replaceWith(pre)
+      }
+    } finally {
+      busy = false
+    }
+  }
+  render()
+  // OS 가 다크 모드로 바뀌면 색을 다시 맞춰 그린다
+  if (dark.addEventListener) dark.addEventListener('change', () => render())
+  let resizeTimer = 0
+  addEventListener('resize', () => {
+    clearTimeout(resizeTimer)
+    resizeTimer = setTimeout(() => diagrams.forEach((d) => fit(d.holder)), 150)
+  }, { passive: true })
+}
+
 // ── 글 목록 분류(개발·여행) 거르기 ──
 const filterBar = document.querySelector('.filter')
 if (filterBar) {
