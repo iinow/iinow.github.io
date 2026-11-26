@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#1B1E3C"/><rect x="8" y="8" width="16" height="16" rx="4" fill="#FFC93C"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="iinow">
+  <rect x="3.0" y="2.0" width="58.0" height="60.0" rx="14.5" fill="#1B1E3C"/>
+  <rect x="6.9" y="5.9" width="50.2" height="49.8" rx="10.6" fill="#FFC93C"/>
+  <circle cx="32.0" cy="16.65" r="4.8" fill="#1B1E3C"/>
+  <rect x="26.5" y="28.95" width="11.0" height="20.7" rx="4.0" fill="#1B1E3C"/>
+</svg>
