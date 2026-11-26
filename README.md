@@ -5,14 +5,49 @@ https://iinow.github.io/ 블로그. GitHub Pages 가 Jekyll 로 알아서 빌드
 ## 새 글 쓰기
 
 ```bash
-scripts/new-post.sh kafka-retry "카프카 재시도 정리"   # _posts/오늘날짜-kafka-retry.md 생성
+scripts/new-post.sh kafka-retry "카프카 재시도 정리"        # 한국어 글
+scripts/new-post.sh kafka-retry "Kafka retries" en          # 영어 글
 # 글 쓰고
 git add -A && git commit -m "글: 카프카 재시도" && git push
 ```
 
 - 주소는 `/posts/kafka-retry/`. 첫 화면 **글** 목록에 최신순으로 자동으로 들어간다.
-- 파일 이름은 `_posts/YYYY-MM-DD-영문-주소.md`. 날짜가 미래면 그날까지 안 보인다.
+- 파일 이름은 `_posts/YYYY-MM-DD-영문-주소.md` (영어 글은 `-en.md`). 날짜가 미래면 그날까지 안 보인다.
 - 아직 안 올릴 글은 `_drafts/` 에 둔다 (공개 안 됨).
+- 스크립트가 글 파일과 함께 그 글의 미리보기 카드(`img/og/…png`)를 만들고 `image`·`image_alt`·`ref`·`lang`(영어면 `permalink` 도) 을 채워 둔다. 아래 두 절 참고.
+
+## 다국어 (KO / EN)
+
+같은 글을 한국어·영어 두 편으로 쓰고 `ref` 로 묶으면 상단 `KO | EN` 전환과 `hreflang` 이 자동으로 서로를 가리킨다.
+
+| | 한국어 | 영어 |
+|---|---|---|
+| 파일 | `_posts/YYYY-MM-DD-<주소>.md` | `_posts/YYYY-MM-DD-<주소>-en.md` |
+| `lang` | `ko` (생략해도 됨) | `en` |
+| `ref` | `<주소>` | 같은 `<주소>` |
+| `permalink` | 생략 (기본 `/posts/<주소>/`) | **`/en/posts/<주소>/`** |
+| `category` | `개발` / `여행` | `Dev` / `Travel` |
+
+- 영어 글에 `permalink` 를 빠뜨리면 `/posts/<주소>-en/` 으로 올라간다. 꼭 적는다 (`new-post.sh` 가 넣어 준다).
+- `ref` 가 같으면 `_layouts/default.html` 이 짝을 찾아 `hreflang="ko"`·`hreflang="en"`·`x-default`(한국어) 를 넣고, 머리의 `KO | EN` 링크도 그 글로 간다. 짝이 없으면 각각 `/`, `/en/` 홈으로 간다.
+- 홈 목록은 `lang` 으로 갈린다. `/` 는 `lang` 이 `en` 이 아닌 글, `/en/` 은 `lang: en` 인 글만 보여 준다.
+- `category` 는 홈의 `전체 / 개발 / 여행`(`All / Dev / Travel`) 필터와 `article:section` 에 쓰인다. 한국어 글에 `Dev` 를 적으면 필터에 안 걸리니 언어별로 값을 맞춘다.
+
+영어 글 머리 예:
+
+```yaml
+---
+layout: post
+title: "Kafka retries, in practice"
+summary: 목록과 글 머리에 보일 한두 문장. 링크 미리보기 설명으로도 쓰인다.
+image: /img/og/kafka-retry-en.png
+image_alt: "Kafka retries, in practice"
+category: Dev
+lang: en
+ref: kafka-retry
+permalink: /en/posts/kafka-retry/
+---
+```
 
 ## 글 안에서 쓸 수 있는 것
 
@@ -28,27 +63,59 @@ git add -A && git commit -m "글: 카프카 재시도" && git push
 | 탭으로 넘기는 화면 캡처 | `_posts/2026-11-15-lite-oc.md` 의 `<div class="shots">` 를 복사 |
 | 작은 회색 글 | 문단 바로 아래 줄에 `{: .note}` |
 
-## 검색 노출
+## 링크 미리보기 · 검색 노출
 
-- 글마다 제목·설명(`summary`)·대표 주소·공유 그림·구조화 데이터가 자동으로 붙는다. `summary` 를 꼭 쓴다 (검색 결과·링크 미리보기 설명으로 쓰인다).
-- 링크 미리보기(카카오톡·슬랙·디스코드·X)는 페이지마다 그 글의 제목이 박힌 카드 그림을 쓴다. `image: /img/og/<영문-주소>.png`, 설명은 `image_alt`.
-- 카드 그림은 `scripts/make-og.py` 로 만든다. `scripts/new-post.sh` 로 글을 만들면 자동으로 하나 만들어진다.  ```bash
-  python3 scripts/make-og.py --out img/og/kafka-retry.png --title "카프카 재시도 정리" --kicker "개발 · 2026.11.27"
-  ```
-  글 카드가 아니라 사진을 쓰고 싶으면 `image:` 에 사진 경로를 넣고 `image_width`·`image_height` 도 같이 적는다 (기본 1200×630).
-- 글 머리 값에 `: ` 나 `#` 가 들어가면 따옴표로 감싼다 (`title: "lite-oc: ..."`). 안 감싸면 그 글의 주소(`permalink`)까지 무시돼 엉뚱한 주소로 올라간다.
+글 머리(frontmatter)에 적는 값:
+
+| 값 | 쓰임 |
+|---|---|
+| `summary` | 목록·글 머리·검색 설명. `meta description` 은 160자, `og:description`·`twitter:description` 은 300자로 잘려 나간다 |
+| `image` | 미리보기 그림. 없으면 `/img/og.png` (사이트 기본 카드) |
+| `image_alt` | 그림 설명(`og:image:alt`, `twitter:image:alt`). 없으면 제목이 쓰인다 |
+| `image_width` / `image_height` | 그림 크기 (기본 1200×630). 카드 대신 사진을 쓸 때 실제 픽셀 값을 적는다 |
+| `noindex: true` | 그 페이지만 검색에서 뺀다 |
+
+- `_layouts/default.html` 이 페이지마다 `og:title`·`og:description`·`og:url`·`og:image`·`og:image:width/height/alt/type`·`og:locale`(+alternate), `twitter:card`(`summary_large_image`)·`twitter:title/description/image/image:alt`, 글에는 `article:published_time/section/author` 와 구조화 데이터(JSON-LD `BlogPosting`) 를 자동으로 만든다. 손으로 넣을 필요 없다.
+- `og:image:type` 은 `image` 확장자를 보고 png / jpeg / webp 중에서 붙는다.
 - `sitemap.xml`, `robots.txt`, `feed.xml` 은 자동.
 - 구글 서치 콘솔·네이버 서치어드바이저 확인 코드는 `_config.yml` 의 `google_site_verification`, `naver_site_verification` 에 넣는다.
+
+### 카드 그림 만들기
+
+```bash
+python3 scripts/make-og.py --out img/og/kafka-retry.png --title "카프카 재시도 정리" --kicker "개발 · 2026.11.27"
+python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retries" --kicker "Dev · 2026.11.27" --lang en
+```
+
+- 1200×630 PNG. 제목이 그림 안에 그려지므로 메신저가 어떻게 잘라도 제목이 보인다. 글꼴은 `scripts/fonts/` (Bagel Fat One·Pretendard, OFL).
+- 긴 제목은 알아서 줄을 나누고 글자를 줄인다. `--lang en` 이면 카드 아래 브랜드 문구가 영어가 된다.
+- `scripts/new-post.sh` 로 글을 만들면 카드까지 같이 만들어진다 (Pillow 필요: `pip install pillow`). 카드 문구는 나중에 직접 고쳐도 된다.
+
+### 글 머리 YAML 따옴표
+
+값에 `: ` 나 `#` 가 들어가면 반드시 따옴표로 감싼다 (`title: "lite-oc: 더블클릭…"`). 안 감싸면 그 글의 frontmatter 가 깨져 **`permalink` 까지 무시되고** `/posts/2026-11-15-lite-oc-en/` 같은 엉뚱한 주소로 올라간다. 제목·`image_alt`·`summary` 는 늘 따옴표로 쓰는 게 안전하다 (`new-post.sh` 가 그렇게 만든다).
+
+### 카카오톡 링크 미리보기 캐시
+
+- 카카오톡은 한 번 공유한 URL 의 미리보기를 자체 캐시로 기억한다. 카드를 바꿔도 **이미 붙였던 링크**는 한동안 옛 썸네일·문구로 보인다. 새 URL 은 바로 새 카드가 뜬다.
+- 바로 바꾸려면 카카오 계정으로 로그인해 https://developers.kakao.com/tool/clear/og 에서 그 URL 을 넣고 캐시를 초기화한다. (본인 계정 작업)
+- X·슬랙·디스코드는 보통 링크를 새로 붙일 때 다시 긁어 간다.
 
 ## 파일
 
 | 파일 | 하는 일 |
 |---|---|
-| `_posts/` | 글 |
-| `index.html` | 첫 화면 (히어로, 글 목록, 저장소) |
-| `_layouts/default.html` | 공통 머리·메뉴·바닥 |
-| `_layouts/post.html` | 글 화면 틀 |
+| `_posts/` | 글 (`YYYY-MM-DD-<주소>.md`, 영어는 `-en.md`) |
+| `index.html` | 첫 화면 (히어로, 글 목록, 분류 필터, 공개 저장소) |
+| `en/index.html` | 영어 첫 화면 (`All / Dev / Travel`) |
+| `_layouts/default.html` | 공통 머리·메뉴·바닥. `og:*`·`twitter:*`·`hreflang`·JSON-LD 생성 |
+| `_layouts/post.html` | 글 화면 틀 (분류 링크, 이전·다음 글) |
 | `style.css`, `main.js` | 모양, 애니메이션·탭·크게 보기 |
-| `scripts/make-og.py` | 링크 미리보기 카드 그림(1200×630) 생성. 글꼴은 `scripts/fonts/` (Bagel Fat One·Pretendard, OFL) |
+| `img/og/` | 페이지별 링크 미리보기 카드(1200×630). `img/og.png` 는 사이트 기본 카드 |
+| `img/<주소>/` | 글에 넣는 사진·그림 |
+| `scripts/new-post.sh` | 새 글 파일 + 카드 생성 |
+| `scripts/make-og.py` | 카드 그림 생성. 글꼴은 `scripts/fonts/` |
+| `_config.yml` | 주소 규칙(`permalink: /posts/:slug/`), 기본 언어, 검색 등록 확인 코드, 플러그인 |
+| `service-worker.js`, `404.html` | 오프라인 캐시, 404 페이지 |
 
 합쳐지는 애니메이션은 lite-oc 글 안에 있다 (`<div class="stage">`, 목록은 `main.js` 의 `SERVICES`).

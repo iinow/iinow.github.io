@@ -30,6 +30,10 @@ ref: $slug
 
 본문.
 EOF
+# 영어 글은 주소가 /en/posts/<주소>/ 가 되도록 permalink 를 넣는다. 없으면 /posts/<주소>-en/ 으로 올라간다.
+if [ "$lang" = "en" ]; then
+  sed -i "/^ref: $slug$/a permalink: /en/posts/$slug/" "$f"
+fi
 if command -v python3 >/dev/null 2>&1 && python3 -c 'import PIL' >/dev/null 2>&1; then
   python3 scripts/make-og.py --out "$img" --title "$title" --kicker "$(date +%Y.%m.%d)" --lang "$lang" || true
 else
