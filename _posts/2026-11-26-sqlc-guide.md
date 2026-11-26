@@ -3,7 +3,7 @@ layout: post
 title: sqlc 사용법 — SQL 은 그대로 두고 Go 코드만 받아 쓰기
 summary: SQL 을 손으로 쓰고, 타입이 붙은 Go 코드는 도구가 만들어 줍니다. 실제로 쓰는 서버의 설정 파일과 폴더 구조, 어노테이션 네 가지, 트랜잭션까지 그림으로 정리했습니다.
 image: /img/og/sqlc-guide-ko.png
-image_alt: sqlc 사용법 — SQL 은 그대로 두고 Go 코드만 받아 쓰기
+image_alt: "sqlc 사용법 — SQL 은 그대로 두고 Go 코드만 받아 쓰기"
 category: 개발
 lang: ko
 ref: sqlc-guide

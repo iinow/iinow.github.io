@@ -3,7 +3,7 @@ layout: post
 title: "sqlc in practice: write the SQL by hand, get typed Go for free"
 summary: You write the SQL, and the tool writes the typed Go around it. The config, the folder layout, four annotations and transactions — all drawn out, from a server that runs this in production.
 image: /img/og/sqlc-guide-en.png
-image_alt: sqlc in practice: write the SQL by hand, get typed Go for free
+image_alt: "sqlc in practice: write the SQL by hand, get typed Go for free"
 category: Dev
 lang: en
 ref: sqlc-guide

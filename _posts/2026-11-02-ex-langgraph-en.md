@@ -3,7 +3,7 @@ layout: post
 title: Building a LangGraph-style agent in Go, then handing it to a small model
 summary: The model calls a tool, we run it, we hand the result back, and ask again. I wrote that loop myself in Go with Eino. Then I gave it to a 3b model running on a laptop, and wrote down where it falls over and how I propped it up in code.
 image: /img/og/ex-langgraph-en.png
-image_alt: Building a LangGraph-style agent in Go, then handing it to a small model
+image_alt: "Building a LangGraph-style agent in Go, then handing it to a small model"
 category: Dev
 lang: en
 ref: ex-langgraph

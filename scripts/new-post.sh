@@ -12,13 +12,15 @@ f="_posts/$today-$slug.md"
 if [ "$lang" = "en" ]; then f="_posts/$today-$slug-en.md"; img="img/og/$slug-en.png"; else img="img/og/$slug.png"; fi
 [ -e "$f" ] && { echo "이미 있음: $f"; exit 1; }
 mkdir -p "img/$slug" img/og
+# 글 머리(YAML) 값에 ': ' 나 '#' 가 들어가면 따옴표로 감싸야 Jekyll 이 제대로 읽는다. 제목은 늘 따옴표로 넣는다.
+title="$(printf '%s' "$title" | tr -d '"')"
 cat > "$f" <<EOF
 ---
 layout: post
-title: $title
+title: "$title"
 summary: 목록과 글 머리에 보일 한두 문장. 링크 미리보기 설명으로도 쓰인다.
 image: /$img
-image_alt: $title
+image_alt: "$title"
 category:
 lang: $lang
 ref: $slug

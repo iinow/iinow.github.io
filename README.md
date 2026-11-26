@@ -32,11 +32,11 @@ git add -A && git commit -m "글: 카프카 재시도" && git push
 
 - 글마다 제목·설명(`summary`)·대표 주소·공유 그림·구조화 데이터가 자동으로 붙는다. `summary` 를 꼭 쓴다 (검색 결과·링크 미리보기 설명으로 쓰인다).
 - 링크 미리보기(카카오톡·슬랙·디스코드·X)는 페이지마다 그 글의 제목이 박힌 카드 그림을 쓴다. `image: /img/og/<영문-주소>.png`, 설명은 `image_alt`.
-- 카드 그림은 `scripts/make-og.py` 로 만든다. `scripts/new-post.sh` 로 글을 만들면 자동으로 하나 만들어진다.
-  ```bash
+- 카드 그림은 `scripts/make-og.py` 로 만든다. `scripts/new-post.sh` 로 글을 만들면 자동으로 하나 만들어진다.  ```bash
   python3 scripts/make-og.py --out img/og/kafka-retry.png --title "카프카 재시도 정리" --kicker "개발 · 2026.11.27"
   ```
   글 카드가 아니라 사진을 쓰고 싶으면 `image:` 에 사진 경로를 넣고 `image_width`·`image_height` 도 같이 적는다 (기본 1200×630).
+- 글 머리 값에 `: ` 나 `#` 가 들어가면 따옴표로 감싼다 (`title: "lite-oc: ..."`). 안 감싸면 그 글의 주소(`permalink`)까지 무시돼 엉뚱한 주소로 올라간다.
 - `sitemap.xml`, `robots.txt`, `feed.xml` 은 자동.
 - 구글 서치 콘솔·네이버 서치어드바이저 확인 코드는 `_config.yml` 의 `google_site_verification`, `naver_site_verification` 에 넣는다.
 
