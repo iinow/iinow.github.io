@@ -280,8 +280,8 @@ main { padding: 0 1rem; }
 .prose .highlight .gh, .prose .highlight .gu { color: var(--code-func); }
 .prose .highlight .gs { font-weight: 700; }
 .prose .highlight .gt { color: var(--code-tag); }
-/* Rouge 가 붙이는 오류 표시는 배경 없이 */
-.prose .highlight .err { color: var(--code-tag); background: none; }
+/* Rouge 가 렉서 한계로 붙이는 err 토큰($1 같은 값)은 빨간 오류색 대신 본문색으로 */
+.prose .highlight .err { color: var(--code-fg); background: none; }
 .prose img { border: 2px solid var(--ink); border-radius: 1rem; background: #fff; cursor: zoom-in; transition: opacity 0.2s; }
 .prose img.swap { opacity: 0; }
 .prose hr { border: 0; border-top: 1px solid var(--line); margin: 2.5rem 0; }
