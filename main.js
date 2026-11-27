@@ -347,10 +347,25 @@ if (toc) {
     })
     toc.hidden = false
 
+    // 좁은 화면: 오른쪽 아래 버튼으로 목차 카드를 여닫는다
+    const toggle = document.getElementById('toc-toggle')
+    const narrow = matchMedia('(max-width: 1239.98px)')
+    if (toggle) toggle.hidden = false
+
     const links = [...list.querySelectorAll('a')]
     const targets = entries.map((entry) => document.getElementById(entry.id))
     const header = document.querySelector('.top')
     let active = -1
+    // 목차가 길어 스크롤될 때 현재 항목이 보이게
+    const reveal = (i) => {
+      const a = links[i]
+      if (!a || !toc.clientHeight) return
+      if (toc.scrollHeight <= toc.clientHeight + 2) return
+      const r = a.getBoundingClientRect()
+      const box = toc.getBoundingClientRect()
+      if (r.top < box.top) toc.scrollTop += r.top - box.top - 8
+      else if (r.bottom > box.bottom) toc.scrollTop += r.bottom - box.bottom + 8
+    }
     const setActive = (i) => {
       if (i === active) return
       active = i
@@ -358,13 +373,7 @@ if (toc) {
         if (n === i) a.setAttribute('aria-current', 'true')
         else a.removeAttribute('aria-current')
       })
-      // 목차가 길어 스크롤될 때 현재 항목이 보이게
-      const a = links[i]
-      if (!a || toc.scrollHeight <= toc.clientHeight + 2) return
-      const r = a.getBoundingClientRect()
-      const box = toc.getBoundingClientRect()
-      if (r.top < box.top) toc.scrollTop += r.top - box.top - 8
-      else if (r.bottom > box.bottom) toc.scrollTop += r.bottom - box.bottom + 8
+      reveal(i)
     }
     const spy = () => {
       const top = (header ? header.offsetHeight : 0) + 24
@@ -392,6 +401,41 @@ if (toc) {
       { passive: true }
     )
     addEventListener('resize', spy, { passive: true })
+
+    // ── 좁은 화면의 떠 있는 목차 버튼과 카드 ──
+    if (toggle) {
+      let openToc = false
+      const setOpen = (open, refocus) => {
+        openToc = open
+        toc.classList.toggle('toc-open', open)
+        toggle.setAttribute('aria-expanded', String(open))
+        // 카드가 그려진 다음에 현재 섹션이 보이도록 스크롤한다
+        if (open) requestAnimationFrame(() => reveal(active))
+        else if (refocus) toggle.focus()
+      }
+      toggle.addEventListener('click', () => setOpen(!openToc))
+      // 항목을 눌러 이동하면 카드는 저절로 닫는다
+      toc.addEventListener('click', (e) => {
+        if (e.target.closest('a') && narrow.matches) setOpen(false)
+      })
+      // 바깥을 누르거나 Esc 로도 닫힌다
+      document.addEventListener('click', (e) => {
+        if (!openToc) return
+        if (toc.contains(e.target) || toggle.contains(e.target)) return
+        setOpen(false)
+      })
+      addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && openToc) {
+          e.stopPropagation()
+          setOpen(false, true)
+        }
+      })
+      // 넓은 화면으로 바뀌면 카드는 쓰이지 않으니 닫아 둔다
+      narrow.addEventListener('change', () => {
+        if (!narrow.matches && openToc) setOpen(false)
+      })
+    }
+
     spy()
   }
 }

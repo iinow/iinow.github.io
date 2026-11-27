@@ -214,6 +214,49 @@ main { padding: 0 1rem; }
 .toc-list .lvl-3 a { padding-left: 1.3rem; font-size: 0.83rem; font-weight: 500; }
 .toc-list a:hover { color: var(--ink); background: var(--surface); }
 .toc-list a[aria-current='true'] { color: #1b1e3c; background: var(--sun); font-weight: 800; }
+
+/* 좁은 화면 목차: 오른쪽 아래 떠 있는 버튼 + 누르면 열리는 카드. 넓은 화면은 위의 고정 목차를 쓴다 */
+.toc-toggle { display: none; }
+@media (max-width: 1239.98px) {
+  .toc-toggle:not([hidden]) {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    position: fixed; right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 15;
+    font: inherit; font-size: 0.92rem; font-weight: 800; letter-spacing: 0.01em;
+    color: var(--ink); background: var(--surface);
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    padding: 0.5rem 0.95rem 0.5rem 0.6rem;
+    box-shadow: 0 4px 0 var(--ink), 0 10px 22px rgba(15, 17, 36, 0.16);
+    cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, background 0.15s;
+  }
+  .toc-toggle:hover { transform: translateY(1px); }
+  .toc-toggle:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+  .toc-toggle[aria-expanded='true'] { background: var(--sun); }
+  .toc-toggle-ico { display: grid; place-items: center; flex: none; width: 1.5rem; height: 1.5rem; padding: 0.26rem; border-radius: 999px; background: var(--sun); color: #1b1e3c; }
+  .toc-toggle-ico svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .toc-toggle[aria-expanded='true'] .toc-toggle-ico { background: #1b1e3c; color: var(--sun); }
+
+  .toc.toc-open:not([hidden]) {
+    display: block;
+    position: fixed; right: max(1rem, env(safe-area-inset-right)); bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 3.85rem);
+    z-index: 15;
+    width: min(21rem, calc(100vw - 2rem));
+    max-height: 62vh;
+    max-height: min(62vh, calc(100dvh - var(--top-h) - 8rem));
+    overflow-y: auto; overscroll-behavior: contain;
+    padding: 0.9rem 0.85rem 1rem;
+    background: var(--surface); border: 2px solid var(--ink); border-radius: 1.1rem;
+    box-shadow: 0 12px 0 -4px rgba(27, 30, 60, 0.1), 0 20px 44px rgba(15, 17, 36, 0.26);
+    animation: toc-in 0.18s ease-out;
+    scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+  }
+  .toc.toc-open .toc-list a { padding: 0.4rem 0.55rem; }
+  .toc.toc-open .toc-list .lvl-3 a { padding-left: 1.25rem; }
+  /* 떠 있는 버튼이 글 끝의 이전·다음 글 링크를 가리지 않게 */
+  .post { padding-bottom: clamp(4.5rem, 12vw, 6rem); }
+}
+@keyframes toc-in { from { opacity: 0; transform: translateY(0.6rem); } }
+@media (prefers-reduced-motion: reduce) { .toc.toc-open:not([hidden]) { animation: none; } }
 @media (min-width: 1240px) {
   .post-body { grid-template-columns: minmax(0, 1fr) 14rem; gap: 2.5rem; align-items: start; }
   .toc:not([hidden]) { display: block; position: sticky; top: calc(var(--top-h) + 1.5rem); max-height: calc(100vh - var(--top-h) - 3rem); overflow-y: auto; overscroll-behavior: contain; padding: 0.15rem 0 0.5rem 1.1rem; border-left: 2px solid var(--line); scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
