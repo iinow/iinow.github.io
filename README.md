@@ -118,6 +118,25 @@ python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retrie
 - 바로 바꾸려면 카카오 계정으로 로그인해 https://developers.kakao.com/tool/clear/og 에서 그 URL 을 넣고 캐시를 초기화한다. (본인 계정 작업)
 - X·슬랙·디스코드는 보통 링크를 새로 붙일 때 다시 긁어 간다.
 
+## 화면 기능
+
+| 기능 | 어떻게 동작하나 |
+|---|---|
+| 코드 복사 | `main.js` 가 `.prose pre` 마다 우측 상단에 `복사` 버튼을 붙인다. 머메이드 그림은 제외. 누르면 `복사됨 ✓` 로 잠깐 바뀐다 |
+| 라이트/다크 | 머리 `KO | EN` 옆 해/달 버튼. 고른 값은 `localStorage('theme')` 에 남고, 안 고르면 OS 설정을 따른다. `<head>` 인라인 스크립트가 `data-theme` 을 먼저 세팅해 깜빡임이 없다 |
+| 글 검색 | `/search.json` 색인을 `Ctrl+K`·`Cmd+K` 또는 머리 검색 버튼으로 연다. 제목·요약·본문 앞부분을 실시간으로 거르고 화살표·Enter·Esc 로 움직인다 |
+| 읽기 진행률 | 글 화면 머리 아래 3px 노란 선. 스크롤에 따라 0→100% |
+| 댓글 | `_config.yml` 의 `giscus` 블록이 `enabled: true` 일 때 글 하단에 giscus 위젯. 테마 전환을 `postMessage` 로 따라간다 |
+
+## 온라인 도구
+
+| 주소 | 하는 일 |
+|---|---|
+| `/online/tsid/` · `/en/online/tsid/` | TSID 생성·대량 생성, 10진수/Base32 Crockford 변환, 시각·노드·카운터 분해 |
+| `/online/openapi-diff/` · `/en/online/openapi-diff/` | OpenAPI 3.x 스펙 두 개를 비교해 Breaking / 안전한 변경을 엔드포인트별로 |
+
+두 페이지 모두 `layout: tool` 을 쓰고 frontmatter 에 `tools: true` 를 두면 `tool.css` 가 붙는다. 계산은 브라우저에서만 하고, 스펙은 어디로도 보내지 않는다.
+
 ## 파일
 
 | 파일 | 하는 일 |
@@ -132,6 +151,8 @@ python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retrie
 | `img/<주소>/` | 글에 넣는 사진·그림 |
 | `scripts/new-post.sh` | 새 글 파일 + 카드 생성 |
 | `scripts/make-og.py` | 카드 그림 생성. 글꼴은 `scripts/fonts/` |
+| `search.json` | `Ctrl+K` 검색 색인 (글 + `search_include: true` 인 페이지) |
+| `tool.css`, `tool-tsid.js`, `tool-openapi-diff.js` | 온라인 도구 화면과 계산 |
 | `_config.yml` | 주소 규칙(`permalink: /posts/:slug/`), 기본 언어, 검색 등록 확인 코드, 플러그인 |
 | `service-worker.js`, `404.html` | 오프라인 캐시, 404 페이지 |
 

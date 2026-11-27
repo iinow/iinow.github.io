@@ -109,10 +109,10 @@ class ChatController {
 여기서부터가 2.x의 핵심입니다. `ChatClient` 호출 한 번은 **advisor 체인**을 지나고, 체인 안에 도구 호출 루프와 메모리가 각자의 자리로 들어갑니다.
 
 ```mermaid
-flowchart LR
-  C["ChatClient.prompt()"] --> T["SessionTurnAdvisor<br/>호출 한 번 = 한 턴"]
+flowchart TD
+  C["ChatClient.prompt()"] --> T["SessionTurnAdvisor<br/>호출 한 번 = 한 턴 · 루프 바깥"]
   T --> L["ToolCallingAdvisor<br/>자동 등록"]
-  L --> M["SessionMemoryAdvisor<br/>도구 루프 안"]
+  L --> M["SessionMemoryAdvisor<br/>루프 안 · 이력 싣기"]
   M --> MD["ChatModel"]
   MD --> LLM["LLM"]
   L -.->|"도구 호출"| TL["@Tool 메서드"]

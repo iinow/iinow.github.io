@@ -110,10 +110,10 @@ class ChatController {
 From here on, the 2.x shape shows. One `ChatClient` call travels through an **advisor chain**, and the tool loop and the memory each take their place inside it.
 
 ```mermaid
-flowchart LR
-  C["ChatClient.prompt()"] --> T["SessionTurnAdvisor<br/>one call = one turn"]
+flowchart TD
+  C["ChatClient.prompt()"] --> T["SessionTurnAdvisor<br/>one call = one turn · outside the loop"]
   T --> L["ToolCallingAdvisor<br/>registered for you"]
-  L --> M["SessionMemoryAdvisor<br/>inside the tool loop"]
+  L --> M["SessionMemoryAdvisor<br/>inside the loop · loads the history"]
   M --> MD["ChatModel"]
   MD --> LLM["LLM"]
   L -.->|"tool call"| TL["@Tool method"]

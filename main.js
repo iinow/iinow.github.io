@@ -697,6 +697,15 @@ if (searchDialog) {
   }
 
   const norm = (s) => String(s || '').toLowerCase()
+  // 라틴 문자 검색어는 단어 경계로 본다 ("tsid" 가 "outside" 안에서 걸리지 않게).
+  // 한글은 조사가 붙으므로 부분 문자열 그대로 찾는다.
+  const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const findWord = (hay, w) => {
+    if (!hay) return -1
+    if (!/^[\x00-\x7F]+$/.test(w)) return hay.indexOf(w)
+    const m = new RegExp('(^|[^a-z0-9])' + escapeRe(w)).exec(hay)
+    return m ? m.index + m[1].length : -1
+  }
   const scoreOf = (doc, words) => {
     const title = norm(doc.title)
     const summary = norm(doc.summary)
@@ -705,10 +714,11 @@ if (searchDialog) {
     let score = 0
     for (const w of words) {
       let s = 0
-      if (title.includes(w)) s += title.startsWith(w) ? 14 : 9
-      if (summary.includes(w)) s += 4
-      if (category.includes(w)) s += 3
-      if (content.includes(w)) s += 1
+      const at = findWord(title, w)
+      if (at !== -1) s += at === 0 ? 14 : 9
+      if (findWord(summary, w) !== -1) s += 4
+      if (findWord(category, w) !== -1) s += 3
+      if (findWord(content, w) !== -1) s += 1
       if (!s) return 0
       score += s
     }
@@ -753,7 +763,7 @@ if (searchDialog) {
     const lower = text.toLowerCase()
     let at = -1
     for (const w of tokens) {
-      const i = lower.indexOf(w)
+      const i = findWord(lower, w)
       if (i !== -1 && (at === -1 || i < at)) at = i
     }
     if (at <= 40) return text.slice(0, 140)
