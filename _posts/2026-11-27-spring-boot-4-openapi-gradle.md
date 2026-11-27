@@ -313,26 +313,12 @@ tasks.register<GenerateTask>("openApiGenerateClient") {
 
 ```mermaid
 flowchart LR
-  subgraph spec["api.json"]
-    T["tags: pet"]
-    O["operationId: getPet<br/>GET /pets/{petId}"]
-    B["requestBody: NewPet"]
-    R["responses.200: Pet"]
-    SEC["securitySchemes<br/>bearerAuth"]
-    SRV["servers[0].url"]
-  end
-  subgraph code["com.example.client"]
-    API["api.PetApi"]
-    NP["model.NewPet"]
-    PET["model.Pet"]
-    CL["ApiClient"]
-  end
-  T --> API
-  O --> API
-  B --> NP
-  R --> PET
-  SEC --> CL
-  SRV --> CL
+  S["api.json"] --> T["tags: pet<br/>operationId: getPet"]
+  T --> API["api.PetApi<br/>getPet(Long petId)"]
+  S --> B["requestBody: NewPet<br/>responses.200: Pet"]
+  B --> M["model.NewPet<br/>model.Pet"]
+  S --> C["securitySchemes: bearerAuth<br/>servers[0].url"]
+  C --> CL["ApiClient<br/>setBasePath · setBearerToken"]
 ```
 
 이 대응은 스펙을 고칠 때마다 다시 계산됩니다. `operationId` 를 바꾸면 메서드 이름이 바뀌고, `required` 를 빼면 인자에서 `@Nonnull` 이 빠지고, 응답 스키마를 `Pet` 에서 `PetPage` 로 바꾸면 반환 타입이 따라 바뀝니다. 그래서 컴파일이 스펙과 코드의 어긋남을 잡아 줍니다.

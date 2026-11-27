@@ -315,26 +315,12 @@ Drawn out, the pieces on the left become the classes on the right.
 
 ```mermaid
 flowchart LR
-  subgraph spec["api.json"]
-    T["tags: pet"]
-    O["operationId: getPet<br/>GET /pets/{petId}"]
-    B["requestBody: NewPet"]
-    R["responses.200: Pet"]
-    SEC["securitySchemes<br/>bearerAuth"]
-    SRV["servers[0].url"]
-  end
-  subgraph code["com.example.client"]
-    API["api.PetApi"]
-    NP["model.NewPet"]
-    PET["model.Pet"]
-    CL["ApiClient"]
-  end
-  T --> API
-  O --> API
-  B --> NP
-  R --> PET
-  SEC --> CL
-  SRV --> CL
+  S["api.json"] --> T["tags: pet<br/>operationId: getPet"]
+  T --> API["api.PetApi<br/>getPet(Long petId)"]
+  S --> B["requestBody: NewPet<br/>responses.200: Pet"]
+  B --> M["model.NewPet<br/>model.Pet"]
+  S --> C["securitySchemes: bearerAuth<br/>servers[0].url"]
+  C --> CL["ApiClient<br/>setBasePath · setBearerToken"]
 ```
 
 The mapping is recomputed on every edit. Rename an `operationId` and the method name moves; drop `required` and `@Nonnull` leaves the signature; change the response schema from `Pet` to `PetPage` and the return type follows. Compilation is what tells you the spec and the code drifted apart.
