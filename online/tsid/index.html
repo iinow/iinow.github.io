@@ -1,0 +1,119 @@
+---
+layout: tool
+lang: ko
+ref: online-tsid
+title: "TSID 생성기"
+summary: "64비트 TSID를 만들고, 10진수·Base32 Crockford·시각·노드·카운터로 다시 풀어 봅니다. 한 번에 여러 개를 뽑거나 다른 곳에서 만든 TSID를 붙여 넣어도 됩니다. 모든 계산은 브라우저 안에서만 합니다."
+permalink: /online/tsid/
+category: 도구
+tools: true
+search_include: true
+image: /img/og.png
+---
+
+<div class="tool-grid">
+  <section class="tcard" aria-labelledby="tsid-gen-title">
+    <h2 id="tsid-gen-title"><span class="num">1</span>TSID 하나 만들기</h2>
+    <div class="field-row">
+      <div class="field">
+        <label for="tsid-node-bits">노드 비트</label>
+        <select id="tsid-node-bits">
+          <option value="0">0비트 · 노드 없음</option>
+          <option value="4">4비트 · 노드 16개</option>
+          <option value="8">8비트 · 노드 256개</option>
+          <option value="10" selected>10비트 · 노드 1024개 (기본)</option>
+          <option value="12">12비트 · 노드 4096개</option>
+          <option value="16">16비트 · 노드 65536개</option>
+          <option value="20">20비트 · 노드 1048576개</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tsid-node">노드 ID</label>
+        <input id="tsid-node" type="number" min="0" step="1" value="1" inputmode="numeric">
+      </div>
+    </div>
+    <p class="tool-msg" id="tsid-gen-msg"></p>
+    <div class="btnrow">
+      <button class="tbtn primary" id="btn-generate" type="button">TSID 생성</button>
+      <span class="out-sub" id="tsid-node-hint">0 – 1023</span>
+    </div>
+
+    <div class="out big" data-result="gen">
+      <div class="out-row"><span class="out-label">UInt64 · 10진수</span><button class="copy-mini" type="button" data-copy-field="uint">복사</button></div>
+      <div class="out-value xl mono" data-field="uint">-</div>
+      <div class="out-row"><span class="out-label">Int64 · 부호 있는 10진수</span><button class="copy-mini" type="button" data-copy-field="int">복사</button></div>
+      <div class="out-value mono" data-field="int">-</div>
+      <div class="out-row"><span class="out-label">Base32 Crockford</span><button class="copy-mini" type="button" data-copy-field="base32">복사</button></div>
+      <div class="out-value mono" data-field="base32">-</div>
+      <p class="out-sub" data-field="iso">-</p>
+    </div>
+
+    <div class="bits" aria-hidden="true">
+      <span class="b-time" data-bit="time">시각 42</span>
+      <span class="b-node" data-bit="node">노드 10</span>
+      <span class="b-counter" data-bit="counter">카운터 12</span>
+    </div>
+    <p class="bits-legend"><span><i class="i-time"></i>2020-01-01 UTC부터 지난 ms</span><span><i class="i-node"></i>노드 ID</span><span><i class="i-counter"></i>같은 ms 안의 순번</span></p>
+  </section>
+
+  <section class="tcard" aria-labelledby="tsid-dec-title">
+    <h2 id="tsid-dec-title"><span class="num">2</span>풀어 보기 · 변환</h2>
+    <div class="field">
+      <label for="decode-input">TSID (10진수 또는 Base32)</label>
+      <input id="decode-input" type="text" spellcheck="false" autocomplete="off" placeholder="예: 732489223423423423 또는 0JMVQ049NFN6K">
+    </div>
+    <div class="btnrow">
+      <button class="tbtn" id="btn-decode" type="button">디코딩</button>
+      <button class="tbtn ghost" id="btn-decode-gen" type="button">방금 만든 값 넣기</button>
+    </div>
+    <p class="tool-msg" id="decode-msg"></p>
+
+    <div class="out big" data-result="dec">
+      <div class="out-row"><span class="out-label">시각 (ISO 8601)</span></div>
+      <div class="out-value mono" data-field="iso">-</div>
+      <div class="out-row"><span class="out-label">UInt64 · 10진수</span><button class="copy-mini" type="button" data-copy-field="uint">복사</button></div>
+      <div class="out-value mono" data-field="uint">-</div>
+      <div class="out-row"><span class="out-label">Base32 Crockford</span><button class="copy-mini" type="button" data-copy-field="base32">복사</button></div>
+      <div class="out-value mono" data-field="base32">-</div>
+      <div class="out-row"><span class="out-label">노드 / 카운터</span></div>
+      <div class="out-value mono" data-field="parts">-</div>
+      <p class="out-sub" data-field="ts">-</p>
+    </div>
+  </section>
+</div>
+
+<section class="tcard" aria-labelledby="tsid-bulk-title">
+  <h2 id="tsid-bulk-title"><span class="num">3</span>한 번에 여러 개</h2>
+  <div class="field-row">
+    <div class="field">
+      <label for="bulk-count">개수 (최대 1000)</label>
+      <input id="bulk-count" type="number" min="1" max="1000" step="1" value="20" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="bulk-format">표시 형식</label>
+      <select id="bulk-format">
+        <option value="base32" selected>Base32 Crockford</option>
+        <option value="uint">UInt64 10진수</option>
+        <option value="int">Int64 10진수</option>
+      </select>
+    </div>
+  </div>
+  <div class="btnrow">
+    <button class="tbtn primary" id="btn-bulk" type="button">대량 생성</button>
+    <button class="tbtn ghost" id="btn-bulk-copy" type="button">목록 전체 복사</button>
+    <span class="out-sub" id="bulk-count-label">-</span>
+  </div>
+  <div class="bulk-list" id="bulk-list"></div>
+</section>
+
+<p class="tool-note">
+  <b>구조</b> — TSID는 64비트 정수 하나입니다. 위 42비트는 2020-01-01T00:00:00Z 부터 지난 밀리초, 남은 22비트를 노드와 카운터로 나눕니다. 노드를 10비트 쓰면 카운터가 12비트라 같은 밀리초에 4096개까지 순서대로 만들 수 있습니다. 이 페이지는 노드를 고른 만큼 카운터를 줄여 쓰고, 카운터가 넘치면 다음 밀리초로 넘어갑니다.
+  <ul>
+    <li>Base32 Crockford는 64비트를 13글자로 줄인 표기입니다. <code>I</code>·<code>L</code>은 <code>1</code>, <code>O</code>는 <code>0</code>으로 읽고 대소문자를 가리지 않습니다.</li>
+    <li>디코딩은 위에서 고른 노드 비트를 기준으로 노드와 카운터를 나눕니다. 다른 설정으로 만든 TSID는 노드 비트를 맞춰야 노드·카운터가 정확합니다.</li>
+    <li>Int64는 같은 비트를 부호 있는 정수로 읽은 값입니다. 최상위 비트가 1이면 음수로 보입니다.</li>
+    <li>입력은 이 브라우저 밖으로 나가지 않습니다. 새로 고치면 방금 만든 값도 사라집니다.</li>
+  </ul>
+</p>
+
+<script src="/tool-tsid.js" defer></script>

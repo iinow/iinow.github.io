@@ -1,0 +1,21 @@
+---
+layout: null
+permalink: /search.json
+sitemap: false
+---
+{%- comment -%}
+  글 검색 색인. main.js 가 Ctrl+K 검색창에서 이 파일을 읽어 거른다.
+  content 는 앞부분만 넣어 파일을 가볍게 둔다 (검색은 제목·요약·본문 앞부분으로).
+{%- endcomment -%}
+[
+{%- assign first = true -%}
+{%- for post in site.posts -%}
+{%- unless first %},{% endunless -%}{%- assign first = false -%}
+{"kind":"post","title":{{ post.title | default: '' | jsonify }},"summary":{{ post.summary | default: '' | strip_html | strip_newlines | strip | jsonify }},"url":{{ post.url | jsonify }},"lang":{{ post.lang | default: 'ko' | jsonify }},"category":{{ post.category | default: '' | jsonify }},"date":{{ post.date | date: '%Y-%m-%d' | jsonify }},"content":{{ post.content | strip_html | strip_newlines | replace: '  ', ' ' | truncate: 1200 | jsonify }}}
+{%- endfor -%}
+{%- assign tool_pages = site.pages | where: 'search_include', true -%}
+{%- for tp in tool_pages -%}
+{%- unless first %},{% endunless -%}{%- assign first = false -%}
+{"kind":"page","title":{{ tp.title | default: '' | jsonify }},"summary":{{ tp.summary | default: '' | strip_html | strip_newlines | strip | jsonify }},"url":{{ tp.url | jsonify }},"lang":{{ tp.lang | default: 'ko' | jsonify }},"category":{{ tp.category | default: '' | jsonify }},"date":{{ tp.date | default: site.time | date: '%Y-%m-%d' | jsonify }},"content":{{ tp.content | strip_html | strip_newlines | replace: '  ', ' ' | truncate: 1200 | jsonify }}}
+{%- endfor %}
+]

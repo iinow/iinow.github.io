@@ -1,0 +1,68 @@
+---
+layout: tool
+lang: ko
+ref: online-openapi-diff
+title: "OpenAPI 변경 감지"
+summary: "OpenAPI 3.x 스펙 두 개를 넣으면 계약이 깨지는 변경(Breaking)과 안전한 변경을 갈라서 엔드포인트별로 보여 줍니다. JSON·YAML·파일 업로드를 지원하고, 비교는 브라우저 안에서만 합니다."
+permalink: /online/openapi-diff/
+category: 도구
+tools: true
+search_include: true
+image: /img/og.png
+---
+
+<section class="tcard" aria-labelledby="od-input-title">
+  <h2 id="od-input-title"><span class="num">1</span>스펙 두 개 넣기</h2>
+  <div class="tool-split">
+    <div class="field">
+      <label for="spec-before">Before · 이전 스펙</label>
+      <textarea id="spec-before" spellcheck="false" placeholder="openapi: 3.0.3 … (JSON 또는 YAML)"></textarea>
+      <div class="btnrow">
+        <button class="tbtn ghost" type="button" data-sample="before">샘플 불러오기</button>
+        <label class="tbtn ghost">파일<input type="file" id="file-before" accept=".json,.yaml,.yml,application/json,application/yaml" hidden></label>
+        <span class="out-sub" id="meta-before"></span>
+      </div>
+    </div>
+    <div class="field">
+      <label for="spec-after">After · 바뀐 스펙</label>
+      <textarea id="spec-after" spellcheck="false" placeholder="openapi: 3.0.3 … (JSON 또는 YAML)"></textarea>
+      <div class="btnrow">
+        <button class="tbtn ghost" type="button" data-sample="after">샘플 불러오기</button>
+        <label class="tbtn ghost">파일<input type="file" id="file-after" accept=".json,.yaml,.yml,application/json,application/yaml" hidden></label>
+        <span class="out-sub" id="meta-after"></span>
+      </div>
+    </div>
+  </div>
+  <div class="btnrow">
+    <button class="tbtn primary" id="btn-diff" type="button">비교하기</button>
+    <button class="tbtn ghost" id="btn-swap" type="button">좌우 바꾸기</button>
+    <button class="tbtn ghost" id="btn-clear" type="button">비우기</button>
+  </div>
+  <p class="tool-msg" id="diff-msg"></p>
+</section>
+
+<section class="tcard" aria-labelledby="od-sum-title">
+  <h2 id="od-sum-title"><span class="num">2</span>요약</h2>
+  <div class="diff-summary" id="diff-summary"></div>
+  <div class="filters" id="diff-filters" role="group" aria-label="변경 종류로 거르기"></div>
+</section>
+
+<section class="tcard" aria-labelledby="od-list-title">
+  <h2 id="od-list-title"><span class="num">3</span>엔드포인트별 변경</h2>
+  <div class="diff-groups" id="diff-groups">
+    <p class="diff-empty">스펙을 넣고 <b>비교하기</b>를 누르면 결과가 여기에 나옵니다.</p>
+  </div>
+</section>
+
+<p class="tool-note">
+  <b>판정 기준</b> — 클라이언트를 고치지 않으면 깨지는 변경을 Breaking으로 봅니다.
+  <ul>
+    <li>Breaking: 엔드포인트·응답 코드 삭제, 필수 파라미터 추가, 파라미터가 선택→필수로 바뀜, 요청·응답 스키마의 타입 변경, 요청 본문의 필수 필드 추가, 응답 필드 삭제, 요청 enum 값 삭제, 응답 enum 값 추가.</li>
+    <li>안전한 변경: 새 엔드포인트·선택 파라미터·선택 필드 추가, 응답 필드 추가, 요청 enum 값 추가, 선택으로 풀린 파라미터, deprecated 표시.</li>
+    <li><code>$ref</code>는 문서 안에서 풀어서 비교하고, 같은 이름의 파라미터는 <code>in</code>과 이름으로 짝을 맞춥니다. 미디어 타입은 <code>application/json</code>을 먼저 봅니다.</li>
+    <li>스펙은 어디로도 전송되지 않습니다. 파일도 브라우저에서만 읽습니다.</li>
+  </ul>
+</p>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
+<script src="/tool-openapi-diff.js" defer></script>

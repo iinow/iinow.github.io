@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --ink: #1b1e3c;
   --paper: #eef0f8;
   --surface: #ffffff;
@@ -31,8 +32,10 @@
   --code-tag: #f7768e;
   --code-param: #e0af68;
 }
+/* OS 가 다크일 때 (테마를 아직 고르지 않은 첫 방문이 따른다) */
 @media (prefers-color-scheme: dark) {
   :root {
+    color-scheme: dark;
     --ink: #eceefa;
     --paper: #14162b;
     --surface: #1e2140;
@@ -43,6 +46,31 @@
     --code-bg: #20233c;
     --code-line: #373c60;
   }
+}
+/* 손으로 고른 테마는 OS 설정을 이긴다 (data-theme 이 있으면 위 media 규칙을 덮는다) */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --ink: #eceefa;
+  --paper: #14162b;
+  --surface: #1e2140;
+  --muted: #a3a8c8;
+  --line: #34385e;
+  --teal: #6cc7e6;
+  --gone: #ff8fa3;
+  --code-bg: #20233c;
+  --code-line: #373c60;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+  --ink: #1b1e3c;
+  --paper: #eef0f8;
+  --surface: #ffffff;
+  --muted: #5b6080;
+  --line: #d3d7e8;
+  --teal: #0b6e8e;
+  --gone: #c4405a;
+  --code-bg: #1a1b26;
+  --code-line: #2a2e47;
 }
 
 * { box-sizing: border-box; }
@@ -86,8 +114,39 @@ ul, ol { padding: 0; list-style: none; }
 .burger:hover { background: var(--sun); border-color: #1b1e3c; }
 .burger:hover span { background: #1b1e3c; }
 
+/* 검색 · 테마 버튼 */
+.top-tools { margin-left: auto; display: flex; align-items: center; gap: 0.35rem; }
+.icon-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  height: 2.35rem; padding: 0 0.7rem;
+  font: inherit; font-size: 0.88rem; font-weight: 800; line-height: 1;
+  color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s, transform 0.12s;
+}
+.icon-btn:hover { border-color: #1b1e3c; background: var(--sun); color: #1b1e3c; }
+.icon-btn:active { transform: translateY(1px); }
+.icon-btn .ico { width: 1.05rem; height: 1.05rem; flex: none; }
+.icon-btn .shortcut {
+  font-family: var(--body); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em;
+  color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: 0.35rem;
+  padding: 0.12rem 0.3rem;
+}
+.icon-btn:hover .shortcut { color: #1b1e3c; border-color: #1b1e3c; background: transparent; }
+/* 지금 테마에 따라 해 / 달 아이콘 하나만 보인다 */
+.theme-btn .ico-sun { display: none; }
+@media (prefers-color-scheme: dark) {
+  .theme-btn .ico-sun { display: block; }
+  .theme-btn .ico-moon { display: none; }
+}
+:root[data-theme='dark'] .theme-btn .ico-sun { display: block; }
+:root[data-theme='dark'] .theme-btn .ico-moon { display: none; }
+:root[data-theme='light'] .theme-btn .ico-sun { display: none; }
+:root[data-theme='light'] .theme-btn .ico-moon { display: block; }
+
 /* 언어 전환 KO | EN */
-.lang { margin-left: auto; display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.01em; }
+.lang { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.01em; }
 .lang a { display: inline-block; padding: 0.22rem 0.6rem; border-radius: 999px; color: var(--muted); text-decoration: none; border: 1.5px solid transparent; transition: color 0.15s, background 0.15s, border-color 0.15s; }
 .lang a:hover { color: var(--ink); border-color: var(--line); }
 .lang a[aria-current='true'] { color: #1b1e3c; background: var(--sun); border-color: #1b1e3c; }
@@ -105,6 +164,8 @@ ul, ol { padding: 0; list-style: none; }
 .side a[aria-current] { background: var(--sun); color: #1b1e3c; }
 .side h2 { margin: 1.25rem 0 0.4rem; padding: 1rem 0.75rem 0; border-top: 1px solid var(--line); font-size: 0.85rem; font-weight: 700; color: var(--muted); }
 .side-posts a { display: block; padding: 0.55rem 0.75rem; border-radius: 0.6rem; color: var(--ink); text-decoration: none; font-size: 0.95rem; font-weight: 600; line-height: 1.45; }
+.side-tools a { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 0.6rem; color: var(--ink); text-decoration: none; font-size: 0.95rem; font-weight: 700; }
+.side-tools a::before { content: ''; flex: none; width: 0.42rem; height: 0.42rem; border-radius: 999px; background: var(--sun); border: 1.5px solid #1b1e3c; }
 .side-posts time { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
 .side-posts a[aria-current] time { color: #1b1e3c; }
 .side-foot { margin-top: 1.25rem; padding: 0 0.75rem; font-size: 0.9rem; }
@@ -124,6 +185,38 @@ ul, ol { padding: 0; list-style: none; }
   .side-open body { overflow: hidden; }
 }
 @keyframes fade-in { from { opacity: 0; } }
+
+/* 읽기 진행률: 글 화면 상단에 노란 선이 스크롤만큼 차오른다 */
+.read-progress { position: fixed; left: 0; right: 0; top: var(--top-h); height: 3px; z-index: 6; pointer-events: none; }
+.read-progress-fill { display: block; height: 100%; width: 100%; background: var(--sun); transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.12s linear; will-change: transform; }
+
+/* 글 검색 모달 (Ctrl+K) */
+.search { width: min(42rem, calc(100vw - 1.5rem)); margin: 9vh auto auto; padding: 0; border: 0; background: transparent; overflow: visible; }
+.search::backdrop { background: rgba(15, 17, 36, 0.55); backdrop-filter: blur(3px); }
+.search-in { display: flex; flex-direction: column; max-height: min(78vh, 46rem); background: var(--surface); border: 2px solid var(--ink); border-radius: 1.15rem; box-shadow: 0 22px 60px rgba(15, 17, 36, 0.35); overflow: hidden; animation: search-in 0.16s ease-out; }
+@keyframes search-in { from { opacity: 0; transform: translateY(-0.6rem); } }
+.search-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.9rem 1rem; border-bottom: 1px solid var(--line); }
+.search-ico { width: 1.15rem; height: 1.15rem; flex: none; color: var(--muted); }
+.search-row input { flex: 1; min-width: 0; font: inherit; font-size: 1.05rem; font-weight: 600; color: var(--ink); background: transparent; border: 0; padding: 0.2rem 0; }
+.search-row input:focus { outline: none; }
+.search-close { font: inherit; font-size: 0.75rem; font-weight: 800; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: 0.4rem; padding: 0.2rem 0.45rem; cursor: pointer; }
+.search-close:hover { color: #1b1e3c; border-color: #1b1e3c; background: var(--sun); }
+.search-status { padding: 0.7rem 1rem 0.2rem; font-size: 0.82rem; font-weight: 700; color: var(--muted); }
+.search-status:empty { display: none; }
+.search-results { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 0.35rem 0.5rem 0.5rem; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.search-results:empty { display: none; }
+.search-results a { display: grid; gap: 0.15rem; padding: 0.6rem 0.7rem; border-radius: 0.7rem; color: var(--ink); text-decoration: none; }
+.search-results a:hover { background: var(--paper); }
+.search-results li[aria-selected='true'] a { background: var(--sun); color: #1b1e3c; }
+.search-results .r-title { font-weight: 800; font-size: 1rem; line-height: 1.4; }
+.search-results .r-meta { font-size: 0.75rem; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.search-results li[aria-selected='true'] .r-meta { color: #40466b; }
+.search-results .r-sum { font-size: 0.86rem; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.search-results li[aria-selected='true'] .r-sum { color: #2a2e4d; }
+.search-results mark { background: var(--sun); color: #1b1e3c; border-radius: 0.2rem; padding: 0 0.1em; }
+.search-results li[aria-selected='true'] mark { background: #1b1e3c; color: var(--sun); }
+.search-hint { display: flex; flex-wrap: wrap; gap: 0.9rem; padding: 0.65rem 1rem; border-top: 1px solid var(--line); font-size: 0.75rem; font-weight: 700; color: var(--muted); }
+.search-hint kbd { font-family: var(--body); font-size: 0.7rem; border: 1px solid var(--line); border-radius: 0.3rem; padding: 0.05rem 0.28rem; margin-right: 0.15rem; }
 
 main { padding: 0 1rem; }
 
@@ -289,6 +382,21 @@ main { padding: 0 1rem; }
 .prose pre code { background: none; border: 0; padding: 0; color: inherit; font-size: inherit; }
 .prose pre ::selection { background: rgba(122, 162, 247, 0.32); }
 
+/* 코드 블록 복사 버튼: main.js 가 블록마다 붙인다 */
+.prose .code-block { position: relative; }
+.prose .code-block pre { padding-top: 2.4rem; }
+.code-copy {
+  position: absolute; top: 0.5rem; right: 0.5rem; z-index: 1;
+  font: inherit; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.02em; line-height: 1;
+  color: var(--code-fg); background: rgba(42, 46, 71, 0.94);
+  border: 1px solid var(--code-line); border-radius: 0.5rem;
+  padding: 0.38rem 0.62rem; cursor: pointer;
+  opacity: 0.72; transition: opacity 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
+}
+.code-block:hover .code-copy, .code-copy:focus-visible { opacity: 1; }
+.code-copy:hover { background: var(--sun); color: #1b1e3c; border-color: #1b1e3c; }
+.code-copy.done { background: var(--sun); color: #1b1e3c; border-color: #1b1e3c; opacity: 1; }
+
 /* 주석 */
 .prose .highlight .c, .prose .highlight .c1, .prose .highlight .cm,
 .prose .highlight .cs, .prose .highlight .ch, .prose .highlight .gp { color: var(--code-comment); font-style: italic; }
@@ -394,6 +502,10 @@ figcaption { margin-top: 0.75rem; color: var(--muted); max-width: var(--text); f
 .pager .next { grid-column: 2; text-align: right; }
 .pager .all { grid-column: 1 / -1; color: var(--teal); text-decoration: underline; }
 
+/* 글 하단 댓글 (giscus) */
+.comments { max-width: var(--text); margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid var(--ink); }
+.comments h2 { font-size: 1.25rem; font-weight: 800; }
+
 /* 글 목록 */
 .list { max-width: var(--wrap); margin: 0 auto; padding: clamp(2.5rem, 6vw, 4rem) 0; border-top: 2px solid var(--ink); }
 .filter { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.25rem; }
@@ -453,4 +565,16 @@ dialog img { border-radius: 0.75rem; background: #fff; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 760px) {
+  .icon-btn { padding: 0 0.55rem; }
+  .icon-btn-label, .icon-btn .shortcut { display: none; }
+  .search { margin-top: 4vh; }
+  .search-in { max-height: 86vh; }
+}
+
+@media print {
+  .top-tools, .read-progress, .toc-toggle, .code-copy { display: none !important; }
+  .prose .code-block pre { padding-top: 1.05rem; }
 }

@@ -288,8 +288,9 @@ if (mermaidCodes.length) {
     }
   }
   render()
-  // OS 가 다크 모드로 바뀌면 색을 다시 맞춰 그린다
+  // OS 가 다크 모드로 바뀌거나 손으로 테마를 바꾸면 색을 다시 맞춰 그린다
   if (dark.addEventListener) dark.addEventListener('change', () => render())
+  document.addEventListener('themechange', () => render())
   let resizeTimer = 0
   addEventListener('resize', () => {
     clearTimeout(resizeTimer)
@@ -502,4 +503,379 @@ if (side && burger) {
   wide.addEventListener('change', () => { root.classList.remove('side-open'); sync() })
   if (location.hash === '#menu' && !wide.matches) set(true)
   sync()
+}
+
+// ── 라이트/다크 손전환 ──
+// <head> 인라인 스크립트가 data-theme 을 먼저 세팅해 깜빡임을 막는다.
+// 손으로 고른 값은 localStorage(theme) 에 남고, 고르지 않았으면 OS 설정을 따라간다.
+const docEl = document.documentElement
+const themeToggle = document.getElementById('theme-toggle')
+const themeMeta = document.getElementById('theme-color')
+const systemDark = matchMedia('(prefers-color-scheme: dark)')
+const storedTheme = () => {
+  try {
+    const v = localStorage.getItem('theme')
+    return v === 'light' || v === 'dark' ? v : null
+  } catch (e) {
+    return null
+  }
+}
+const currentTheme = () => (docEl.getAttribute('data-theme') === 'dark' ? 'dark' : 'light')
+const paintTheme = (theme, notify) => {
+  docEl.setAttribute('data-theme', theme)
+  if (themeToggle) {
+    const dark = theme === 'dark'
+    themeToggle.setAttribute('aria-pressed', String(dark))
+    const label = themeToggle.dataset[dark ? 'labelLight' : 'labelDark']
+    if (label) {
+      themeToggle.setAttribute('aria-label', label)
+      themeToggle.title = label
+    }
+  }
+  if (themeMeta) themeMeta.setAttribute('content', theme === 'dark' ? '#14162b' : '#1B1E3C')
+  if (notify) document.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }))
+  syncGiscusTheme()
+}
+// giscus 댓글이 켜져 있으면 지금 테마를 iframe 에 알려 준다
+const syncGiscusTheme = () => {
+  const frame = document.querySelector('.giscus iframe')
+  if (frame && frame.contentWindow) {
+    frame.contentWindow.postMessage({ giscus: { setConfig: { theme: currentTheme() } } }, 'https://giscus.app')
+  }
+}
+paintTheme(currentTheme(), false)
+// giscus iframe 은 늦게 붙으므로 붙는 순간과 로드 직후에 테마를 다시 보낸다
+const giscusHost = document.querySelector('.giscus')
+if (giscusHost) {
+  new MutationObserver(() => syncGiscusTheme()).observe(giscusHost, { childList: true, subtree: true })
+  addEventListener('load', () => setTimeout(syncGiscusTheme, 600))
+}
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark'
+    try { localStorage.setItem('theme', next) } catch (e) {}
+    paintTheme(next, true)
+  })
+}
+// 아직 테마를 고르지 않았으면 OS 설정이 바뀔 때 따라간다
+if (!storedTheme() && systemDark.addEventListener) {
+  systemDark.addEventListener('change', (e) => paintTheme(e.matches ? 'dark' : 'light', true))
+}
+
+// ── 코드 블록 복사 버튼 ──
+// Mermaid 로 바뀐 블록은 그림이라 건너뛴다.
+const COPY_TEXT = EN
+  ? { copy: 'Copy', done: 'Copied ✓', fail: 'Copy failed' }
+  : { copy: '복사', done: '복사됨 ✓', fail: '복사 실패' }
+const copyText = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    return true
+  } catch (e) {
+    // 클립보드 API 가 막힌 곳(비 https, 오래된 브라우저)은 예전 방식으로
+    try {
+      const ta = document.createElement('textarea')
+      ta.value = text
+      ta.setAttribute('readonly', '')
+      ta.style.position = 'fixed'
+      ta.style.top = '-1000px'
+      document.body.appendChild(ta)
+      ta.select()
+      const ok = document.execCommand('copy')
+      ta.remove()
+      return ok
+    } catch (err) {
+      return false
+    }
+  }
+}
+document.querySelectorAll('.prose pre').forEach((pre) => {
+  if (pre.closest('.mermaid') || pre.querySelector('code.language-mermaid')) return
+  const block = pre.closest('.highlighter-rouge') || pre
+  if (block.classList.contains('code-block')) return
+  block.classList.add('code-block')
+  const btn = document.createElement('button')
+  btn.type = 'button'
+  btn.className = 'code-copy'
+  btn.textContent = COPY_TEXT.copy
+  btn.setAttribute('aria-label', COPY_TEXT.copy)
+  let timer = 0
+  btn.addEventListener('click', async () => {
+    const code = pre.querySelector('code') || pre
+    const text = code.textContent.replace(/\s+$/, '')
+    const ok = await copyText(text)
+    btn.textContent = ok ? COPY_TEXT.done : COPY_TEXT.fail
+    btn.classList.toggle('done', ok)
+    btn.setAttribute('aria-label', ok ? COPY_TEXT.done : COPY_TEXT.fail)
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      btn.textContent = COPY_TEXT.copy
+      btn.classList.remove('done')
+      btn.setAttribute('aria-label', COPY_TEXT.copy)
+    }, 1600)
+  })
+  block.appendChild(btn)
+})
+
+// ── 글 읽기 진행률 ──
+const progress = document.getElementById('read-progress')
+if (progress) {
+  const fill = progress.querySelector('.read-progress-fill')
+  const article = document.querySelector('.post')
+  const head = document.querySelector('.top')
+  let raf = 0
+  const draw = () => {
+    raf = 0
+    if (!fill) return
+    let ratio = 0
+    if (article) {
+      const start = article.offsetTop - (head ? head.offsetHeight : 0)
+      const end = article.offsetTop + article.offsetHeight - innerHeight
+      if (end > start) ratio = (scrollY - start) / (end - start)
+      else ratio = scrollY > start ? 1 : 0
+    } else {
+      const max = document.documentElement.scrollHeight - innerHeight
+      ratio = max > 0 ? scrollY / max : 1
+    }
+    fill.style.transform = 'scaleX(' + Math.min(1, Math.max(0, ratio)).toFixed(4) + ')'
+  }
+  const request = () => {
+    if (raf) return
+    raf = requestAnimationFrame(draw)
+  }
+  addEventListener('scroll', request, { passive: true })
+  addEventListener('resize', request, { passive: true })
+  draw()
+}
+
+// ── 글 검색 (Ctrl+K / Cmd+K) ──
+const searchDialog = document.getElementById('search')
+if (searchDialog) {
+  const input = document.getElementById('search-input')
+  const list = document.getElementById('search-results')
+  const statusEl = document.getElementById('search-status')
+  const openBtn = document.getElementById('search-open')
+  const closeBtn = document.getElementById('search-close')
+  const shortcut = document.getElementById('search-shortcut')
+  const SEARCH_TEXT = EN
+    ? {
+        recent: 'Recent posts',
+        hint: 'Type to search',
+        count: (n) => n + (n === 1 ? ' result' : ' results'),
+        none: (q) => 'No results for “' + q + '”',
+        broken: 'Search index could not be loaded.',
+        post: 'Post',
+        page: 'Tool',
+      }
+    : {
+        recent: '최근 글',
+        hint: '검색어를 입력하세요',
+        count: (n) => n + '개 결과',
+        none: (q) => '“' + q + '” 결과가 없습니다',
+        broken: '검색 색인을 불러오지 못했습니다.',
+        post: '글',
+        page: '도구',
+      }
+  let index = null
+  let loading = null
+  let results = []
+  let tokens = []
+  let active = -1
+  let query = ''
+
+  if (shortcut && /Mac|iPhone|iPad/.test(navigator.platform || '')) shortcut.textContent = '⌘ K'
+
+  const loadIndex = () => {
+    if (index) return Promise.resolve(index)
+    if (!loading) {
+      loading = fetch('/search.json')
+        .then((r) => (r.ok ? r.json() : []))
+        .then((data) => (index = Array.isArray(data) ? data : []))
+        .catch(() => (index = []))
+    }
+    return loading
+  }
+
+  const norm = (s) => String(s || '').toLowerCase()
+  const scoreOf = (doc, words) => {
+    const title = norm(doc.title)
+    const summary = norm(doc.summary)
+    const category = norm(doc.category)
+    const content = norm(doc.content)
+    let score = 0
+    for (const w of words) {
+      let s = 0
+      if (title.includes(w)) s += title.startsWith(w) ? 14 : 9
+      if (summary.includes(w)) s += 4
+      if (category.includes(w)) s += 3
+      if (content.includes(w)) s += 1
+      if (!s) return 0
+      score += s
+    }
+    return score
+  }
+
+  // 검색어와 겹치는 부분만 <mark> 로 감싼다 (글자열은 DOM 으로만 넣는다)
+  const markText = (text, words) => {
+    const frag = document.createDocumentFragment()
+    if (!words.length || !text) {
+      frag.appendChild(document.createTextNode(text || ''))
+      return frag
+    }
+    const lower = text.toLowerCase()
+    let i = 0
+    while (i < text.length) {
+      let best = -1
+      let len = 0
+      for (const w of words) {
+        const at = lower.indexOf(w, i)
+        if (at !== -1 && (best === -1 || at < best || (at === best && w.length > len))) {
+          best = at
+          len = w.length
+        }
+      }
+      if (best === -1) {
+        frag.appendChild(document.createTextNode(text.slice(i)))
+        break
+      }
+      if (best > i) frag.appendChild(document.createTextNode(text.slice(i, best)))
+      const m = document.createElement('mark')
+      m.textContent = text.slice(best, best + len)
+      frag.appendChild(m)
+      i = best + len
+    }
+    return frag
+  }
+
+  const snippetOf = (doc) => {
+    const text = String(doc.summary || doc.content || '').replace(/\s+/g, ' ').trim()
+    if (!query || !text) return text.slice(0, 140)
+    const lower = text.toLowerCase()
+    let at = -1
+    for (const w of tokens) {
+      const i = lower.indexOf(w)
+      if (i !== -1 && (at === -1 || i < at)) at = i
+    }
+    if (at <= 40) return text.slice(0, 140)
+    return '…' + text.slice(at - 30, at + 110)
+  }
+
+  const setActive = (i) => {
+    const items = [...list.children]
+    if (!items.length) {
+      active = -1
+      input.removeAttribute('aria-activedescendant')
+      return
+    }
+    active = ((i % items.length) + items.length) % items.length
+    items.forEach((li, n) => li.setAttribute('aria-selected', String(n === active)))
+    input.setAttribute('aria-activedescendant', items[active].id)
+    items[active].scrollIntoView({ block: 'nearest' })
+  }
+
+  const renderResults = () => {
+    list.textContent = ''
+    active = -1
+    results.forEach((doc, i) => {
+      const li = document.createElement('li')
+      li.id = 'search-opt-' + i
+      li.setAttribute('role', 'option')
+      li.setAttribute('aria-selected', 'false')
+      const a = document.createElement('a')
+      a.href = doc.url
+      const title = document.createElement('span')
+      title.className = 'r-title'
+      title.appendChild(markText(doc.title || doc.url, tokens))
+      const meta = document.createElement('span')
+      meta.className = 'r-meta'
+      meta.textContent = [
+        doc.kind === 'page' ? SEARCH_TEXT.page : SEARCH_TEXT.post,
+        doc.date,
+        doc.category,
+        doc.lang === 'en' ? 'EN' : 'KO',
+      ]
+        .filter(Boolean)
+        .join(' · ')
+      const sum = document.createElement('span')
+      sum.className = 'r-sum'
+      sum.appendChild(markText(snippetOf(doc), tokens))
+      a.append(title, meta, sum)
+      li.appendChild(a)
+      list.appendChild(li)
+    })
+    if (results.length) setActive(0)
+  }
+
+  const update = async () => {
+    query = input.value.trim()
+    tokens = norm(query).split(/\s+/).filter(Boolean)
+    await loadIndex()
+    if (!index || !index.length) {
+      results = []
+      list.textContent = ''
+      statusEl.textContent = SEARCH_TEXT.broken
+      return
+    }
+    if (!tokens.length) {
+      results = index
+        .slice()
+        .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
+        .slice(0, 6)
+      statusEl.textContent = SEARCH_TEXT.recent
+    } else {
+      results = index
+        .map((doc) => ({ doc, score: scoreOf(doc, tokens) }))
+        .filter((x) => x.score > 0)
+        .sort((a, b) => b.score - a.score || String(b.doc.date || '').localeCompare(String(a.doc.date || '')))
+        .slice(0, 20)
+        .map((x) => x.doc)
+      statusEl.textContent = results.length ? SEARCH_TEXT.count(results.length) : SEARCH_TEXT.none(query)
+    }
+    renderResults()
+  }
+
+  const openSearch = () => {
+    if (!searchDialog.open) searchDialog.showModal()
+    input.focus()
+    input.select()
+    update()
+  }
+
+  openBtn.addEventListener('click', openSearch)
+  closeBtn.addEventListener('click', () => searchDialog.close())
+  input.addEventListener('input', update)
+  input.addEventListener('focus', () => {
+    if (!results.length && !input.value.trim()) update()
+  })
+  // 바깥(어두운 배경)을 누르면 닫는다
+  searchDialog.addEventListener('click', (e) => {
+    if (e.target === searchDialog) searchDialog.close()
+  })
+
+  document.addEventListener('keydown', (e) => {
+    const mod = e.ctrlKey || e.metaKey
+    if (!searchDialog.open) {
+      if (mod && !e.altKey && !e.shiftKey && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault()
+        openSearch()
+      }
+      return
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActive(active + 1)
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActive(active - 1)
+    } else if (e.key === 'Enter') {
+      const doc = results[active] || results[0]
+      if (doc) {
+        e.preventDefault()
+        location.href = doc.url
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault()
+      searchDialog.close()
+    }
+  })
 }

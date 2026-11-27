@@ -1,0 +1,68 @@
+---
+layout: tool
+lang: en
+ref: online-openapi-diff
+title: "OpenAPI Diff"
+summary: "Paste two OpenAPI 3.x specs and see which changes break the contract and which are safe, grouped by endpoint. JSON, YAML and file upload are supported, and the comparison never leaves your browser."
+permalink: /en/online/openapi-diff/
+category: Tools
+tools: true
+search_include: true
+image: /img/og.png
+---
+
+<section class="tcard" aria-labelledby="od-input-title">
+  <h2 id="od-input-title"><span class="num">1</span>Two specs</h2>
+  <div class="tool-split">
+    <div class="field">
+      <label for="spec-before">Before · old spec</label>
+      <textarea id="spec-before" spellcheck="false" placeholder="openapi: 3.0.3 … (JSON or YAML)"></textarea>
+      <div class="btnrow">
+        <button class="tbtn ghost" type="button" data-sample="before">Load sample</button>
+        <label class="tbtn ghost">File<input type="file" id="file-before" accept=".json,.yaml,.yml,application/json,application/yaml" hidden></label>
+        <span class="out-sub" id="meta-before"></span>
+      </div>
+    </div>
+    <div class="field">
+      <label for="spec-after">After · new spec</label>
+      <textarea id="spec-after" spellcheck="false" placeholder="openapi: 3.0.3 … (JSON or YAML)"></textarea>
+      <div class="btnrow">
+        <button class="tbtn ghost" type="button" data-sample="after">Load sample</button>
+        <label class="tbtn ghost">File<input type="file" id="file-after" accept=".json,.yaml,.yml,application/json,application/yaml" hidden></label>
+        <span class="out-sub" id="meta-after"></span>
+      </div>
+    </div>
+  </div>
+  <div class="btnrow">
+    <button class="tbtn primary" id="btn-diff" type="button">Compare</button>
+    <button class="tbtn ghost" id="btn-swap" type="button">Swap sides</button>
+    <button class="tbtn ghost" id="btn-clear" type="button">Clear</button>
+  </div>
+  <p class="tool-msg" id="diff-msg"></p>
+</section>
+
+<section class="tcard" aria-labelledby="od-sum-title">
+  <h2 id="od-sum-title"><span class="num">2</span>Summary</h2>
+  <div class="diff-summary" id="diff-summary"></div>
+  <div class="filters" id="diff-filters" role="group" aria-label="Filter by change type"></div>
+</section>
+
+<section class="tcard" aria-labelledby="od-list-title">
+  <h2 id="od-list-title"><span class="num">3</span>Changes by endpoint</h2>
+  <div class="diff-groups" id="diff-groups">
+    <p class="diff-empty">Paste two specs and press <b>Compare</b> to see the result here.</p>
+  </div>
+</section>
+
+<p class="tool-note">
+  <b>How it judges</b> — a change is breaking when a client would stop working without being updated.
+  <ul>
+    <li>Breaking: endpoint or response code removed, required parameter added, parameter turned from optional into required, type change in a request or response schema, required field added to a request body, response field removed, enum value removed from a request, enum value added to a response.</li>
+    <li>Safe: new endpoint, optional parameter or field added, response field added, enum value added to a request, parameter relaxed to optional, deprecated flag.</li>
+    <li><code>$ref</code> is resolved inside the document, and parameters are paired by <code>in</code> and name. For content, <code>application/json</code> is preferred.</li>
+    <li>Nothing is sent anywhere. Files are read in the browser only.</li>
+  </ul>
+</p>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
+<script src="/tool-openapi-diff.js" defer></script>

@@ -1,0 +1,119 @@
+---
+layout: tool
+lang: en
+ref: online-tsid
+title: "TSID Generator"
+summary: "Generate 64-bit TSIDs and read them back as decimal, Crockford Base32, timestamp, node and counter. Make a batch at once or paste a TSID made elsewhere. Every calculation stays in your browser."
+permalink: /en/online/tsid/
+category: Tools
+tools: true
+search_include: true
+image: /img/og.png
+---
+
+<div class="tool-grid">
+  <section class="tcard" aria-labelledby="tsid-gen-title">
+    <h2 id="tsid-gen-title"><span class="num">1</span>Generate one TSID</h2>
+    <div class="field-row">
+      <div class="field">
+        <label for="tsid-node-bits">Node bits</label>
+        <select id="tsid-node-bits">
+          <option value="0">0 bits · no node</option>
+          <option value="4">4 bits · 16 nodes</option>
+          <option value="8">8 bits · 256 nodes</option>
+          <option value="10" selected>10 bits · 1024 nodes (default)</option>
+          <option value="12">12 bits · 4096 nodes</option>
+          <option value="16">16 bits · 65536 nodes</option>
+          <option value="20">20 bits · 1048576 nodes</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tsid-node">Node ID</label>
+        <input id="tsid-node" type="number" min="0" step="1" value="1" inputmode="numeric">
+      </div>
+    </div>
+    <p class="tool-msg" id="tsid-gen-msg"></p>
+    <div class="btnrow">
+      <button class="tbtn primary" id="btn-generate" type="button">Generate TSID</button>
+      <span class="out-sub" id="tsid-node-hint">0 – 1023</span>
+    </div>
+
+    <div class="out big" data-result="gen">
+      <div class="out-row"><span class="out-label">UInt64 · decimal</span><button class="copy-mini" type="button" data-copy-field="uint">Copy</button></div>
+      <div class="out-value xl mono" data-field="uint">-</div>
+      <div class="out-row"><span class="out-label">Int64 · signed decimal</span><button class="copy-mini" type="button" data-copy-field="int">Copy</button></div>
+      <div class="out-value mono" data-field="int">-</div>
+      <div class="out-row"><span class="out-label">Crockford Base32</span><button class="copy-mini" type="button" data-copy-field="base32">Copy</button></div>
+      <div class="out-value mono" data-field="base32">-</div>
+      <p class="out-sub" data-field="iso">-</p>
+    </div>
+
+    <div class="bits" aria-hidden="true">
+      <span class="b-time" data-bit="time">time 42</span>
+      <span class="b-node" data-bit="node">node 10</span>
+      <span class="b-counter" data-bit="counter">counter 12</span>
+    </div>
+    <p class="bits-legend"><span><i class="i-time"></i>ms since 2020-01-01 UTC</span><span><i class="i-node"></i>node ID</span><span><i class="i-counter"></i>sequence in the same ms</span></p>
+  </section>
+
+  <section class="tcard" aria-labelledby="tsid-dec-title">
+    <h2 id="tsid-dec-title"><span class="num">2</span>Decode · convert</h2>
+    <div class="field">
+      <label for="decode-input">TSID (decimal or Base32)</label>
+      <input id="decode-input" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 732489223423423423 or 0JMVQ049NFN6K">
+    </div>
+    <div class="btnrow">
+      <button class="tbtn" id="btn-decode" type="button">Decode</button>
+      <button class="tbtn ghost" id="btn-decode-gen" type="button">Use the last one</button>
+    </div>
+    <p class="tool-msg" id="decode-msg"></p>
+
+    <div class="out big" data-result="dec">
+      <div class="out-row"><span class="out-label">Timestamp (ISO 8601)</span></div>
+      <div class="out-value mono" data-field="iso">-</div>
+      <div class="out-row"><span class="out-label">UInt64 · decimal</span><button class="copy-mini" type="button" data-copy-field="uint">Copy</button></div>
+      <div class="out-value mono" data-field="uint">-</div>
+      <div class="out-row"><span class="out-label">Crockford Base32</span><button class="copy-mini" type="button" data-copy-field="base32">Copy</button></div>
+      <div class="out-value mono" data-field="base32">-</div>
+      <div class="out-row"><span class="out-label">Node / counter</span></div>
+      <div class="out-value mono" data-field="parts">-</div>
+      <p class="out-sub" data-field="ts">-</p>
+    </div>
+  </section>
+</div>
+
+<section class="tcard" aria-labelledby="tsid-bulk-title">
+  <h2 id="tsid-bulk-title"><span class="num">3</span>Generate a batch</h2>
+  <div class="field-row">
+    <div class="field">
+      <label for="bulk-count">How many (max 1000)</label>
+      <input id="bulk-count" type="number" min="1" max="1000" step="1" value="20" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="bulk-format">Format</label>
+      <select id="bulk-format">
+        <option value="base32" selected>Crockford Base32</option>
+        <option value="uint">UInt64 decimal</option>
+        <option value="int">Int64 decimal</option>
+      </select>
+    </div>
+  </div>
+  <div class="btnrow">
+    <button class="tbtn primary" id="btn-bulk" type="button">Generate batch</button>
+    <button class="tbtn ghost" id="btn-bulk-copy" type="button">Copy the whole list</button>
+    <span class="out-sub" id="bulk-count-label">-</span>
+  </div>
+  <div class="bulk-list" id="bulk-list"></div>
+</section>
+
+<p class="tool-note">
+  <b>Layout</b> — a TSID is one 64-bit integer. The top 42 bits count milliseconds since 2020-01-01T00:00:00Z; the remaining 22 bits are split into a node ID and a counter. With 10 node bits the counter gets 12, so one millisecond holds 4096 IDs in order. This page gives the counter whatever the node leaves and moves to the next millisecond when the counter overflows.
+  <ul>
+    <li>Crockford Base32 writes those 64 bits in 13 characters. <code>I</code> and <code>L</code> read as <code>1</code>, <code>O</code> as <code>0</code>, and case does not matter.</li>
+    <li>Decoding splits node and counter with the node bits selected above. For a TSID made with another setting, match the node bits to get those parts right.</li>
+    <li>Int64 is the same bits read as a signed integer. When the top bit is 1 it shows as a negative number.</li>
+    <li>Nothing you type leaves this browser, and a reload clears anything you generated.</li>
+  </ul>
+</p>
+
+<script src="/tool-tsid.js" defer></script>

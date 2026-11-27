@@ -13,6 +13,15 @@ markdown: kramdown
 plugins:
   - jekyll-feed
   - jekyll-sitemap
+# 댓글(giscus). GitHub Discussions 와 giscus 앱을 켜고 아래 값에 repo-id·category-id 를 넣으면 켜진다.
+giscus:
+  enabled: true
+  repo: "iinow/iinow.github.io"
+  repo_id: "R_kgDOGGaSUw"
+  category: "General"
+  category_id: "DIC_kwDOGGaSU84DMElq"
+  mapping: "pathname"
+  lang: "ko"
 exclude:
   - README.md
   - scripts

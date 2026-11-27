@@ -1,0 +1,17 @@
+---
+layout: default
+---
+{%- assign is_en = false -%}
+{%- if page.lang == 'en' -%}{%- assign is_en = true -%}{%- endif -%}
+<article class="tool-page">
+  <header class="tool-head">
+    <p class="date">{% if is_en %}Online tool{% else %}온라인 도구{% endif %}{% if page.category %}<span class="cat">{{ page.category }}</span>{% endif %}</p>
+    <h1>{{ page.title | escape }}</h1>
+    {%- if page.summary %}
+    <p class="summary">{{ page.summary }}</p>
+    {%- endif %}
+  </header>
+  <div class="tool-body">
+{{ content }}
+  </div>
+</article>
