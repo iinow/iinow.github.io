@@ -766,8 +766,23 @@ if (searchDialog) {
       const i = findWord(lower, w)
       if (i !== -1 && (at === -1 || i < at)) at = i
     }
-    if (at <= 40) return text.slice(0, 140)
-    return '…' + text.slice(at - 30, at + 110)
+    if (at <= 40) {
+      const cut = Math.min(text.length, 140)
+      const sp = text.lastIndexOf(' ', cut)
+      const end = cut < text.length && sp > 60 ? sp : cut
+      return text.slice(0, end) + (end < text.length ? '…' : '')
+    }
+    let start = Math.max(0, at - 40)
+    if (start > 0) {
+      const sp = text.indexOf(' ', start)
+      if (sp !== -1 && sp < at) start = sp + 1
+    }
+    let end = Math.min(text.length, at + 110)
+    if (end < text.length) {
+      const sp = text.lastIndexOf(' ', end)
+      if (sp > at) end = sp
+    }
+    return (start > 0 ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '')
   }
 
   const setActive = (i) => {
