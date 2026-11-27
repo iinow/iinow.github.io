@@ -297,6 +297,105 @@ if (mermaidCodes.length) {
   }, { passive: true })
 }
 
+// ── 글 안의 표: 본문 폭을 넘으면 표만 가로로 스크롤 ──
+// nowrap 코드 때문에 첫 열이 한 글자씩 쪼개지는 문제를 막는다.
+document.querySelectorAll('.prose table').forEach((table) => {
+  const parent = table.parentElement
+  if (!parent || parent.classList.contains('table-scroll')) return
+  const wrap = document.createElement('div')
+  wrap.className = 'table-scroll'
+  parent.insertBefore(wrap, table)
+  wrap.appendChild(table)
+})
+
+// ── 우측 목차: 본문 헤딩을 모아 스크롤에 따라 현재 위치를 표시 ──
+// id 가 없는 헤딩에는 슬러그를 붙이고, 항목이 둘 이상일 때만 목차를 보여 준다.
+const toc = document.getElementById('toc')
+if (toc) {
+  const slug = (text) =>
+    text
+      .trim()
+      .toLowerCase()
+      .replace(/[\s]+/g, '-')
+      .replace(/[^\p{L}\p{N}-]/gu, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+  const entries = []
+  const seen = new Set()
+  document.querySelectorAll('.prose h2, .prose h3').forEach((h, i) => {
+    let id = h.id
+    if (!id) {
+      const base = slug(h.textContent) || 'section-' + (i + 1)
+      id = base
+      let n = 2
+      while (seen.has(id) || document.getElementById(id)) id = base + '-' + n++
+      h.id = id
+    }
+    seen.add(id)
+    entries.push({ id, level: h.tagName === 'H3' ? 3 : 2, text: h.textContent.trim() })
+  })
+  const list = toc.querySelector('.toc-list')
+  if (list && entries.length > 1) {
+    entries.forEach((entry) => {
+      const li = document.createElement('li')
+      li.className = 'lvl-' + entry.level
+      const a = document.createElement('a')
+      a.href = '#' + entry.id
+      a.textContent = entry.text
+      li.appendChild(a)
+      list.appendChild(li)
+    })
+    toc.hidden = false
+
+    const links = [...list.querySelectorAll('a')]
+    const targets = entries.map((entry) => document.getElementById(entry.id))
+    const header = document.querySelector('.top')
+    let active = -1
+    const setActive = (i) => {
+      if (i === active) return
+      active = i
+      links.forEach((a, n) => {
+        if (n === i) a.setAttribute('aria-current', 'true')
+        else a.removeAttribute('aria-current')
+      })
+      // 목차가 길어 스크롤될 때 현재 항목이 보이게
+      const a = links[i]
+      if (!a || toc.scrollHeight <= toc.clientHeight + 2) return
+      const r = a.getBoundingClientRect()
+      const box = toc.getBoundingClientRect()
+      if (r.top < box.top) toc.scrollTop += r.top - box.top - 8
+      else if (r.bottom > box.bottom) toc.scrollTop += r.bottom - box.bottom + 8
+    }
+    const spy = () => {
+      const top = (header ? header.offsetHeight : 0) + 24
+      let current = 0
+      targets.forEach((el, i) => {
+        if (el && el.getBoundingClientRect().top <= top) current = i
+      })
+      // 바닥까지 내려갔으면 마지막 섹션을 가리킨다
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) {
+        current = targets.length - 1
+      }
+      setActive(current)
+    }
+    let ticking = false
+    addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return
+        ticking = true
+        requestAnimationFrame(() => {
+          ticking = false
+          spy()
+        })
+      },
+      { passive: true }
+    )
+    addEventListener('resize', spy, { passive: true })
+    spy()
+  }
+}
+
 // ── 글 목록 분류(개발·여행) 거르기 ──
 const filterBar = document.querySelector('.filter')
 if (filterBar) {

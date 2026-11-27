@@ -29,8 +29,14 @@ layout: default
     {%- endif %}
   </header>
 
-  <div class="prose">
+  <div class="post-body">
+    <div class="prose">
 {{ content }}
+    </div>
+    <nav class="toc" id="toc" aria-label="{% if is_en %}On this page{% else %}이 페이지의 목차{% endif %}" hidden>
+      <p class="toc-title">{% if is_en %}On this page{% else %}목차{% endif %}</p>
+      <ol class="toc-list"></ol>
+    </nav>
   </div>
 
   <nav class="pager" aria-label="{% if is_en %}More posts{% else %}다른 글{% endif %}">
