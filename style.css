@@ -19,7 +19,7 @@
   --code-line: #2a2e47;
   --code-fg: #c0caf5;
   --code-punct: #a9b1d6;
-  --code-comment: #565f89;
+  --code-comment: #7a85a8; /* Tokyo Night 주석색(#565f89)은 대비가 낮아 읽기 좋게 한 단계 밝힘 */
   --code-keyword: #bb9af7;
   --code-type: #2ac3de;
   --code-func: #7aa2f7;
