@@ -14,6 +14,22 @@
   --text: 42rem;
   --top-h: 3.75rem;
   --side-w: 17rem;
+  /* 글 안 코드 블록: Tokyo Night 팔레트 */
+  --code-bg: #1a1b26;
+  --code-line: #2a2e47;
+  --code-fg: #c0caf5;
+  --code-punct: #a9b1d6;
+  --code-comment: #565f89;
+  --code-keyword: #bb9af7;
+  --code-type: #2ac3de;
+  --code-func: #7aa2f7;
+  --code-prop: #73daca;
+  --code-string: #9ece6a;
+  --code-number: #ff9e64;
+  --code-operator: #89ddff;
+  --code-regex: #b4f9f8;
+  --code-tag: #f7768e;
+  --code-param: #e0af68;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -24,6 +40,8 @@
     --line: #34385e;
     --teal: #6cc7e6;
     --gone: #ff8fa3;
+    --code-bg: #20233c;
+    --code-line: #373c60;
   }
 }
 
@@ -193,8 +211,77 @@ main { padding: 0 1rem; }
 .prose blockquote { margin-left: 0; margin-right: 0; padding: 0.1rem 0 0.1rem 1rem; border-left: 4px solid var(--sun); color: var(--muted); }
 .prose blockquote p:first-child { margin-top: 0; }
 .prose code { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.9em; background: var(--surface); border: 1px solid var(--line); border-radius: 0.35rem; padding: 0.1em 0.35em; }
-.prose pre { background: #1b1e3c; color: #eceefa; border-radius: 0.9rem; padding: 1rem 1.1rem; overflow-x: auto; line-height: 1.55; font-size: 0.9rem; }
+/* 코드 블록: Rouge 가 남기는 토큰 클래스에 Tokyo Night 색을 입힌다 */
+.prose pre {
+  background: var(--code-bg);
+  color: var(--code-fg);
+  border: 1px solid var(--code-line);
+  border-radius: 0.9rem;
+  padding: 1.05rem 1.2rem;
+  overflow-x: auto;
+  line-height: 1.6;
+  font-size: 0.9rem;
+  tab-size: 4;
+  -webkit-font-smoothing: antialiased;
+  scrollbar-width: thin;
+  scrollbar-color: var(--code-line) transparent;
+}
+.prose pre::-webkit-scrollbar { height: 8px; }
+.prose pre::-webkit-scrollbar-thumb { background: var(--code-line); border-radius: 999px; }
+.prose pre::-webkit-scrollbar-track { background: none; }
 .prose pre code { background: none; border: 0; padding: 0; color: inherit; font-size: inherit; }
+.prose pre ::selection { background: rgba(122, 162, 247, 0.32); }
+
+/* 주석 */
+.prose .highlight .c, .prose .highlight .c1, .prose .highlight .cm,
+.prose .highlight .cs, .prose .highlight .ch, .prose .highlight .gp { color: var(--code-comment); font-style: italic; }
+/* 전처리기 지시자 (#include, #if) */
+.prose .highlight .cp, .prose .highlight .cpf { color: var(--code-type); }
+/* 키워드·제어문 */
+.prose .highlight .k, .prose .highlight .kc, .prose .highlight .kd,
+.prose .highlight .kn, .prose .highlight .kp, .prose .highlight .kr { color: var(--code-keyword); }
+/* 타입·클래스·네임스페이스 */
+.prose .highlight .kt, .prose .highlight .nc, .prose .highlight .nn,
+.prose .highlight .ne, .prose .highlight .nb, .prose .highlight .bp { color: var(--code-type); }
+/* 함수·메서드 */
+.prose .highlight .nf, .prose .highlight .fm { color: var(--code-func); }
+/* 속성·키 (YAML·JSON 키, 헤더 이름) */
+.prose .highlight .na { color: var(--code-prop); }
+/* 문자열 */
+.prose .highlight .s, .prose .highlight .sa, .prose .highlight .sb,
+.prose .highlight .sc, .prose .highlight .dl, .prose .highlight .sd,
+.prose .highlight .s1, .prose .highlight .s2, .prose .highlight .sh,
+.prose .highlight .si, .prose .highlight .sx, .prose .highlight .ss { color: var(--code-string); }
+/* 문자열 안의 이스케이프 */
+.prose .highlight .se { color: var(--code-operator); }
+/* 정규식 */
+.prose .highlight .sr { color: var(--code-regex); }
+/* 숫자·상수·날짜 */
+.prose .highlight .m, .prose .highlight .mb, .prose .highlight .mf,
+.prose .highlight .mh, .prose .highlight .mi, .prose .highlight .il,
+.prose .highlight .mo, .prose .highlight .no, .prose .highlight .l,
+.prose .highlight .ld { color: var(--code-number); }
+/* 연산자 */
+.prose .highlight .o, .prose .highlight .ow { color: var(--code-operator); }
+/* 괄호·구두점 */
+.prose .highlight .p { color: var(--code-punct); }
+/* 태그 */
+.prose .highlight .nt { color: var(--code-tag); }
+/* 데코레이터·애노테이션·매개변수 */
+.prose .highlight .nd { color: var(--code-param); }
+/* 이름·변수 */
+.prose .highlight .n, .prose .highlight .nx, .prose .highlight .nl,
+.prose .highlight .py, .prose .highlight .nv, .prose .highlight .vc,
+.prose .highlight .vg, .prose .highlight .vi, .prose .highlight .vm,
+.prose .highlight .ni, .prose .highlight .w { color: var(--code-fg); }
+/* diff 표시 */
+.prose .highlight .gd { color: var(--code-tag); }
+.prose .highlight .gi { color: var(--code-string); }
+.prose .highlight .gh, .prose .highlight .gu { color: var(--code-func); }
+.prose .highlight .gs { font-weight: 700; }
+.prose .highlight .gt { color: var(--code-tag); }
+/* Rouge 가 붙이는 오류 표시는 배경 없이 */
+.prose .highlight .err { color: var(--code-tag); background: none; }
 .prose img { border: 2px solid var(--ink); border-radius: 1rem; background: #fff; cursor: zoom-in; transition: opacity 0.2s; }
 .prose img.swap { opacity: 0; }
 .prose hr { border: 0; border-top: 1px solid var(--line); margin: 2.5rem 0; }
