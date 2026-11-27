@@ -559,12 +559,12 @@ So give each spec its own `outputDir`, `invokerPackage`, `apiPackage` and `model
 ```kotlin
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
-data class ClientSpec(val name: String, val specUrl: String, val basePath: String)
+data class ClientSpec(val name: String, val specUrl: String)
 
 val clientSpecs = listOf(
-    ClientSpec("pet",     "https://api.example.com/v3/api-docs/pet",   "https://api.example.com"),
-    ClientSpec("order",   "https://api.example.com/v3/api-docs/order", "https://api.example.com"),
-    ClientSpec("billing", "https://billing.example.net/v3/api-docs",   "https://billing.example.net"),
+    ClientSpec("pet",     "https://api.example.com/v3/api-docs/pet"),
+    ClientSpec("order",   "https://api.example.com/v3/api-docs/order"),
+    ClientSpec("billing", "https://billing.example.net/v3/api-docs"),
 )
 
 val clientTasks = clientSpecs.map { spec ->
