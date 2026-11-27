@@ -68,7 +68,7 @@ layout: default
       data-emit-metadata="0"
       data-input-position="top"
       data-theme="preferred_color_scheme"
-      data-lang="{{ site.giscus.lang | default: 'ko' }}"
+      data-lang="{% if is_en %}en{% else %}{{ site.giscus.lang | default: 'ko' }}{% endif %}"
       data-loading="lazy"
       crossorigin="anonymous"
       async>
