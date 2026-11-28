@@ -2,7 +2,7 @@
   "id": "/",
   "name": "iinow — 만들고, 다니고, 적어 둡니다",
   "short_name": "iinow",
-  "description": "백엔드 개발자 Joonha 의 블로그. 개발 기록부터 여행과 소소한 일상까지, 기억하고 싶은 것들을 적어 둡니다.",
+  "description": "개발을 좋아하는 Joonha 의 블로그. 개발 기록부터 여행과 소소한 일상까지, 기억하고 싶은 것들을 적어 둡니다.",
   "lang": "ko",
   "dir": "ltr",
   "start_url": "/",
