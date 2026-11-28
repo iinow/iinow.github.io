@@ -14,6 +14,7 @@
 {%- assign openapi_url = tools_base | append: '/online/openapi-diff/' -%}
 {%- assign base64_url = tools_base | append: '/online/base64/' -%}
 {%- assign urlenc_url = tools_base | append: '/online/url-encode/' -%}
+{%- assign uuid7_url = tools_base | append: '/online/uuid-v7/' -%}
 {%- if lang == 'ko' -%}
   {%- assign side_posts = site.posts | where_exp: 'p', "p.lang != 'en'" | where_exp: 'p', "p.lang != 'ja'" | where_exp: 'p', "p.lang != 'zh'" -%}
 {%- else -%}
@@ -285,7 +286,8 @@
 </script>
 {%- elsif page.tools %}
 {%- assign tool_faq = nil -%}
-{%- if page.codec -%}{%- assign tool_faq = site.data.codec[page.codec][lang].faq -%}{%- endif %}
+{%- if page.codec -%}{%- assign tool_faq = site.data.codec[page.codec][lang].faq -%}{%- endif -%}
+{%- if page.tool_data -%}{%- assign tool_faq = site.data[page.tool_data][lang].faq -%}{%- endif %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -415,6 +417,7 @@
     <h2>{{ t_tools }}</h2>
     <ul class="side-tools">
       <li><a href="{{ tsid_url }}"{% if page.url == tsid_url %} aria-current="page"{% endif %}>{{ t_tsid }}</a></li>
+      <li><a href="{{ uuid7_url }}"{% if page.url == uuid7_url %} aria-current="page"{% endif %}>{{ site.data.uuid7[lang].nav }}</a></li>
       <li><a href="{{ openapi_url }}"{% if page.url == openapi_url %} aria-current="page"{% endif %}>{{ t_openapi }}</a></li>
       <li><a href="{{ base64_url }}"{% if page.url == base64_url %} aria-current="page"{% endif %}>{{ site.data.codec.base64[lang].nav }}</a></li>
       <li><a href="{{ urlenc_url }}"{% if page.url == urlenc_url %} aria-current="page"{% endif %}>{{ site.data.codec.url[lang].nav }}</a></li>

@@ -1,0 +1,114 @@
+---
+layout: tool
+---
+{%- comment -%}
+  UUID v7 생성기 화면. 문구는 _data/uuid7.yml, 계산은 /tool-uuid7.js.
+{%- endcomment -%}
+{%- assign lang = page.lang | default: 'ko' -%}
+{%- assign t = site.data.uuid7[lang] -%}
+{%- assign names = site.data.codec.ui[lang] -%}
+{%- assign base = '' -%}
+{%- if lang != 'ko' -%}{%- assign base = '/' | append: lang -%}{%- endif -%}
+<div class="codec" id="uuid7"
+  data-copied="{{ t.copied | escape }}"
+  data-err-bad="{{ t.err_bad | escape }}"
+  data-warn-version="{{ t.warn_version | escape }}"
+  data-count="{{ t.count | escape }}">
+  <div class="tool-grid">
+    <section class="tcard" aria-labelledby="uuid-gen-title">
+      <h2 id="uuid-gen-title"><span class="num">1</span>{{ t.gen_title }}</h2>
+      <div class="out big" data-result="gen">
+        <div class="out-row"><span class="out-label">{{ t.out_label }}</span><button class="copy-mini" type="button" data-copy-field="uuid">{{ t.copy }}</button></div>
+        <div class="out-value mono" data-field="uuid">-</div>
+        <p class="out-sub" data-field="iso">-</p>
+      </div>
+      <fieldset class="codec-opts">
+        <label><input type="checkbox" id="uuid-hyphen" checked> {{ t.opt_hyphen }}</label>
+        <label><input type="checkbox" id="uuid-upper"> {{ t.opt_upper }}</label>
+      </fieldset>
+      <div class="field">
+        <label for="uuid-time">{{ t.time_label }}</label>
+        <input id="uuid-time" type="datetime-local" step="0.001">
+      </div>
+      <div class="btnrow">
+        <button class="tbtn primary" id="uuid-generate" type="button">{{ t.btn_generate }}</button>
+      </div>
+    </section>
+
+    <section class="tcard" aria-labelledby="uuid-dec-title">
+      <h2 id="uuid-dec-title"><span class="num">2</span>{{ t.dec_title }}</h2>
+      <div class="field">
+        <label for="uuid-input">{{ t.dec_label }}</label>
+        <input id="uuid-input" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="{{ t.dec_ph | escape }}">
+      </div>
+      <div class="btnrow">
+        <button class="tbtn ghost" id="uuid-use-last" type="button">{{ t.use_last }}</button>
+        <span class="out-sub">{{ t.dec_hint }}</span>
+      </div>
+      <p class="tool-msg" id="uuid-msg" role="status" aria-live="polite"></p>
+      <div class="out big" data-result="dec">
+        <div class="out-row"><span class="out-label">{{ t.f_time }}</span><button class="copy-mini" type="button" data-copy-field="iso">{{ t.copy }}</button></div>
+        <div class="out-value mono" data-field="iso">-</div>
+        <div class="out-row"><span class="out-label">{{ t.f_local }}</span></div>
+        <div class="out-value mono" data-field="local">-</div>
+        <div class="out-row"><span class="out-label">{{ t.f_unix }}</span><button class="copy-mini" type="button" data-copy-field="unix">{{ t.copy }}</button></div>
+        <div class="out-value mono" data-field="unix">-</div>
+        <div class="out-row"><span class="out-label">{{ t.f_version }} / {{ t.f_variant }}</span></div>
+        <div class="out-value mono" data-field="version">-</div>
+        <div class="out-row"><span class="out-label">{{ t.f_rand }}</span></div>
+        <div class="out-value mono" data-field="rand">-</div>
+      </div>
+    </section>
+  </div>
+
+  <section class="tcard" aria-labelledby="uuid-bulk-title">
+    <h2 id="uuid-bulk-title"><span class="num">3</span>{{ t.bulk_title }}</h2>
+    <div class="field">
+      <label for="uuid-bulk-count">{{ t.bulk_count }}</label>
+      <input id="uuid-bulk-count" type="number" min="1" max="1000" step="1" value="20" inputmode="numeric">
+    </div>
+    <div class="btnrow">
+      <button class="tbtn primary" id="uuid-bulk" type="button">{{ t.btn_bulk }}</button>
+      <button class="tbtn ghost" id="uuid-bulk-copy" type="button">{{ t.btn_bulk_copy }}</button>
+      <span class="out-sub" id="uuid-bulk-label"></span>
+    </div>
+    <div class="bulk-list" id="uuid-bulk-list"></div>
+  </section>
+
+  <section class="tcard" aria-labelledby="uuid-hist-title">
+    <h2 id="uuid-hist-title">{{ t.history }}</h2>
+    <ul class="hist-list" id="uuid-hist"></ul>
+    <p class="out-sub" id="uuid-hist-empty">{{ t.history_empty }}</p>
+    <div class="btnrow">
+      <button class="tbtn ghost" id="uuid-hist-clear" type="button">{{ t.history_clear }}</button>
+      <span class="out-sub">{{ t.history_note }}</span>
+    </div>
+  </section>
+
+  <section class="codec-text" aria-labelledby="uuid-about-title">
+    <h2 id="uuid-about-title">{{ t.about_title }}</h2>
+    {%- for para in t.about %}
+    <p>{{ para | escape }}</p>
+    {%- endfor %}
+  </section>
+
+  <section class="codec-text" aria-labelledby="uuid-faq-title">
+    <h2 id="uuid-faq-title">{{ t.faq_title }}</h2>
+    {%- for item in t.faq %}
+    <h3>{{ item.q | escape }}</h3>
+    <p>{{ item.a | escape }}</p>
+    {%- endfor %}
+  </section>
+
+  <nav class="codec-text" aria-labelledby="uuid-related-title">
+    <h2 id="uuid-related-title">{{ t.related }}</h2>
+    <ul class="codec-related">
+      <li><a href="{{ base }}/online/tsid/">{{ names.tsid }}</a></li>
+      <li><a href="{{ base }}/online/base64/">{{ site.data.codec.base64[lang].nav }}</a></li>
+      <li><a href="{{ base }}/online/url-encode/">{{ site.data.codec.url[lang].nav }}</a></li>
+      <li><a href="{{ base }}/online/openapi-diff/">{{ names.openapi }}</a></li>
+    </ul>
+  </nav>
+</div>
+
+<script src="/tool-uuid7.js?v={{ site.time | date: '%s' }}" defer></script>

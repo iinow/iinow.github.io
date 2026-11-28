@@ -18,7 +18,7 @@
 .field > label { font-size: 0.8rem; font-weight: 800; color: var(--muted); letter-spacing: 0.01em; }
 .field-row { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); }
 
-.tool-body input[type='text'], .tool-body input[type='number'], .tool-body input[type='search'], .tool-body select, .tool-body textarea {
+.tool-body input[type='text'], .tool-body input[type='number'], .tool-body input[type='search'], .tool-body input[type='datetime-local'], .tool-body select, .tool-body textarea {
   font: inherit; font-size: 0.95rem; width: 100%; min-width: 0;
   color: var(--ink); background: var(--paper);
   border: 1.5px solid var(--line); border-radius: 0.65rem; padding: 0.55rem 0.7rem;
