@@ -395,13 +395,20 @@
     </button>
   </div>
   <nav class="lang" aria-label="{{ t_language | escape }}">
-    <a href="{{ ko_url }}" lang="ko" hreflang="ko"{% if lang == 'ko' %} aria-current="true"{% endif %}>KO</a>
-    <span class="sep" aria-hidden="true">|</span>
-    <a href="{{ en_url }}" lang="en" hreflang="en"{% if lang == 'en' %} aria-current="true"{% endif %}>EN</a>
-    <span class="sep" aria-hidden="true">|</span>
-    <a href="{{ ja_url }}" lang="ja" hreflang="ja"{% if lang == 'ja' %} aria-current="true"{% endif %}>JA</a>
-    <span class="sep" aria-hidden="true">|</span>
-    <a href="{{ zh_url }}" lang="zh-CN" hreflang="zh"{% if lang == 'zh' %} aria-current="true"{% endif %}>ZH</a>
+    <details class="lang-box" id="lang-box">
+      <summary class="lang-btn" aria-controls="lang-menu">
+        <span class="sr-only">{{ t_language }}</span>
+        <svg class="ico lang-globe" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.9 5.7 3.9 9S14.5 18.4 12 21c-2.5-2.6-3.9-5.7-3.9-9S9.5 5.6 12 3Z"/></svg>
+        <span class="lang-cur">{{ lang | upcase }}</span>
+        <svg class="ico lang-caret" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+      <ul class="lang-menu" id="lang-menu">
+        <li><a href="{{ ko_url }}" lang="ko" hreflang="ko"{% if lang == 'ko' %} aria-current="true"{% endif %}><span class="lc">KO</span><span class="ln">한국어</span></a></li>
+        <li><a href="{{ en_url }}" lang="en" hreflang="en"{% if lang == 'en' %} aria-current="true"{% endif %}><span class="lc">EN</span><span class="ln">English</span></a></li>
+        <li><a href="{{ ja_url }}" lang="ja" hreflang="ja"{% if lang == 'ja' %} aria-current="true"{% endif %}><span class="lc">JA</span><span class="ln">日本語</span></a></li>
+        <li><a href="{{ zh_url }}" lang="zh-CN" hreflang="zh"{% if lang == 'zh' %} aria-current="true"{% endif %}><span class="lc">ZH</span><span class="ln">中文</span></a></li>
+      </ul>
+    </details>
   </nav>
 </header>
 

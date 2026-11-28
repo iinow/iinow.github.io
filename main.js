@@ -528,6 +528,31 @@ if (side && burger) {
   sync()
 }
 
+// ── 언어 선택 ──
+// 지구본 버튼(요약)을 누르면 KO / EN / JA / ZH 목록이 열린다.
+// 여닫는 기본 동작은 <details> 가 맡고, 여기서는 바깥 클릭·Esc·링크 이동에서 닫는다.
+const langBox = document.getElementById('lang-box')
+if (langBox) {
+  const langBtn = langBox.querySelector('.lang-btn')
+  const closeLang = (focus) => {
+    if (!langBox.open) return
+    langBox.open = false
+    if (focus && langBtn) langBtn.focus()
+  }
+  document.addEventListener('click', (e) => {
+    if (!langBox.contains(e.target)) closeLang(false)
+  })
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && langBox.open) {
+      e.stopPropagation()
+      closeLang(true)
+    }
+  })
+  langBox.querySelectorAll('.lang-menu a').forEach((a) => {
+    a.addEventListener('click', () => closeLang(false))
+  })
+}
+
 // ── 라이트/다크 손전환 ──
 // <head> 인라인 스크립트가 data-theme 을 먼저 세팅해 깜빡임을 막는다.
 // 손으로 고른 값은 localStorage(theme) 에 남고, 고르지 않았으면 OS 설정을 따라간다.

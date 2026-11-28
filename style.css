@@ -145,12 +145,39 @@ ul, ol { padding: 0; list-style: none; }
 :root[data-theme='light'] .theme-btn .ico-sun { display: none; }
 :root[data-theme='light'] .theme-btn .ico-moon { display: block; }
 
-/* 언어 전환 KO | EN */
-.lang { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.01em; }
-.lang a { display: inline-block; padding: 0.22rem 0.6rem; border-radius: 999px; color: var(--muted); text-decoration: none; border: 1.5px solid transparent; transition: color 0.15s, background 0.15s, border-color 0.15s; }
-.lang a:hover { color: var(--ink); border-color: var(--line); }
-.lang a[aria-current='true'] { color: #1b1e3c; background: var(--sun); border-color: #1b1e3c; }
-.lang .sep { color: var(--muted); opacity: 0.6; font-weight: 600; }
+/* 언어 전환: 지구본 + 언어 코드 버튼을 누르면 KO / EN / JA / ZH 목록이 열린다.
+   링크 네 개를 늘어놓지 않아 좁은 화면에서도 머리글이 개행되지 않는다. */
+.lang { position: relative; flex: none; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.01em; white-space: nowrap; }
+.lang-box { display: block; position: relative; }
+.lang-btn {
+  display: inline-flex; align-items: center; gap: 0.32rem;
+  height: 2.35rem; padding: 0 0.6rem;
+  font: inherit; font-size: 0.82rem; font-weight: 800; line-height: 1;
+  color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 999px;
+  cursor: pointer; list-style: none; user-select: none;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+.lang-btn::-webkit-details-marker { display: none; }
+.lang-btn::marker { content: ''; }
+.lang-btn:hover, .lang-box[open] .lang-btn { border-color: #1b1e3c; background: var(--sun); color: #1b1e3c; }
+.lang-btn .ico { flex: none; }
+.lang-btn .lang-globe { width: 1.05rem; height: 1.05rem; }
+.lang-btn .lang-caret { width: 0.78rem; height: 0.78rem; transition: transform 0.15s; }
+.lang-box[open] .lang-btn .lang-caret { transform: rotate(180deg); }
+.lang-menu {
+  position: absolute; right: 0; top: calc(100% + 0.75rem); z-index: 6;
+  min-width: 9.75rem; padding: 0.35rem;
+  background: var(--surface); border: 2px solid var(--ink); border-radius: 0.95rem;
+  box-shadow: 0 18px 44px rgba(15, 17, 36, 0.24);
+  animation: fade-in 0.14s ease-out;
+}
+.lang-menu a { display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.6rem; border-radius: 0.62rem; color: var(--ink); text-decoration: none; }
+.lang-menu a:hover { background: var(--paper); }
+.lang-menu a[aria-current='true'] { background: var(--sun); color: #1b1e3c; }
+.lang-menu .lc { min-width: 1.75rem; font-size: 0.82rem; font-weight: 800; letter-spacing: 0.02em; color: inherit; }
+.lang-menu .ln { font-size: 0.92rem; font-weight: 600; }
+.lang-menu a:not([aria-current='true']) .lc { color: var(--muted); }
 
 /* 왼쪽 메뉴: 넓은 화면은 펼친 채로 붙어 있고, 좁은 화면은 햄버거로 덮어 연다 */
 .side {
@@ -575,11 +602,10 @@ dialog img { border-radius: 0.75rem; background: #fff; }
 }
 
 @media (max-width: 520px) {
-  /* 좁은 화면: 언어 링크 네 개가 머리에 들어가도록 간격을 줄인다 */
+  /* 좁은 화면: 머리글에 들어가는 요소가 적도록 간격을 줄인다 */
   .top { gap: 0.5rem; padding: 0 0.7rem; }
-  .lang { gap: 0; font-size: 0.8rem; }
-  .lang a { padding: 0.2rem 0.38rem; }
-  .lang .sep { display: none; }
+  .logo { font-size: 1.4rem; }
+  .lang-btn { padding: 0 0.5rem; font-size: 0.78rem; gap: 0.26rem; }
 }
 
 @media (max-width: 760px) {
@@ -590,6 +616,6 @@ dialog img { border-radius: 0.75rem; background: #fff; }
 }
 
 @media print {
-  .top-tools, .read-progress, .toc-toggle, .code-copy { display: none !important; }
+  .top-tools, .lang, .read-progress, .toc-toggle, .code-copy { display: none !important; }
   .prose .code-block pre { padding-top: 1.05rem; }
 }
