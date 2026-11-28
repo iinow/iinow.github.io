@@ -159,12 +159,14 @@ flowchart TB
 management:
   endpoint:
     restart:
-      enabled: true
+      access: unrestricted
   endpoints:
     web:
       exposure:
         include: restart
 ```
+
+restart エンドポイントは既定のアクセスレベルが `none` なので、明示的に開く必要があります。Spring Cloud AWS のドキュメントには `enabled: true` と書かれていますが、Spring Boot 3.4 以降は `access` が現行のプロパティで、`enabled` は非推奨の扱いです。
 
 ## 実際に値を変えてみると
 
@@ -223,13 +225,14 @@ sequenceDiagram
 flowchart LR
   A["値が変わらない"] --> B{"どう受け取って<br/>いるか"}
   B -->|"シングルトンの @Value"| C["@RefreshScope を付けるか<br/>@ConfigurationProperties に移す"]
-  B -->|"record やコンストラクターバインディング"| D["setter のあるクラスにするか<br/>@RefreshScope を付ける"]
+  B -->|"record やコンストラクターバインディング"| D["setter のあるクラスにする<br/>record は結び直されない"]
   B -->|"DataSource などのプール"| E["restart_context を使う"]
   B -->|"フィールドにコピーした値"| F["使うたびにプロパティから取り出す"]
 ```
 
 - **`@Value` はそのままです。** シングルトン Bean は作られるときに 1 回だけ値が注入されます。クラスに `@RefreshScope` を付けると、refresh のあと最初に使われるときに作り直されます。
-- **コネクションプールは refresh では変わりません。** `spring.datasource.password` が変わっても、作成済みの HikariCP プールは古いパスワードで接続を開きます。DB パスワードの差し替えには `restart_context` が合っています。
+- **record とコンストラクターバインディングは結び直されません。** Spring Cloud のドキュメントに「コンストラクターバインディングを使うオブジェクトと record は refresh できない」と書かれている制約です。変わる必要のある設定は setter のあるクラスで受け取ります。
+- **コネクションプールは refresh では変わりません。** Spring Cloud が `HikariDataSource` を結び直さない対象（`spring.cloud.refresh.never-refreshable` の既定値）にしているためです。 `spring.datasource.password` が変わっても、作成済みの HikariCP プールは古いパスワードで接続を開きます。DB パスワードの差し替えには `restart_context` が合っています。
 - **コンストラクターで値をコピーしないようにします。** `this.key = props.getApiKey()` のようにフィールドへ入れておくと、プロパティが変わってもそのフィールドは古い値のままです。
 - **インスタンスごとに別々に確認します。** 10 台動いていれば 10 台がそれぞれの間隔で読むので、最大 1 間隔は古い値と新しい値が混在します。
 - **間隔はそのまま呼び出し回数になります。** 3 つのシークレットを 10 台が 1 分ごとに読むと、1 か月で約 130 万回です。API 呼び出しの料金（1 万回あたり 0.05 ドル）で 6.5 ドルほどになり、間隔を 15 秒にすると 4 倍になります。

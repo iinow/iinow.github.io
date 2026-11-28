@@ -159,12 +159,14 @@ flowchart TB
 management:
   endpoint:
     restart:
-      enabled: true
+      access: unrestricted
   endpoints:
     web:
       exposure:
         include: restart
 ```
+
+restart 端点的默认访问级别是 `none`，所以需要显式打开。Spring Cloud AWS 文档里写的是 `enabled: true`，而从 Spring Boot 3.4 起 `access` 才是现行属性，`enabled` 已标记为弃用。
 
 ## 实际改一次值
 
@@ -223,13 +225,14 @@ sequenceDiagram
 flowchart LR
   A["值没有变化"] --> B{"是怎么<br/>接收的"}
   B -->|"单例里的 @Value"| C["加上 @RefreshScope<br/>或改用 @ConfigurationProperties"]
-  B -->|"record 或构造器绑定"| D["改成带 setter 的类<br/>或加上 @RefreshScope"]
+  B -->|"record 或构造器绑定"| D["改成带 setter 的类<br/>record 不会被重新绑定"]
   B -->|"DataSource 之类的连接池"| E["使用 restart_context"]
   B -->|"复制到字段里的值"| F["每次使用时都从属性里取"]
 ```
 
 - **`@Value` 不会变。** 单例 Bean 只在创建时注入一次值。在类上加 `@RefreshScope` 后，refresh 之后第一次使用时会重新创建。
-- **连接池不会被 refresh 更新。** 即使 `spring.datasource.password` 变了，已经创建的 HikariCP 连接池仍然用旧密码建立连接。更换数据库密码应该用 `restart_context`。
+- **record 和构造器绑定不会被重新绑定。** Spring Cloud 文档写明：使用构造器绑定的对象以及 record 无法 refresh。需要变化的配置请用带 setter 的类来接收。
+- **连接池不会被 refresh 更新。** 因为 Spring Cloud 把 `HikariDataSource` 列为不重新绑定的类型（`spring.cloud.refresh.never-refreshable` 的默认值）。 即使 `spring.datasource.password` 变了，已经创建的 HikariCP 连接池仍然用旧密码建立连接。更换数据库密码应该用 `restart_context`。
 - **不要在构造器里复制值。** 像 `this.key = props.getApiKey()` 这样存进字段后，属性变了，这个字段还是旧值。
 - **每个实例各自检查。** 有 10 个实例时，它们各自按自己的周期读取，所以最多一个周期内新旧值会同时存在。
 - **周期就是调用次数。** 10 个实例每分钟读取 3 个密钥，一个月大约 130 万次。按 API 调用费用（每 1 万次 0.05 美元）计算约为 6.5 美元，把周期缩短到 15 秒就是四倍。

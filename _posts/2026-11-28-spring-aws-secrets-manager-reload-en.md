@@ -159,12 +159,14 @@ flowchart TB
 management:
   endpoint:
     restart:
-      enabled: true
+      access: unrestricted
   endpoints:
     web:
       exposure:
         include: restart
 ```
+
+The restart endpoint has a default access level of `none`, so it has to be opened explicitly. The Spring Cloud AWS docs show `enabled: true`. Since Spring Boot 3.4 `access` is the current property and `enabled` is marked deprecated.
 
 ## Changing a value for real
 
@@ -223,13 +225,14 @@ sequenceDiagram
 flowchart LR
   A["The value does not change"] --> B{"How is it<br/>received"}
   B -->|"@Value in a singleton"| C["Add @RefreshScope or move it<br/>to @ConfigurationProperties"]
-  B -->|"record or constructor binding"| D["Use a class with setters<br/>or add @RefreshScope"]
+  B -->|"record or constructor binding"| D["Use a class with setters<br/>records are not rebound"]
   B -->|"A pool such as DataSource"| E["Use restart_context"]
   B -->|"A value copied to a field"| F["Read the property<br/>every time it is used"]
 ```
 
 - **`@Value` stays as it was.** A singleton bean gets its value injected once, when it is created. With `@RefreshScope` on the class, the bean is rebuilt the first time it is used after a refresh.
-- **Connection pools are not changed by refresh.** Even when `spring.datasource.password` changes, the HikariCP pool that already exists keeps opening connections with the old password. For a DB password rotation, `restart_context` is the right one.
+- **Records and constructor binding are not rebound.** The Spring Cloud docs state that objects using constructor binding, including records, cannot be refreshed. Receive settings that must change in a class with setters.
+- **Connection pools are not changed by refresh.** Spring Cloud keeps `HikariDataSource` on its never-rebind list (the default of `spring.cloud.refresh.never-refreshable`). Even when `spring.datasource.password` changes, the HikariCP pool that already exists keeps opening connections with the old password. For a DB password rotation, `restart_context` is the right one.
 - **Do not copy the value in a constructor.** With `this.key = props.getApiKey()`, the field keeps the old value after the property changes.
 - **Each instance checks on its own.** With 10 instances, each reads on its own schedule, so for up to one period old and new values coexist.
 - **The period is your call count.** Ten instances reading three secrets every minute is about 1.3 million calls a month. At the API call price (0.05 USD per 10,000 calls) that is about 6.5 USD, and four times that with a 15 second period.
