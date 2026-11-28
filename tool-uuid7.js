@@ -78,7 +78,9 @@
   const genRoot = root.querySelector('[data-result="gen"]')
 
   // 시각을 지정하면 그 시각으로, 비우면 지금 시각으로 만든다
+  let picker = null
   const customMs = () => {
+    if (picker) return picker.selectedDates.length ? picker.selectedDates[0].getTime() : null
     if (!timeEl.value) return null
     const ms = new Date(timeEl.value).getTime()
     return Number.isFinite(ms) ? ms : null
@@ -96,7 +98,43 @@
     showCurrent()
   }
   $('uuid-generate').addEventListener('click', generate)
-  timeEl.addEventListener('change', generate)
+
+  // 날짜·시각 고르기: flatpickr 가 실렸으면 그것으로, 아니면 브라우저 기본 입력으로
+  const timeClear = $('uuid-time-clear')
+  const syncClear = () => {
+    if (timeClear) timeClear.hidden = customMs() === null
+  }
+  if (window.flatpickr) {
+    const key = locale.toLowerCase().startsWith('zh') ? 'zh' : locale.slice(0, 2).toLowerCase()
+    const l10n = window.flatpickr.l10ns && window.flatpickr.l10ns[key]
+    timeEl.type = 'text'
+    picker = window.flatpickr(timeEl, {
+      enableTime: true,
+      enableSeconds: true,
+      time_24hr: true,
+      allowInput: true,
+      disableMobile: true,
+      dateFormat: 'Y-m-d H:i:S',
+      locale: l10n || 'default',
+      onChange: () => {
+        generate()
+        syncClear()
+      },
+    })
+  } else {
+    timeEl.addEventListener('change', () => {
+      generate()
+      syncClear()
+    })
+  }
+  if (timeClear) {
+    timeClear.addEventListener('click', () => {
+      if (picker) picker.clear(false)
+      else timeEl.value = ''
+      generate()
+      syncClear()
+    })
+  }
 
   // ── 풀어 보기: 입력할 때마다 ──
   const inputEl = $('uuid-input')

@@ -173,6 +173,7 @@ python3 scripts/make-og.py --out img/og/kafka-retry-zh.png --lang zh --title "Ka
 모든 도구는 `layout: tool` 을 쓰고 frontmatter 에 `tools: true` 를 두면 `tool.css` 가 붙는다. 계산은 브라우저에서만 하고, 입력은 어디로도 보내지 않는다.
 
 - **Base64 · URL 도구**는 화면이 같아서 `_layouts/codec.html` 하나를 쓴다. 페이지 파일에는 본문 없이 머리만 두고 `codec: base64` / `codec: url` 로 고른다. 화면 문구·설명·FAQ 는 `_data/codec.yml` 에 언어별로 있고, 계산은 `tool-codec.js` 가 한다.
+- **날짜·시각 고르기**는 flatpickr 4.6.13(jsDelivr CDN, 언어 파일 `l10n/ko·ja·zh`)을 쓴다. UUID v7 의 「시각 지정」에 붙어 있고, 색은 `tool.css` 에서 사이트 변수로 맞췄다(다크 모드 포함). CDN 이 막히면 브라우저 기본 `datetime-local` 입력으로 동작한다.
 - **UUID v7 도구**도 같은 방식이다. `_layouts/uuid7.html` + `_data/uuid7.yml` + `tool-uuid7.js`, 페이지 머리에 `tool_data: uuid7` 을 두면 그 데이터 파일의 `faq` 가 `FAQPage` 로 들어간다. 새 도구를 이 방식으로 더 만들 때도 `tool_data: <데이터 파일 이름>` 만 맞추면 된다.
 - **검색 노출용 머리 값** — `seo_title`(있으면 `<title>`·`og:title` 에 `title` 대신 쓰인다), `keywords`(`meta keywords`). `tools: true` 인 페이지에는 `_layouts/default.html` 이 JSON-LD `WebApplication` + `BreadcrumbList` 를 넣고, `codec` 페이지에는 `_data/codec.yml` 의 `faq` 로 `FAQPage` 까지 넣는다. FAQ 는 화면에도 같은 글로 보인다.
 - **이력** — `localStorage` 에 도구별로 최근 10개(`iinow:codec:base64:history`, `iinow:codec:url:history`, `iinow:uuid7:history`, `iinow:openapi-diff:history`). Base64·URL 은 입력이 0.8초 멈추면 저장하고 이어서 친 값은 맨 위 항목을 갈아 끼운다. OpenAPI 는 비교가 성공할 때 스펙 두 개를 통째로 저장하고, 용량이 넘치면 오래된 것부터 버린다.

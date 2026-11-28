@@ -28,10 +28,11 @@ layout: tool
       </fieldset>
       <div class="field">
         <label for="uuid-time">{{ t.time_label }}</label>
-        <input id="uuid-time" type="datetime-local" step="0.001">
+        <input id="uuid-time" type="datetime-local" step="1" placeholder="YYYY-MM-DD HH:MM:SS" autocomplete="off">
       </div>
       <div class="btnrow">
         <button class="tbtn primary" id="uuid-generate" type="button">{{ t.btn_generate }}</button>
+        <button class="tbtn ghost" id="uuid-time-clear" type="button" hidden>{{ t.time_clear }}</button>
       </div>
     </section>
 
@@ -111,4 +112,10 @@ layout: tool
   </nav>
 </div>
 
+{%- comment -%} 날짜·시각 고르기는 flatpickr. CDN 이 막히면 브라우저 기본 datetime-local 입력으로 동작한다. {%- endcomment %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js" defer></script>
+{%- if lang != 'en' %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/{{ lang }}.js" defer></script>
+{%- endif %}
 <script src="/tool-uuid7.js?v={{ site.time | date: '%s' }}" defer></script>

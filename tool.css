@@ -44,6 +44,7 @@
 .tbtn.primary:active { transform: translateY(3px); box-shadow: none; }
 .tbtn.ghost { border-color: var(--line); color: var(--muted); padding: 0.42rem 0.8rem; font-size: 0.82rem; }
 .tbtn.ghost:hover { border-color: var(--ink); color: var(--ink); background: var(--paper); }
+.tbtn[hidden] { display: none; }
 .tbtn[disabled] { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
 
 .mono { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; word-break: break-all; }
@@ -127,6 +128,31 @@
 .before-after div { background: var(--paper); border: 1px solid var(--line); border-radius: 0.5rem; padding: 0.4rem 0.55rem; word-break: break-all; white-space: pre-wrap; }
 .before-after b { display: block; font-family: var(--body); font-size: 0.68rem; color: var(--muted); margin-bottom: 0.15rem; }
 .diff-empty { padding: 1.2rem; text-align: center; color: var(--muted); font-weight: 700; border: 2px dashed var(--line); border-radius: 0.9rem; }
+
+/* 날짜·시각 고르기 (flatpickr) 를 사이트 색에 맞춘다 */
+.flatpickr-calendar { font-family: inherit; border-radius: 0.8rem; }
+.flatpickr-day.selected, .flatpickr-day.selected:hover, .flatpickr-day.selected:focus { background: var(--sun); border-color: #1b1e3c; color: #1b1e3c; }
+.flatpickr-day.today { border-color: var(--sun); }
+:root[data-theme='dark'] .flatpickr-calendar { background: var(--surface); box-shadow: 0 0 0 1px var(--line), 0 10px 28px rgba(0, 0, 0, 0.55); }
+:root[data-theme='dark'] .flatpickr-calendar.arrowTop::before, :root[data-theme='dark'] .flatpickr-calendar.arrowTop::after { border-bottom-color: var(--surface); }
+:root[data-theme='dark'] .flatpickr-calendar.arrowBottom::before, :root[data-theme='dark'] .flatpickr-calendar.arrowBottom::after { border-top-color: var(--surface); }
+:root[data-theme='dark'] .flatpickr-months .flatpickr-month,
+:root[data-theme='dark'] .flatpickr-current-month,
+:root[data-theme='dark'] .flatpickr-current-month input.cur-year,
+:root[data-theme='dark'] .flatpickr-current-month .flatpickr-monthDropdown-months,
+:root[data-theme='dark'] span.flatpickr-weekday,
+:root[data-theme='dark'] .flatpickr-day,
+:root[data-theme='dark'] .flatpickr-time input,
+:root[data-theme='dark'] .flatpickr-time .flatpickr-time-separator { color: var(--ink); }
+:root[data-theme='dark'] .flatpickr-months .flatpickr-prev-month, :root[data-theme='dark'] .flatpickr-months .flatpickr-next-month { color: var(--ink); fill: var(--ink); }
+:root[data-theme='dark'] .flatpickr-current-month .flatpickr-monthDropdown-months option { background: var(--surface); color: var(--ink); }
+:root[data-theme='dark'] .flatpickr-day.prevMonthDay, :root[data-theme='dark'] .flatpickr-day.nextMonthDay, :root[data-theme='dark'] .flatpickr-day.flatpickr-disabled { color: var(--muted); }
+:root[data-theme='dark'] .flatpickr-day:hover, :root[data-theme='dark'] .flatpickr-day:focus { background: var(--paper); border-color: var(--line); }
+:root[data-theme='dark'] .flatpickr-day.selected, :root[data-theme='dark'] .flatpickr-day.selected:hover { background: var(--sun); border-color: var(--sun); color: #1b1e3c; }
+:root[data-theme='dark'] .flatpickr-time { border-top-color: var(--line); }
+:root[data-theme='dark'] .flatpickr-time input:hover, :root[data-theme='dark'] .flatpickr-time input:focus { background: var(--paper); }
+:root[data-theme='dark'] .numInputWrapper span.arrowUp::after { border-bottom-color: var(--ink); }
+:root[data-theme='dark'] .numInputWrapper span.arrowDown::after { border-top-color: var(--ink); }
 
 /* URL 로 가져오기 (OpenAPI) */
 .url-row { display: flex; gap: 0.5rem; align-items: center; }
