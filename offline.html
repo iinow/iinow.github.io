@@ -1,0 +1,39 @@
+---
+layout: default
+title: 오프라인입니다
+permalink: /offline.html
+noindex: true
+sitemap: false
+---
+<section class="hero offline">
+  <div class="hero-text">
+    <p class="offline-mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6.5 18.5A30 30 0 0 1 41.5 18.5"/>
+        <path d="M13 25.5a21 21 0 0 1 22 0"/>
+        <path d="M19.5 32.5a11 11 0 0 1 9 0"/>
+        <circle cx="24" cy="39" r="1.6" fill="currentColor" stroke="none"/>
+        <path d="m8 7 32 34"/>
+      </svg>
+    </p>
+    <h1>지금은 오프라인입니다</h1>
+    <p class="lead">인터넷 연결이 끊긴 것 같습니다. 연결을 확인한 뒤 다시 시도해 주세요. 한 번 열어 본 글은 연결 없이도 볼 수 있습니다.</p>
+    <p class="lead offline-en"><span lang="en">You look offline. Check your connection and try again. Posts you have already opened stay readable.</span></p>
+    <p class="hero-links">
+      <button class="btn" type="button" id="offline-retry">다시 시도</button>
+      <a class="plain" href="/">홈으로 가기</a>
+    </p>
+  </div>
+</section>
+<style>
+  .offline { padding-bottom: clamp(3rem, 8vw, 6rem); }
+  .offline .offline-mark { margin: 0; color: var(--teal); }
+  .offline .offline-mark svg { width: 3.25rem; height: 3.25rem; }
+  .offline .offline-en { font-size: 0.95rem; }
+  .offline .btn { border: 0; font: inherit; font-weight: 700; cursor: pointer; }
+</style>
+<script>
+  document.getElementById('offline-retry').addEventListener('click', function () {
+    location.reload();
+  });
+</script>

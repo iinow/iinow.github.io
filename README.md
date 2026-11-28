@@ -128,6 +128,27 @@ python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retrie
 | 읽기 진행률 | 글 화면 머리 아래 3px 노란 선. 스크롤에 따라 0→100% |
 | 댓글 | `_config.yml` 의 `giscus` 블록이 `enabled: true` 일 때 글 하단에 giscus 위젯. 테마 전환을 `postMessage` 로 따라간다 |
 
+## 홈 화면 앱 · 오프라인 (PWA)
+
+휴대폰 브라우저에서 `홈 화면에 추가` 를 하면 주소창 없이 앱처럼 열리고, 한 번 열어 본 페이지는 연결이 끊겨도 보인다.
+
+| 파일 | 하는 일 |
+|---|---|
+| `manifest.webmanifest` | 앱 이름(`iinow`), `start_url: /`, `scope: /`, `display: standalone`, 테마·배경색, 192·512 아이콘(`any` / `maskable`), 바로가기(글 목록·온라인 도구·EN) |
+| `sw.js` | 서비스 워커. 첫 화면(`/`, `/en/`), `offline.html`, `style.css`, `main.js`, `search.json`, 아이콘을 미리 저장하고 요청을 나눠 받는다 |
+| `offline.html` | 연결이 끊긴 채 처음 여는 페이지에 보여 줄 안내. `다시 시도`·`홈으로 가기`, 사이트와 같은 라이트/다크 |
+| `img/icon-192x192.png` · `512x512` | 앱 아이콘(`purpose: any`) |
+| `img/icon-maskable-*.png` | 안드로이드가 모양을 잘라 써도 그림이 안 잘리도록 안전 영역 안에 그린 아이콘 |
+| `scripts/make-icons.py` | 아이콘을 `favicon.svg` 도형으로 다시 만든다 (`python3 scripts/make-icons.py`) |
+
+캐시 전략:
+
+- 페이지 이동(`mode: navigate`)은 **네트워크 우선** → 실패하면 저장본 → 그것도 없으면 `offline.html`. 온라인이면 항상 새 HTML 을 받는다.
+- 같은 사이트의 CSS·JS·이미지는 **저장본 먼저(SWR)** — 바로 보여 주고 뒤에서 최신으로 갈아 둔다. `?v=` 가 붙은 주소는 `ignoreSearch` 로 맞춘다.
+- 다른 도메인(GA4, giscus, 폰트 CDN)과 `GET` 이 아닌 요청은 가로채지 않는다.
+- `sw.js` 의 `VERSION` 을 올리면 새 캐시로 갈아타고, `activate` 에서 `iinow-` 가 아닌 옛 캐시를 지운다.
+- `service-worker.js` 는 예전 방문자 브라우저에 남은 등록을 스스로 정리하는 자리다. 새 워커는 `sw.js` 다.
+
 ## 온라인 도구
 
 | 주소 | 하는 일 |
@@ -154,6 +175,8 @@ python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retrie
 | `search.json` | `Ctrl+K` 검색 색인 (글 + `search_include: true` 인 페이지) |
 | `tool.css`, `tool-tsid.js`, `tool-openapi-diff.js` | 온라인 도구 화면과 계산 |
 | `_config.yml` | 주소 규칙(`permalink: /posts/:slug/`), 기본 언어, 검색 등록 확인 코드, 플러그인 |
-| `service-worker.js`, `404.html` | 오프라인 캐시, 404 페이지 |
+| `manifest.webmanifest`, `sw.js`, `offline.html` | 홈 화면 앱(PWA)·오프라인 캐시, 오프라인 안내 페이지 |
+| `service-worker.js` | 옛 서비스 워커 정리용 껍데기(새 워커는 `sw.js`) |
+| `404.html` | 404 페이지 |
 
 합쳐지는 애니메이션은 lite-oc 글 안에 있다 (`<div class="stage">`, 목록은 `main.js` 의 `SERVICES`).

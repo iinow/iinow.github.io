@@ -1,10 +1,9 @@
-// 옛 PWA 서비스 워커 정리
+// PWA: 홈 화면에 추가했을 때와 오프라인에서도 열리도록 서비스 워커를 등록한다.
+// 캐시 전략은 sw.js 에 있다(페이지는 네트워크 우선, 정적 파일은 저장본 먼저).
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister())).catch(() => {})
-}
-// 예전 방문자 브라우저에 남은 캐시 저장소도 비운다
-if ('caches' in window) {
-  caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))).catch(() => {})
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {})
+  })
 }
 
 // ── lite-oc 글: 따로 띄우던 서비스가 상자 하나로 들어간다 ──
