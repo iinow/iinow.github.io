@@ -4,7 +4,7 @@ description: Joonha 의 블로그. 개발 기록부터 여행과 소소한 일�
 author: Joonha
 # 검색 등록 확인 코드. 서치 콘솔에서 받은 값을 넣으면 확인용 태그가 붙는다.
 google_site_verification: VonyJx2Z2YvX2AtODdrDAFD7UHJl1Mx7eFqHSyaD7RU
-naver_site_verification:
+naver_site_verification: d4016ee7dae787fa1201869b0fd82af9f732ec18
 url: https://iinow.github.io
 lang: ko
 timezone: Asia/Seoul
