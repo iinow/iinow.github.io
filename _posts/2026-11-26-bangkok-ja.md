@@ -13,7 +13,7 @@ permalink: /ja/posts/bangkok/
 <dl class="facts">
   <div><dt>期間</dt><dd>5<small>泊</small> 6<small>日</small></dd></div>
   <div><dt>都市</dt><dd>バンコク</dd></div>
-  <div><dt>主なコース</dt><dd>ムアンボーラン・メークロン</dd></div>
+  <div><dt>主なコース</dt><dd class="long">ムアンボーラン<small> · メークロン</small></dd></div>
   <div><dt>写真</dt><dd>39<small>枚</small></dd></div>
 </dl>
 

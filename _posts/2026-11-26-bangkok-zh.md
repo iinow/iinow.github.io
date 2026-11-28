@@ -13,7 +13,7 @@ permalink: /zh/posts/bangkok/
 <dl class="facts">
   <div><dt>时间</dt><dd>5<small>晚</small> 6<small>天</small></dd></div>
   <div><dt>城市</dt><dd>曼谷</dd></div>
-  <div><dt>主要行程</dt><dd>古城七十二府·Maeklong</dd></div>
+  <div><dt>主要行程</dt><dd class="long">古城七十二府<small> · Maeklong</small></dd></div>
   <div><dt>照片</dt><dd>39<small>张</small></dd></div>
 </dl>
 
