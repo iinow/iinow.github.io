@@ -3,7 +3,7 @@ layout: tool
 lang: zh
 ref: online-openapi-diff
 title: "OpenAPI 变更检测"
-summary: "放入两份 OpenAPI 3.x 规范，就能按端点列出会破坏契约的变更（Breaking）和安全的变更。支持 JSON、YAML 和文件上传，比较只在浏览器里进行。"
+summary: "放入两份 OpenAPI 3.x 规范，就能按端点列出会破坏契约的变更（Breaking）和安全的变更。支持粘贴 JSON、YAML、上传文件和通过 URL 获取，最近 10 次比较会保留为记录，比较只在浏览器里进行。"
 permalink: /zh/online/openapi-diff/
 category: 工具
 tools: true
@@ -61,6 +61,8 @@ image: /img/og/online-openapi-diff-zh.png
     <li>安全变更: 新增端点、可选参数、可选字段，新增响应字段，新增请求 enum 值，参数放宽为可选，标记 deprecated。</li>
     <li><code>$ref</code> 在文档内展开后比较，同名参数按 <code>in</code> 和名称配对。媒体类型优先看 <code>application/json</code>。</li>
     <li>规范不会发送到任何地方，文件也只在浏览器中读取。</li>
+    <li>通过 URL 获取时，由浏览器直接读取该地址。如果服务器不允许 CORS 就无法读取，请下载成文件后再载入。GitHub 文件链接会自动换成 raw 地址。</li>
+    <li>比较过的规范会作为记录保存在此浏览器的 localStorage 中（最近 10 条），可以用“清空记录”删除。</li>
   </ul>
 </p>
 

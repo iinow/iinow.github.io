@@ -12,6 +12,8 @@
 {%- if lang == 'zh' -%}{%- assign tools_base = '/zh' -%}{%- endif -%}
 {%- assign tsid_url = tools_base | append: '/online/tsid/' -%}
 {%- assign openapi_url = tools_base | append: '/online/openapi-diff/' -%}
+{%- assign base64_url = tools_base | append: '/online/base64/' -%}
+{%- assign urlenc_url = tools_base | append: '/online/url-encode/' -%}
 {%- if lang == 'ko' -%}
   {%- assign side_posts = site.posts | where_exp: 'p', "p.lang != 'en'" | where_exp: 'p', "p.lang != 'ja'" | where_exp: 'p', "p.lang != 'zh'" -%}
 {%- else -%}
@@ -186,14 +188,14 @@
 {%- if page.layout == 'post' %}
 <title>{{ page.title | escape }} | iinow</title>
 {%- elsif page.title %}
-<title>{{ page.title | escape }} | iinow</title>
+<title>{{ page.seo_title | default: page.title | escape }} | iinow</title>
 {%- else %}
 <title>iinow | {{ page.tagline | default: site.tagline }}</title>
 {%- endif %}
 {%- assign desc_raw = page.summary | default: page.description | default: site.description | strip_html | strip_newlines | strip -%}
 {%- assign desc = desc_raw | truncate: 160 -%}
 {%- assign og_desc = desc_raw | truncate: 300 -%}
-{%- assign og_title = page.title | default: page.tagline | default: site.tagline -%}
+{%- assign og_title = page.seo_title | default: page.title | default: page.tagline | default: site.tagline -%}
 {%- assign img_path = page.image | default: '/img/og.png' -%}
 {%- assign img = img_path | absolute_url -%}
 {%- assign img_alt = page.image_alt | default: og_title -%}
@@ -201,7 +203,13 @@
 {%- assign img_h = page.image_height | default: 630 -%}
 {%- assign img_ext = img_path | split: '.' | last | downcase -%}
 <meta name="description" content="{{ desc | escape }}">
+{%- if page.keywords %}
+<meta name="keywords" content="{{ page.keywords | escape }}">
+{%- endif %}
 <meta name="author" content="{{ site.author }}">
+{%- if page.tools %}
+<meta name="application-name" content="{{ page.title | escape }}">
+{%- endif %}
 <meta name="robots" content="{% if page.noindex %}noindex{% else %}index, follow, max-image-preview:large{% endif %}">
 <link rel="canonical" href="{{ page.url | absolute_url }}">
 {%- if alt_ko %}
@@ -273,6 +281,50 @@
   "mainEntityOfPage": {{ page.url | absolute_url | jsonify }},
   "author": { "@type": "Person", "name": {{ site.author | jsonify }}, "url": "https://github.com/iinow" },
   "publisher": { "@type": "Person", "name": {{ site.author | jsonify }} }
+}
+</script>
+{%- elsif page.tools %}
+{%- assign tool_faq = nil -%}
+{%- if page.codec -%}{%- assign tool_faq = site.data.codec[page.codec][lang].faq -%}{%- endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": {{ page.title | jsonify }},
+      "description": {{ desc_raw | jsonify }},
+      "url": {{ page.url | absolute_url | jsonify }},
+      "inLanguage": {{ html_lang | jsonify }},
+      "image": {{ img | jsonify }},
+      {%- if page.keywords %}
+      "keywords": {{ page.keywords | jsonify }},
+      {%- endif %}
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@type": "Person", "name": {{ site.author | jsonify }}, "url": "https://github.com/iinow" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": {{ site.title | jsonify }}, "item": {{ home | absolute_url | jsonify }} },
+        { "@type": "ListItem", "position": 2, "name": {{ page.title | jsonify }}, "item": {{ page.url | absolute_url | jsonify }} }
+      ]
+    }
+    {%- if tool_faq %},
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for item in tool_faq %}
+        { "@type": "Question", "name": {{ item.q | jsonify }}, "acceptedAnswer": { "@type": "Answer", "text": {{ item.a | jsonify }} } }{% unless forloop.last %},{% endunless %}
+        {%- endfor %}
+      ]
+    }
+    {%- endif %}
+  ]
 }
 </script>
 {%- else %}
@@ -364,6 +416,8 @@
     <ul class="side-tools">
       <li><a href="{{ tsid_url }}"{% if page.url == tsid_url %} aria-current="page"{% endif %}>{{ t_tsid }}</a></li>
       <li><a href="{{ openapi_url }}"{% if page.url == openapi_url %} aria-current="page"{% endif %}>{{ t_openapi }}</a></li>
+      <li><a href="{{ base64_url }}"{% if page.url == base64_url %} aria-current="page"{% endif %}>{{ site.data.codec.base64[lang].nav }}</a></li>
+      <li><a href="{{ urlenc_url }}"{% if page.url == urlenc_url %} aria-current="page"{% endif %}>{{ site.data.codec.url[lang].nav }}</a></li>
     </ul>
     <h2>{{ t_post_count }}</h2>
     <ul class="side-posts">

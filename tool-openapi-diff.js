@@ -688,6 +688,7 @@
   }
 
   // ── 실행 ──
+  let onCompared = null // 비교가 끝나면 이력에 남긴다 (아래 「이력」)
   const run = () => {
     try {
       const before = parseSpec(beforeEl.value)
@@ -700,6 +701,7 @@
       const b = state.changes.filter((c) => c.severity === 'breaking').length
       const s = state.changes.length - b
       showMsg(state.changes.length ? L.done(b, s) : L.sameSpec, state.changes.length ? (b ? 'bad' : 'good') : 'good')
+      if (onCompared) onCompared(before, after, b, s)
     } catch (e) {
       state = { changes: [], endpoints: { added: 0, removed: 0 }, filter: 'all' }
       summaryEl.textContent = ''
@@ -717,6 +719,13 @@
     const tm = metaBefore.textContent
     metaBefore.textContent = metaAfter.textContent
     metaAfter.textContent = tm
+    const ub = $('url-before')
+    const ua = $('url-after')
+    if (ub && ua) {
+      const tu = ub.value
+      ub.value = ua.value
+      ua.value = tu
+    }
     if (beforeEl.value.trim() && afterEl.value.trim()) run()
   })
   $('btn-clear').addEventListener('click', () => {
@@ -724,6 +733,8 @@
     afterEl.value = ''
     metaBefore.textContent = ''
     metaAfter.textContent = ''
+    if ($('url-before')) $('url-before').value = ''
+    if ($('url-after')) $('url-after').value = ''
     state = { changes: [], endpoints: { added: 0, removed: 0 }, filter: 'all' }
     summaryEl.textContent = ''
     filtersEl.textContent = ''
@@ -893,8 +904,240 @@
     })
   })
 
+  // ── URL 로 가져오기 · 이력 문구 ──
+  const X = {
+    ko: {
+      urlPh: 'https://… 스펙 주소 (JSON 또는 YAML)',
+      fetchBtn: 'URL 가져오기',
+      fetching: '가져오는 중…',
+      badUrl: 'http:// 또는 https:// 로 시작하는 주소를 넣어 주세요.',
+      fetchFail: (m) => '가져오지 못했습니다 (' + m + '). 서버가 CORS 를 허용하지 않으면 브라우저에서 읽을 수 없습니다. 파일로 받아 넣어 주세요.',
+      history: '최근 비교 이력',
+      historyEmpty: '아직 이력이 없습니다. 스펙을 넣어 비교하면 자동으로 쌓입니다.',
+      historyClear: '이력 지우기',
+      historyNote: '이 브라우저(localStorage)에만 최근 10건까지 저장됩니다. 누르면 그 스펙으로 다시 비교합니다.',
+    },
+    en: {
+      urlPh: 'https://… spec URL (JSON or YAML)',
+      fetchBtn: 'Fetch URL',
+      fetching: 'Fetching…',
+      badUrl: 'Enter an address that starts with http:// or https://.',
+      fetchFail: (m) => 'Could not fetch it (' + m + '). If the server does not allow CORS, a browser cannot read it. Download the file and load it instead.',
+      history: 'Recent comparisons',
+      historyEmpty: 'No history yet. It fills up automatically when you compare specs.',
+      historyClear: 'Clear history',
+      historyNote: 'The last 10 comparisons are kept only in this browser (localStorage). Click one to compare it again.',
+    },
+    ja: {
+      urlPh: 'https://… スペックの URL (JSON または YAML)',
+      fetchBtn: 'URL から取得',
+      fetching: '取得中…',
+      badUrl: 'http:// または https:// で始まるアドレスを入れてください。',
+      fetchFail: (m) => '取得できませんでした (' + m + ')。サーバーが CORS を許可していない場合、ブラウザーからは読み込めません。ファイルとして保存してから入れてください。',
+      history: '最近の比較履歴',
+      historyEmpty: 'まだ履歴はありません。スペックを比較すると自動的に保存されます。',
+      historyClear: '履歴を消去',
+      historyNote: 'このブラウザー（localStorage）にだけ直近 10 件まで保存されます。クリックするとそのスペックでもう一度比較します。',
+    },
+    zh: {
+      urlPh: 'https://… 规范地址（JSON 或 YAML）',
+      fetchBtn: '从 URL 获取',
+      fetching: '获取中…',
+      badUrl: '请输入以 http:// 或 https:// 开头的地址。',
+      fetchFail: (m) => '获取失败（' + m + '）。如果服务器不允许 CORS，浏览器就无法读取。请下载成文件后再载入。',
+      history: '最近比较记录',
+      historyEmpty: '还没有记录。比较规范后会自动保存。',
+      historyClear: '清空记录',
+      historyNote: '最近 10 条记录只保存在此浏览器（localStorage）中。点击即可用该规范重新比较。',
+    },
+  }[LANG]
+
+  // ── URL 로 가져오기 ──
+  // GitHub 의 파일 보기 주소는 CORS 가 열려 있는 raw 주소로 바꿔 읽는다
+  const rawUrl = (href) => {
+    const m = /^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/(?:blob|raw)\/(.+)$/.exec(href)
+    return m ? 'https://raw.githubusercontent.com/' + m[1] + '/' + m[2] + '/' + m[3] : href
+  }
+
+  const wireUrl = (which, target) => {
+    const field = target.closest('.field')
+    if (!field) return
+    const row = document.createElement('div')
+    row.className = 'url-row'
+    const input = document.createElement('input')
+    input.type = 'text'
+    input.id = 'url-' + which
+    input.inputMode = 'url'
+    input.spellcheck = false
+    input.autocomplete = 'off'
+    input.placeholder = X.urlPh
+    input.setAttribute('aria-label', X.urlPh)
+    const btn = document.createElement('button')
+    btn.type = 'button'
+    btn.className = 'tbtn ghost'
+    btn.textContent = X.fetchBtn
+    row.append(input, btn)
+    field.insertBefore(row, target)
+
+    const load = async () => {
+      const href = input.value.trim()
+      if (!/^https?:\/\//i.test(href)) {
+        showMsg(X.badUrl, 'bad')
+        input.focus()
+        return
+      }
+      btn.disabled = true
+      btn.textContent = X.fetching
+      try {
+        const res = await fetch(rawUrl(href))
+        if (!res.ok) throw new Error('HTTP ' + res.status)
+        target.value = await res.text()
+        showMsg(L.loaded + ' ' + href, 'good')
+        if (beforeEl.value.trim() && afterEl.value.trim()) run()
+      } catch (e) {
+        showMsg(X.fetchFail(e.message || String(e)), 'bad')
+      } finally {
+        btn.disabled = false
+        btn.textContent = X.fetchBtn
+      }
+    }
+    btn.addEventListener('click', load)
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        load()
+      }
+    })
+  }
+  wireUrl('before', beforeEl)
+  wireUrl('after', afterEl)
+  const urlBefore = $('url-before')
+  const urlAfter = $('url-after')
+
+  // ── 이력 (localStorage, 최근 10건) ──
+  const HKEY = 'iinow:openapi-diff:history'
+  const HMAX = 10
+  const SAMPLE_BEFORE_TEXT = JSON.stringify(SAMPLE_BEFORE, null, 2)
+  const SAMPLE_AFTER_TEXT = JSON.stringify(SAMPLE_AFTER, null, 2)
+  const locale = document.documentElement.getAttribute('lang') || 'ko'
+
+  const loadHist = () => {
+    try {
+      const v = JSON.parse(localStorage.getItem(HKEY) || '[]')
+      return Array.isArray(v) ? v.filter((e) => e && typeof e.before === 'string' && typeof e.after === 'string') : []
+    } catch (e) {
+      return []
+    }
+  }
+  // 스펙이 커서 저장 공간을 넘으면 오래된 것부터 버리고 다시 넣는다
+  const storeHist = (list) => {
+    let keep = list.slice(0, HMAX)
+    while (keep.length) {
+      try {
+        localStorage.setItem(HKEY, JSON.stringify(keep))
+        return
+      } catch (e) {
+        keep = keep.slice(0, -1)
+      }
+    }
+    try {
+      localStorage.removeItem(HKEY)
+    } catch (e) {
+      /* 저장소를 못 쓰면 이력 없이 동작한다 */
+    }
+  }
+
+  const histCard = document.createElement('section')
+  histCard.className = 'tcard'
+  histCard.setAttribute('aria-labelledby', 'od-hist-title')
+  const histTitle = document.createElement('h2')
+  histTitle.id = 'od-hist-title'
+  histTitle.textContent = X.history
+  const histList = document.createElement('ul')
+  histList.className = 'hist-list'
+  const histEmpty = document.createElement('p')
+  histEmpty.className = 'out-sub'
+  histEmpty.textContent = X.historyEmpty
+  const histRow = document.createElement('div')
+  histRow.className = 'btnrow'
+  const histClear = document.createElement('button')
+  histClear.type = 'button'
+  histClear.className = 'tbtn ghost'
+  histClear.textContent = X.historyClear
+  const histNote = document.createElement('span')
+  histNote.className = 'out-sub'
+  histNote.textContent = X.historyNote
+  histRow.append(histClear, histNote)
+  histCard.append(histTitle, histList, histEmpty, histRow)
+  const inputCard = beforeEl.closest('.tcard')
+  if (inputCard) inputCard.after(histCard)
+
+  const renderHist = () => {
+    const list = loadHist()
+    histList.textContent = ''
+    for (const entry of list) {
+      const li = document.createElement('li')
+      const btn = document.createElement('button')
+      btn.type = 'button'
+      const main = document.createElement('span')
+      main.className = 'h-main'
+      main.textContent = (entry.labelBefore || 'Before') + ' → ' + (entry.labelAfter || 'After')
+      const sub = document.createElement('span')
+      sub.className = 'h-sub'
+      const parts = [L.done(entry.breaking || 0, entry.safe || 0)]
+      if (entry.at) parts.push(new Date(entry.at).toLocaleString(locale))
+      if (entry.urlBefore || entry.urlAfter) parts.push([entry.urlBefore, entry.urlAfter].filter(Boolean).join(' → '))
+      sub.textContent = parts.join(' · ')
+      btn.append(main, sub)
+      btn.addEventListener('click', () => {
+        beforeEl.value = entry.before
+        afterEl.value = entry.after
+        if (urlBefore) urlBefore.value = entry.urlBefore || ''
+        if (urlAfter) urlAfter.value = entry.urlAfter || ''
+        run()
+        beforeEl.scrollIntoView({ block: 'nearest' })
+      })
+      li.appendChild(btn)
+      histList.appendChild(li)
+    }
+    histEmpty.hidden = list.length > 0
+  }
+
+  histClear.addEventListener('click', () => {
+    try {
+      localStorage.removeItem(HKEY)
+    } catch (e) {
+      /* 무시 */
+    }
+    renderHist()
+  })
+
+  const labelOf = (spec) => ((spec.info && spec.info.title) || '(untitled)') + ' ' + ((spec.info && spec.info.version) || '?')
+
+  onCompared = (before, after, breaking, safe) => {
+    const beforeText = beforeEl.value
+    const afterText = afterEl.value
+    // 처음에 채워 두는 샘플끼리의 비교는 이력에 남기지 않는다
+    if (beforeText === SAMPLE_BEFORE_TEXT && afterText === SAMPLE_AFTER_TEXT) return
+    const list = loadHist().filter((e) => !(e.before === beforeText && e.after === afterText))
+    list.unshift({
+      before: beforeText,
+      after: afterText,
+      urlBefore: urlBefore ? urlBefore.value.trim() : '',
+      urlAfter: urlAfter ? urlAfter.value.trim() : '',
+      labelBefore: labelOf(before),
+      labelAfter: labelOf(after),
+      breaking,
+      safe,
+      at: Date.now(),
+    })
+    storeHist(list)
+    renderHist()
+  }
+  renderHist()
+
   // 처음에는 샘플로 채워 두고 한 번 비교해 둔다
-  beforeEl.value = JSON.stringify(SAMPLE_BEFORE, null, 2)
-  afterEl.value = JSON.stringify(SAMPLE_AFTER, null, 2)
+  beforeEl.value = SAMPLE_BEFORE_TEXT
+  afterEl.value = SAMPLE_AFTER_TEXT
   run()
 })()

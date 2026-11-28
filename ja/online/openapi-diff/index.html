@@ -3,7 +3,7 @@ layout: tool
 lang: ja
 ref: online-openapi-diff
 title: "OpenAPI 変更検出"
-summary: "OpenAPI 3.x のスペックを 2 つ入れると、契約を壊す変更(Breaking)と安全な変更を分けてエンドポイントごとに表示します。JSON・YAML・ファイルのアップロードに対応し、比較はブラウザ内だけで行います。"
+summary: "OpenAPI 3.x のスペックを 2 つ入れると、契約を壊す変更(Breaking)と安全な変更を分けてエンドポイントごとに表示します。JSON・YAML の貼り付け、ファイルのアップロード、URL からの取得に対応し、直近 10 件の比較は履歴に残ります。比較はブラウザ内だけで行います。"
 permalink: /ja/online/openapi-diff/
 category: ツール
 tools: true
@@ -61,6 +61,8 @@ image: /img/og/online-openapi-diff-ja.png
     <li>安全な変更: 新しいエンドポイント・任意パラメーター・任意フィールドの追加、レスポンスフィールドの追加、リクエスト enum 値の追加、任意に緩めたパラメーター、deprecated の付与。</li>
     <li><code>$ref</code> はドキュメント内で展開してから比較し、同じ名前のパラメーターは <code>in</code> と名前で対応付けます。メディアタイプは <code>application/json</code> を優先します。</li>
     <li>スペックはどこにも送信されません。ファイルもブラウザ内だけで読みます。</li>
+    <li>URL から取得するときは、ブラウザーがそのアドレスを直接読み込みます。サーバーが CORS を許可していない場合は読み込めないので、ファイルとして保存してから入れてください。GitHub のファイル URL は raw のアドレスに置き換えて読み込みます。</li>
+    <li>比較したスペックは、このブラウザーの localStorage に直近 10 件まで履歴として残り、「履歴を消去」で削除できます。</li>
   </ul>
 </p>
 

@@ -164,9 +164,16 @@ python3 scripts/make-og.py --out img/og/kafka-retry-zh.png --lang zh --title "Ka
 | 주소 | 하는 일 |
 |---|---|
 | `/online/tsid/` · `/en/…` · `/ja/…` · `/zh/…` | TSID 생성·대량 생성, 10진수/Base32 Crockford 변환, 시각·노드·카운터 분해 |
-| `/online/openapi-diff/` · `/en/…` · `/ja/…` · `/zh/…` | OpenAPI 3.x 스펙 두 개를 비교해 Breaking / 안전한 변경을 엔드포인트별로 |
+| `/online/openapi-diff/` · `/en/…` · `/ja/…` · `/zh/…` | OpenAPI 3.x 스펙 두 개를 비교해 Breaking / 안전한 변경을 엔드포인트별로. 붙여 넣기·파일·URL 가져오기, 최근 비교 10건 이력 |
+| `/online/base64/` · `/en/…` · `/ja/…` · `/zh/…` | Base64 인코딩·디코딩 (UTF-8, URL-safe). 입력하는 즉시 변환, 최근 10개 이력 |
+| `/online/url-encode/` · `/en/…` · `/ja/…` · `/zh/…` | URL(퍼센트) 인코딩·디코딩 (`encodeURIComponent` / `encodeURI`, 공백 `+`). 입력하는 즉시 변환, 최근 10개 이력 |
 
-두 페이지 모두 `layout: tool` 을 쓰고 frontmatter 에 `tools: true` 를 두면 `tool.css` 가 붙는다. 계산은 브라우저에서만 하고, 스펙은 어디로도 보내지 않는다.
+모든 도구는 `layout: tool` 을 쓰고 frontmatter 에 `tools: true` 를 두면 `tool.css` 가 붙는다. 계산은 브라우저에서만 하고, 입력은 어디로도 보내지 않는다.
+
+- **Base64 · URL 도구**는 화면이 같아서 `_layouts/codec.html` 하나를 쓴다. 페이지 파일에는 본문 없이 머리만 두고 `codec: base64` / `codec: url` 로 고른다. 화면 문구·설명·FAQ 는 `_data/codec.yml` 에 언어별로 있고, 계산은 `tool-codec.js` 가 한다.
+- **검색 노출용 머리 값** — `seo_title`(있으면 `<title>`·`og:title` 에 `title` 대신 쓰인다), `keywords`(`meta keywords`). `tools: true` 인 페이지에는 `_layouts/default.html` 이 JSON-LD `WebApplication` + `BreadcrumbList` 를 넣고, `codec` 페이지에는 `_data/codec.yml` 의 `faq` 로 `FAQPage` 까지 넣는다. FAQ 는 화면에도 같은 글로 보인다.
+- **이력** — `localStorage` 에 도구별로 최근 10개(`iinow:codec:base64:history`, `iinow:codec:url:history`, `iinow:openapi-diff:history`). Base64·URL 은 입력이 0.8초 멈추면 저장하고 이어서 친 값은 맨 위 항목을 갈아 끼운다. OpenAPI 는 비교가 성공할 때 스펙 두 개를 통째로 저장하고, 용량이 넘치면 오래된 것부터 버린다.
+- **OpenAPI URL 가져오기**는 브라우저가 직접 `fetch` 하므로 상대 서버가 CORS 를 허용해야 한다. `github.com/…/blob/…` 주소는 `raw.githubusercontent.com` 으로 바꿔 읽는다.
 
 ## 파일
 
@@ -183,7 +190,8 @@ python3 scripts/make-og.py --out img/og/kafka-retry-zh.png --lang zh --title "Ka
 | `scripts/new-post.sh` | 새 글 파일 + 카드 생성 |
 | `scripts/make-og.py` | 카드 그림 생성(`--lang ko/en/ja/zh`). 글꼴은 `scripts/fonts/` |
 | `search.json` | `Ctrl+K` 검색 색인 (글 + `search_include: true` 인 페이지) |
-| `tool.css`, `tool-tsid.js`, `tool-openapi-diff.js` | 온라인 도구 화면과 계산(문구는 `ko/en/ja/zh`) |
+| `tool.css`, `tool-tsid.js`, `tool-openapi-diff.js`, `tool-codec.js` | 온라인 도구 화면과 계산(문구는 `ko/en/ja/zh`) |
+| `_layouts/codec.html`, `_data/codec.yml` | Base64 · URL 인코딩/디코딩 공용 화면과 언어별 문구·FAQ |
 | `_config.yml` | 주소 규칙(`permalink: /posts/:slug/`), 기본 언어, 검색 등록 확인 코드, 플러그인 |
 | `manifest.webmanifest`, `sw.js`, `offline.html` | 홈 화면 앱(PWA)·오프라인 캐시, 오프라인 안내 페이지 |
 | `service-worker.js` | 옛 서비스 워커 정리용 껍데기(새 워커는 `sw.js`) |

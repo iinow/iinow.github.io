@@ -1,0 +1,95 @@
+---
+layout: tool
+---
+{%- comment -%}
+  Base64 · URL 인코딩/디코딩 도구 공용 화면. 페이지 머리(frontmatter)의 codec: base64 | url 로 고른다.
+  문구는 _data/codec.yml, 계산은 /tool-codec.js.
+{%- endcomment -%}
+{%- assign lang = page.lang | default: 'ko' -%}
+{%- assign ui = site.data.codec.ui[lang] -%}
+{%- assign t = site.data.codec[page.codec][lang] -%}
+{%- assign base = '' -%}
+{%- if lang != 'ko' -%}{%- assign base = '/' | append: lang -%}{%- endif -%}
+<div class="codec" id="codec"
+  data-codec="{{ page.codec }}"
+  data-copied="{{ ui.copied | escape }}"
+  data-chars="{{ ui.chars | escape }}"
+  data-bytes="{{ ui.bytes | escape }}"
+  data-sample="{{ t.sample | escape }}"
+  data-label-plain="{{ ui.plain | escape }}"
+  data-label-encoded="{{ t.encoded | escape }}"
+  data-err-encode="{{ t.err_encode | escape }}"
+  data-err-decode="{{ t.err_decode | escape }}"
+  data-warn-utf8="{{ t.warn_utf8 | escape }}">
+  <section class="tcard" aria-label="{{ page.title | escape }}">
+    <fieldset class="codec-opts">
+      <legend>{{ ui.options }}</legend>
+      {%- if page.codec == 'base64' %}
+      <label><input type="checkbox" id="codec-urlsafe"> {{ t.opt_urlsafe }}</label>
+      {%- else %}
+      <label><input type="radio" name="codec-mode" value="component" checked> {{ t.opt_component }}</label>
+      <label><input type="radio" name="codec-mode" value="uri"> {{ t.opt_uri }}</label>
+      <label><input type="checkbox" id="codec-plus"> {{ t.opt_plus }}</label>
+      {%- endif %}
+    </fieldset>
+    <div class="tool-split">
+      <div class="field">
+        <div class="out-row"><label for="codec-plain">{{ ui.plain }}</label><button class="copy-mini" type="button" data-copy="codec-plain">{{ ui.copy }}</button></div>
+        <textarea id="codec-plain" spellcheck="false" autocomplete="off" autocapitalize="off" autofocus placeholder="{{ t.plain_ph | escape }}"></textarea>
+        <p class="out-sub" id="codec-plain-stat">0 {{ ui.chars }} · 0 {{ ui.bytes }}</p>
+      </div>
+      <div class="field">
+        <div class="out-row"><label for="codec-encoded">{{ t.encoded }}</label><button class="copy-mini" type="button" data-copy="codec-encoded">{{ ui.copy }}</button></div>
+        <textarea id="codec-encoded" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="{{ t.encoded_ph | escape }}"></textarea>
+        <p class="out-sub" id="codec-encoded-stat">0 {{ ui.chars }} · 0 {{ ui.bytes }}</p>
+      </div>
+    </div>
+    <p class="tool-msg" id="codec-msg" role="status" aria-live="polite"></p>
+    <div class="btnrow">
+      <button class="tbtn ghost" id="codec-sample" type="button">{{ ui.sample }}</button>
+      <button class="tbtn ghost" id="codec-clear" type="button">{{ ui.clear }}</button>
+      <span class="out-sub">{{ ui.live }}</span>
+    </div>
+  </section>
+
+  <section class="tcard" aria-labelledby="codec-hist-title">
+    <h2 id="codec-hist-title">{{ ui.history }}</h2>
+    <ul class="hist-list" id="codec-hist"></ul>
+    <p class="out-sub" id="codec-hist-empty">{{ ui.history_empty }}</p>
+    <div class="btnrow">
+      <button class="tbtn ghost" id="codec-hist-clear" type="button">{{ ui.history_clear }}</button>
+      <span class="out-sub">{{ ui.history_note }}</span>
+    </div>
+  </section>
+
+  <section class="codec-text" aria-labelledby="codec-about-title">
+    <h2 id="codec-about-title">{{ t.about_title }}</h2>
+    {%- for para in t.about %}
+    <p>{{ para | escape }}</p>
+    {%- endfor %}
+  </section>
+
+  <section class="codec-text" aria-labelledby="codec-faq-title">
+    <h2 id="codec-faq-title">{{ ui.faq }}</h2>
+    {%- for item in t.faq %}
+    <h3>{{ item.q | escape }}</h3>
+    <p>{{ item.a | escape }}</p>
+    {%- endfor %}
+  </section>
+
+  <nav class="codec-text" aria-labelledby="codec-related-title">
+    <h2 id="codec-related-title">{{ ui.related }}</h2>
+    <ul class="codec-related">
+      {%- if page.codec != 'base64' %}
+      <li><a href="{{ base }}/online/base64/">{{ site.data.codec.base64[lang].nav }}</a></li>
+      {%- endif %}
+      {%- if page.codec != 'url' %}
+      <li><a href="{{ base }}/online/url-encode/">{{ site.data.codec.url[lang].nav }}</a></li>
+      {%- endif %}
+      <li><a href="{{ base }}/online/tsid/">{{ ui.tsid }}</a></li>
+      <li><a href="{{ base }}/online/openapi-diff/">{{ ui.openapi }}</a></li>
+    </ul>
+  </nav>
+</div>
+
+<script src="/tool-codec.js?v={{ site.time | date: '%s' }}" defer></script>

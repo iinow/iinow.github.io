@@ -3,7 +3,7 @@ layout: tool
 lang: ko
 ref: online-openapi-diff
 title: "OpenAPI 변경 감지"
-summary: "OpenAPI 3.x 스펙 두 개를 넣으면 계약이 깨지는 변경(Breaking)과 안전한 변경을 갈라서 엔드포인트별로 보여 줍니다. JSON·YAML·파일 업로드를 지원하고, 비교는 브라우저 안에서만 합니다."
+summary: "OpenAPI 3.x 스펙 두 개를 넣으면 계약이 깨지는 변경(Breaking)과 안전한 변경을 갈라서 엔드포인트별로 보여 줍니다. JSON·YAML 붙여 넣기, 파일 업로드, URL 로 가져오기를 지원하고 최근 비교 10건은 이력으로 남습니다, 비교는 브라우저 안에서만 합니다."
 permalink: /online/openapi-diff/
 category: 도구
 tools: true
@@ -61,6 +61,8 @@ image: /img/og.png
     <li>안전한 변경: 새 엔드포인트·선택 파라미터·선택 필드 추가, 응답 필드 추가, 요청 enum 값 추가, 선택으로 풀린 파라미터, deprecated 표시.</li>
     <li><code>$ref</code>는 문서 안에서 풀어서 비교하고, 같은 이름의 파라미터는 <code>in</code>과 이름으로 짝을 맞춥니다. 미디어 타입은 <code>application/json</code>을 먼저 봅니다.</li>
     <li>스펙은 어디로도 전송되지 않습니다. 파일도 브라우저에서만 읽습니다.</li>
+    <li>URL 로 가져올 때는 브라우저가 그 주소를 직접 읽습니다. 서버가 CORS 를 허용하지 않으면 읽을 수 없으니 그때는 파일로 받아 넣어 주세요. GitHub 파일 주소는 raw 주소로 바꿔서 읽습니다.</li>
+    <li>비교한 스펙은 이 브라우저의 localStorage 에 최근 10건까지 이력으로 남고, 이력 지우기로 없앨 수 있습니다.</li>
   </ul>
 </p>
 

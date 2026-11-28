@@ -3,7 +3,7 @@ layout: tool
 lang: en
 ref: online-openapi-diff
 title: "OpenAPI Diff"
-summary: "Paste two OpenAPI 3.x specs and see which changes break the contract and which are safe, grouped by endpoint. JSON, YAML and file upload are supported, and the comparison never leaves your browser."
+summary: "Paste two OpenAPI 3.x specs and see which changes break the contract and which are safe, grouped by endpoint. Paste JSON or YAML, upload a file or fetch a spec by URL. The last 10 comparisons are kept as history, and the comparison never leaves your browser."
 permalink: /en/online/openapi-diff/
 category: Tools
 tools: true
@@ -61,6 +61,8 @@ image: /img/og.png
     <li>Safe: new endpoint, optional parameter or field added, response field added, enum value added to a request, parameter relaxed to optional, deprecated flag.</li>
     <li><code>$ref</code> is resolved inside the document, and parameters are paired by <code>in</code> and name. For content, <code>application/json</code> is preferred.</li>
     <li>Nothing is sent anywhere. Files are read in the browser only.</li>
+    <li>Fetching by URL is done by your browser directly. If the server does not allow CORS it cannot be read, so download the file and load it instead. GitHub file links are rewritten to their raw address.</li>
+    <li>The last 10 comparisons are kept as history in this browser's localStorage, and Clear history removes them.</li>
   </ul>
 </p>
 
