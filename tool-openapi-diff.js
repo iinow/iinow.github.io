@@ -825,12 +825,25 @@
     },
   }
 
+  // 예시 스펙의 요약 문구는 화면 언어를 따른다
+  const SAMPLE_TEXT = {
+    ko: { list: '주문 목록', create: '주문 생성', one: '주문 하나', cancel: '주문 취소', legacy: '옛 주문 목록', refund: '환불 요청' },
+    en: { list: 'Order list', create: 'Create an order', one: 'One order', cancel: 'Cancel an order', legacy: 'Legacy order list', refund: 'Request a refund' },
+    ja: { list: '注文一覧', create: '注文の作成', one: '注文 1 件', cancel: '注文のキャンセル', legacy: '旧注文一覧', refund: '返金リクエスト' },
+    zh: { list: '订单列表', create: '创建订单', one: '单个订单', cancel: '取消订单', legacy: '旧订单列表', refund: '申请退款' },
+  }[LANG]
+  SAMPLE_BEFORE.paths['/orders'].get.summary = SAMPLE_TEXT.list
+  SAMPLE_BEFORE.paths['/orders'].post.summary = SAMPLE_TEXT.create
+  SAMPLE_BEFORE.paths['/orders/{id}'].get.summary = SAMPLE_TEXT.one
+  SAMPLE_BEFORE.paths['/orders/{id}'].delete.summary = SAMPLE_TEXT.cancel
+  SAMPLE_BEFORE.paths['/legacy/orders'].get.summary = SAMPLE_TEXT.legacy
+
   const SAMPLE_AFTER = JSON.parse(JSON.stringify(SAMPLE_BEFORE))
 
   // 새 엔드포인트
   SAMPLE_AFTER.paths['/orders/{id}/refund'] = {
     post: {
-      summary: '환불 요청',
+      summary: SAMPLE_TEXT.refund,
       requestBody: {
         required: true,
         content: {
