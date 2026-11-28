@@ -6,19 +6,39 @@ if ('serviceWorker' in navigator) {
   })
 }
 
+// ── 언어: <html lang> 하나로 문구를 고른다 (ko / en / ja / zh-CN) ──
+const LANG = (() => {
+  const l = (document.documentElement.getAttribute('lang') || 'ko').toLowerCase()
+  if (l.startsWith('zh')) return 'zh'
+  if (l.startsWith('ja')) return 'ja'
+  if (l.startsWith('en')) return 'en'
+  return 'ko'
+})()
+const EN = LANG === 'en'
+
 // ── lite-oc 글: 따로 띄우던 서비스가 상자 하나로 들어간다 ──
-const EN = (document.documentElement.getAttribute('lang') || '').toLowerCase().startsWith('en')
-const SERVICES = EN
-  ? [
-      'PostgreSQL', 'Mosquitto MQTT', 'S3 storage', 'SQS queue', 'nginx proxy', 'edge nginx',
-      'Tailscale', 'Back office', 'Tablet screen', 'Session expiry job', 'CCTV relay',
-      'Jaeger', 'Prometheus', 'Grafana', 'Loki', 'Alloy', 'Dozzle',
-    ]
-  : [
-      'PostgreSQL', 'Mosquitto MQTT', 'S3 저장소', 'SQS 큐', 'nginx 프록시', 'edge nginx',
-      'Tailscale', '백오피스', '태블릿 화면', '세션 만료 작업', 'CCTV 중계',
-      'Jaeger', 'Prometheus', 'Grafana', 'Loki', 'Alloy', 'Dozzle',
-    ]
+const SERVICES = {
+  ko: [
+    'PostgreSQL', 'Mosquitto MQTT', 'S3 저장소', 'SQS 큐', 'nginx 프록시', 'edge nginx',
+    'Tailscale', '백오피스', '태블릿 화면', '세션 만료 작업', 'CCTV 중계',
+    'Jaeger', 'Prometheus', 'Grafana', 'Loki', 'Alloy', 'Dozzle',
+  ],
+  en: [
+    'PostgreSQL', 'Mosquitto MQTT', 'S3 storage', 'SQS queue', 'nginx proxy', 'edge nginx',
+    'Tailscale', 'Back office', 'Tablet screen', 'Session expiry job', 'CCTV relay',
+    'Jaeger', 'Prometheus', 'Grafana', 'Loki', 'Alloy', 'Dozzle',
+  ],
+  ja: [
+    'PostgreSQL', 'Mosquitto MQTT', 'S3 ストレージ', 'SQS キュー', 'nginx プロキシ', 'edge nginx',
+    'Tailscale', 'バックオフィス', 'タブレット画面', 'セッション期限切れジョブ', 'CCTV 中継',
+    'Jaeger', 'Prometheus', 'Grafana', 'Loki', 'Alloy', 'Dozzle',
+  ],
+  zh: [
+    'PostgreSQL', 'Mosquitto MQTT', 'S3 存储', 'SQS 队列', 'nginx 代理', 'edge nginx',
+    'Tailscale', '后台管理', '平板界面', '会话过期任务', 'CCTV 中继',
+    'Jaeger', 'Prometheus', 'Grafana', 'Loki', 'Alloy', 'Dozzle',
+  ],
+}[LANG]
 const cloud = document.getElementById('cloud')
 if (cloud) {
   const box = document.getElementById('box')
@@ -27,7 +47,8 @@ if (cloud) {
   const unitEl = box.querySelector('.count .unit')
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
   const TOTAL = SERVICES.length + 1 // + Go 서버 자신
-  const unit = (n) => (EN ? (n === 1 ? 'service' : 'services') : '개')
+  const BOOK_UNIT = { ko: '개', ja: '個', zh: '个' }
+  const unit = (n) => (EN ? (n === 1 ? 'service' : 'services') : BOOK_UNIT[LANG])
 
   const chips = SERVICES.map((name) => {
     const el = document.createElement('span')
@@ -40,7 +61,7 @@ if (cloud) {
   function finish() {
     chips.forEach((c) => c.classList.add('gone'))
     countEl.textContent = '1'
-    if (EN && unitEl) unitEl.textContent = unit(1)
+    if (unitEl) unitEl.textContent = unit(1)
     box.classList.add('done')
     replay.disabled = false
   }
@@ -48,7 +69,7 @@ if (cloud) {
   function reset() {
     chips.forEach((c) => c.classList.remove('gone'))
     countEl.textContent = String(TOTAL)
-    if (EN && unitEl) unitEl.textContent = unit(TOTAL)
+    if (unitEl) unitEl.textContent = unit(TOTAL)
     box.classList.remove('done')
   }
 
@@ -81,7 +102,7 @@ if (cloud) {
           fly.remove()
           left -= 1
           countEl.textContent = String(left)
-          if (EN && unitEl) unitEl.textContent = unit(left)
+          if (unitEl) unitEl.textContent = unit(left)
           box.classList.remove('hit')
           void box.offsetWidth
           box.classList.add('hit')
@@ -122,7 +143,8 @@ document.querySelectorAll('.shots').forEach((shots) => {
     img.classList.add('swap')
     next.onload = () => {
       img.src = tab.dataset.img
-      img.alt = tab.textContent + (EN ? ' screen' : ' 화면')
+      const SCREEN = { ko: ' 화면', ja: ' 画面', zh: ' 界面' }
+      img.alt = tab.textContent + (EN ? ' screen' : SCREEN[LANG])
       if (cap) cap.textContent = tab.dataset.cap || ''
       img.classList.remove('swap')
     }
@@ -147,7 +169,9 @@ const viewerImg = document.getElementById('viewer-img')
 document.querySelectorAll('.prose img').forEach((img) => {
   img.tabIndex = 0
   img.setAttribute('role', 'button')
-  img.setAttribute('aria-label', (img.alt || (EN ? 'Image' : '그림')) + (EN ? ', view larger' : ' 크게 보기'))
+  const IMG_WORD = { ko: '그림', ja: '画像', zh: '图片' }
+  const IMG_MORE = { ko: ' 크게 보기', ja: ' 拡大表示', zh: ' 放大查看' }
+  img.setAttribute('aria-label', (img.alt || (EN ? 'Image' : IMG_WORD[LANG])) + (EN ? ', view larger' : IMG_MORE[LANG]))
   const open = () => {
     viewerImg.src = img.src
     viewerImg.alt = img.alt
@@ -563,9 +587,12 @@ if (!storedTheme() && systemDark.addEventListener) {
 
 // ── 코드 블록 복사 버튼 ──
 // Mermaid 로 바뀐 블록은 그림이라 건너뛴다.
-const COPY_TEXT = EN
-  ? { copy: 'Copy', done: 'Copied ✓', fail: 'Copy failed' }
-  : { copy: '복사', done: '복사됨 ✓', fail: '복사 실패' }
+const COPY_TEXT = {
+  ko: { copy: '복사', done: '복사됨 ✓', fail: '복사 실패' },
+  en: { copy: 'Copy', done: 'Copied ✓', fail: 'Copy failed' },
+  ja: { copy: 'コピー', done: 'コピーしました ✓', fail: 'コピーできませんでした' },
+  zh: { copy: '复制', done: '已复制 ✓', fail: '复制失败' },
+}[LANG]
 const copyText = async (text) => {
   try {
     await navigator.clipboard.writeText(text)
@@ -656,25 +683,45 @@ if (searchDialog) {
   const openBtn = document.getElementById('search-open')
   const closeBtn = document.getElementById('search-close')
   const shortcut = document.getElementById('search-shortcut')
-  const SEARCH_TEXT = EN
-    ? {
-        recent: 'Recent posts',
-        hint: 'Type to search',
-        count: (n) => n + (n === 1 ? ' result' : ' results'),
-        none: (q) => 'No results for “' + q + '”',
-        broken: 'Search index could not be loaded.',
-        post: 'Post',
-        page: 'Tool',
-      }
-    : {
-        recent: '최근 글',
-        hint: '검색어를 입력하세요',
-        count: (n) => n + '개 결과',
-        none: (q) => '“' + q + '” 결과가 없습니다',
-        broken: '검색 색인을 불러오지 못했습니다.',
-        post: '글',
-        page: '도구',
-      }
+  const SEARCH_TEXT = {
+    ko: {
+      recent: '최근 글',
+      hint: '검색어를 입력하세요',
+      count: (n) => n + '개 결과',
+      none: (q) => '“' + q + '” 결과가 없습니다',
+      broken: '검색 색인을 불러오지 못했습니다.',
+      post: '글',
+      page: '도구',
+    },
+    en: {
+      recent: 'Recent posts',
+      hint: 'Type to search',
+      count: (n) => n + (n === 1 ? ' result' : ' results'),
+      none: (q) => 'No results for “' + q + '”',
+      broken: 'Search index could not be loaded.',
+      post: 'Post',
+      page: 'Tool',
+    },
+    ja: {
+      recent: '最新の記事',
+      hint: '検索語を入力してください',
+      count: (n) => n + ' 件',
+      none: (q) => '「' + q + '」の結果はありません',
+      broken: '検索インデックスを読み込めませんでした。',
+      post: '記事',
+      page: 'ツール',
+    },
+    zh: {
+      recent: '最近文章',
+      hint: '请输入搜索词',
+      count: (n) => n + ' 条结果',
+      none: (q) => '没有找到“' + q + '”的结果',
+      broken: '搜索索引加载失败。',
+      post: '文章',
+      page: '工具',
+    },
+  }[LANG]
+  const LANG_LABEL = { ko: 'KO', en: 'EN', ja: 'JA', zh: 'ZH' }
   let index = null
   let loading = null
   let results = []
@@ -816,7 +863,7 @@ if (searchDialog) {
         doc.kind === 'page' ? SEARCH_TEXT.page : SEARCH_TEXT.post,
         doc.date,
         doc.category,
-        doc.lang === 'en' ? 'EN' : 'KO',
+        LANG_LABEL[doc.lang === 'en' || doc.lang === 'ja' || doc.lang === 'zh' ? doc.lang : 'ko'],
       ]
         .filter(Boolean)
         .join(' · ')
@@ -840,14 +887,16 @@ if (searchDialog) {
       statusEl.textContent = SEARCH_TEXT.broken
       return
     }
+    // 지금 보고 있는 언어의 글·도구만 보여 준다
+    const scoped = index.filter((doc) => (doc.lang || 'ko') === LANG)
     if (!tokens.length) {
-      results = index
+      results = scoped
         .slice()
         .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
         .slice(0, 6)
       statusEl.textContent = SEARCH_TEXT.recent
     } else {
-      results = index
+      results = scoped
         .map((doc) => ({ doc, score: scoreOf(doc, tokens) }))
         .filter((x) => x.score > 0)
         .sort((a, b) => b.score - a.score || String(b.doc.date || '').localeCompare(String(a.doc.date || '')))

@@ -3,7 +3,7 @@
 // - 정적 파일(CSS/JS/이미지): 저장해 둔 사본을 먼저 주고 뒤에서 최신으로 바꾼다(SWR)
 // - 다른 도메인(GA4, giscus, 폰트 CDN)과 GET 이 아닌 요청은 가로채지 않는다.
 // 캐시 이름을 바꾸면 새 캐시로 갈아타고 옛 캐시는 activate 에서 지운다.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const PRECACHE_CACHE = `iinow-precache-${VERSION}`;
 const RUNTIME_CACHE = `iinow-runtime-${VERSION}`;
 const KEEP = [PRECACHE_CACHE, RUNTIME_CACHE];
@@ -12,6 +12,8 @@ const OFFLINE_URL = '/offline.html';
 const PRECACHE_URLS = [
   '/',
   '/en/',
+  '/ja/',
+  '/zh/',
   OFFLINE_URL,
   '/style.css',
   '/main.js',

@@ -1,0 +1,119 @@
+---
+layout: tool
+lang: zh
+ref: online-tsid
+title: "TSID 生成器"
+summary: "生成 64 位 TSID，并把它还原成十进制、Base32 Crockford、时间、节点和计数器。可以一次生成多个，也可以粘贴别处生成的 TSID。所有计算都在浏览器里完成。"
+permalink: /zh/online/tsid/
+category: 工具
+tools: true
+search_include: true
+image: /img/og/online-tsid-zh.png
+---
+
+<div class="tool-grid">
+  <section class="tcard" aria-labelledby="tsid-gen-title">
+    <h2 id="tsid-gen-title"><span class="num">1</span>生成一个 TSID</h2>
+    <div class="field-row">
+      <div class="field">
+        <label for="tsid-node-bits">节点位</label>
+        <select id="tsid-node-bits">
+          <option value="0">0 位 · 无节点</option>
+          <option value="4">4 位 · 16 个节点</option>
+          <option value="8">8 位 · 256 个节点</option>
+          <option value="10" selected>10 位 · 1024 个节点（默认）</option>
+          <option value="12">12 位 · 4096 个节点</option>
+          <option value="16">16 位 · 65536 个节点</option>
+          <option value="20">20 位 · 1048576 个节点</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tsid-node">节点 ID</label>
+        <input id="tsid-node" type="number" min="0" step="1" value="1" inputmode="numeric">
+      </div>
+    </div>
+    <p class="tool-msg" id="tsid-gen-msg"></p>
+    <div class="btnrow">
+      <button class="tbtn primary" id="btn-generate" type="button">生成 TSID</button>
+      <span class="out-sub" id="tsid-node-hint">0 – 1023</span>
+    </div>
+
+    <div class="out big" data-result="gen">
+      <div class="out-row"><span class="out-label">UInt64 · 十进制</span><button class="copy-mini" type="button" data-copy-field="uint">复制</button></div>
+      <div class="out-value xl mono" data-field="uint">-</div>
+      <div class="out-row"><span class="out-label">Int64 · 有符号十进制</span><button class="copy-mini" type="button" data-copy-field="int">复制</button></div>
+      <div class="out-value mono" data-field="int">-</div>
+      <div class="out-row"><span class="out-label">Base32 Crockford</span><button class="copy-mini" type="button" data-copy-field="base32">复制</button></div>
+      <div class="out-value mono" data-field="base32">-</div>
+      <p class="out-sub" data-field="iso">-</p>
+    </div>
+
+    <div class="bits" aria-hidden="true">
+      <span class="b-time" data-bit="time">时间 42</span>
+      <span class="b-node" data-bit="node">节点 10</span>
+      <span class="b-counter" data-bit="counter">计数器 12</span>
+    </div>
+    <p class="bits-legend"><span><i class="i-time"></i>2020-01-01 UTC 起经过的毫秒</span><span><i class="i-node"></i>节点 ID</span><span><i class="i-counter"></i>同一毫秒内的序号</span></p>
+  </section>
+
+  <section class="tcard" aria-labelledby="tsid-dec-title">
+    <h2 id="tsid-dec-title"><span class="num">2</span>解析 · 转换</h2>
+    <div class="field">
+      <label for="decode-input">TSID（十进制或 Base32）</label>
+      <input id="decode-input" type="text" spellcheck="false" autocomplete="off" placeholder="例: 732489223423423423 或 0JMVQ049NFN6K">
+    </div>
+    <div class="btnrow">
+      <button class="tbtn" id="btn-decode" type="button">解码</button>
+      <button class="tbtn ghost" id="btn-decode-gen" type="button">填入刚生成的值</button>
+    </div>
+    <p class="tool-msg" id="decode-msg"></p>
+
+    <div class="out big" data-result="dec">
+      <div class="out-row"><span class="out-label">时间 (ISO 8601)</span></div>
+      <div class="out-value mono" data-field="iso">-</div>
+      <div class="out-row"><span class="out-label">UInt64 · 十进制</span><button class="copy-mini" type="button" data-copy-field="uint">复制</button></div>
+      <div class="out-value mono" data-field="uint">-</div>
+      <div class="out-row"><span class="out-label">Base32 Crockford</span><button class="copy-mini" type="button" data-copy-field="base32">复制</button></div>
+      <div class="out-value mono" data-field="base32">-</div>
+      <div class="out-row"><span class="out-label">节点 / 计数器</span></div>
+      <div class="out-value mono" data-field="parts">-</div>
+      <p class="out-sub" data-field="ts">-</p>
+    </div>
+  </section>
+</div>
+
+<section class="tcard" aria-labelledby="tsid-bulk-title">
+  <h2 id="tsid-bulk-title"><span class="num">3</span>批量生成</h2>
+  <div class="field-row">
+    <div class="field">
+      <label for="bulk-count">数量（最多 1000）</label>
+      <input id="bulk-count" type="number" min="1" max="1000" step="1" value="20" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="bulk-format">显示格式</label>
+      <select id="bulk-format">
+        <option value="base32" selected>Base32 Crockford</option>
+        <option value="uint">UInt64 十进制</option>
+        <option value="int">Int64 十进制</option>
+      </select>
+    </div>
+  </div>
+  <div class="btnrow">
+    <button class="tbtn primary" id="btn-bulk" type="button">批量生成</button>
+    <button class="tbtn ghost" id="btn-bulk-copy" type="button">复制整个列表</button>
+    <span class="out-sub" id="bulk-count-label">-</span>
+  </div>
+  <div class="bulk-list" id="bulk-list"></div>
+</section>
+
+<p class="tool-note">
+  <b>结构</b> — TSID 是一个 64 位整数。高 42 位是 2020-01-01T00:00:00Z 起经过的毫秒数，剩下的 22 位分成节点和计数器。节点用 10 位时计数器有 12 位，同一毫秒内可以按顺序生成 4096 个。这个页面把节点占用的位数从计数器里扣掉，计数器溢出时就进入下一毫秒。
+  <ul>
+    <li>Base32 Crockford 用 13 个字符表示这 64 位。<code>I</code>、<code>L</code> 读作 <code>1</code>，<code>O</code> 读作 <code>0</code>，不区分大小写。</li>
+    <li>解码时按上面选择的节点位拆分节点和计数器。用其他设置生成的 TSID，需要把节点位调成一致，节点和计数器才准确。</li>
+    <li>Int64 是把同样的位当作有符号整数读出的值。最高位为 1 时会显示成负数。</li>
+    <li>输入不会离开这个浏览器，刷新页面后刚生成的值也会消失。</li>
+  </ul>
+</p>
+
+<script src="/tool-tsid.js" defer></script>

@@ -5,33 +5,39 @@ https://iinow.github.io/ 블로그. GitHub Pages 가 Jekyll 로 알아서 빌드
 ## 새 글 쓰기
 
 ```bash
-scripts/new-post.sh kafka-retry "카프카 재시도 정리"        # 한국어 글
-scripts/new-post.sh kafka-retry "Kafka retries" en          # 영어 글
+scripts/new-post.sh kafka-retry "카프카 재시도 정리"          # 한국어 글
+scripts/new-post.sh kafka-retry "Kafka retries" en            # 영어 글
+scripts/new-post.sh kafka-retry "Kafka のリトライ" ja         # 일본어 글
+scripts/new-post.sh kafka-retry "Kafka 重试" zh               # 중국어(간체) 글
 # 글 쓰고
 git add -A && git commit -m "글: 카프카 재시도" && git push
 ```
 
 - 주소는 `/posts/kafka-retry/`. 첫 화면 **글** 목록에 최신순으로 자동으로 들어간다.
-- 파일 이름은 `_posts/YYYY-MM-DD-영문-주소.md` (영어 글은 `-en.md`). 날짜가 미래면 그날까지 안 보인다.
+- 파일 이름은 `_posts/YYYY-MM-DD-영문-주소.md` (다른 언어는 `-en.md` / `-ja.md` / `-zh.md`). 날짜가 미래면 그날까지 안 보인다.
 - 아직 안 올릴 글은 `_drafts/` 에 둔다 (공개 안 됨).
 - 스크립트가 글 파일과 함께 그 글의 미리보기 카드(`img/og/…png`)를 만들고 `image`·`image_alt`·`ref`·`lang`(영어면 `permalink` 도) 을 채워 둔다. 아래 두 절 참고.
 
-## 다국어 (KO / EN)
+## 다국어 (KO / EN / JA / ZH)
 
-같은 글을 한국어·영어 두 편으로 쓰고 `ref` 로 묶으면 상단 `KO | EN` 전환과 `hreflang` 이 자동으로 서로를 가리킨다.
+같은 글을 언어별로 따로 쓰고 `ref` 로 묶으면 상단 `KO | EN | JA | ZH` 전환과 `hreflang` 이 자동으로 서로를 가리킨다. 짝이 없는 언어는 그 언어의 홈(`/`, `/en/`, `/ja/`, `/zh/`)으로 간다.
 
-| | 한국어 | 영어 |
-|---|---|---|
-| 파일 | `_posts/YYYY-MM-DD-<주소>.md` | `_posts/YYYY-MM-DD-<주소>-en.md` |
-| `lang` | `ko` (생략해도 됨) | `en` |
-| `ref` | `<주소>` | 같은 `<주소>` |
-| `permalink` | 생략 (기본 `/posts/<주소>/`) | **`/en/posts/<주소>/`** |
-| `category` | `개발` / `여행` | `Dev` / `Travel` |
+| | 한국어 | 영어 | 일본어 | 중국어(간체) |
+|---|---|---|---|---|
+| 파일 | `_posts/YYYY-MM-DD-<주소>.md` | `…-en.md` | `…-ja.md` | `…-zh.md` |
+| `lang` | `ko` (생략해도 됨) | `en` | `ja` | `zh` |
+| `ref` | `<주소>` | 같은 `<주소>` | 같은 `<주소>` | 같은 `<주소>` |
+| `permalink` | 생략 (기본 `/posts/<주소>/`) | **`/en/posts/<주소>/`** | **`/ja/posts/<주소>/`** | **`/zh/posts/<주소>/`** |
+| `category` | `개발` / `여행` | `Dev` / `Travel` | `開発` / `旅行` | `开发` / `旅行` |
+| 홈 | `/` | `/en/` | `/ja/` | `/zh/` |
+| 주요 코스·태그 날짜 형식 | `2026년 11월 26일` | `Nov 26, 2026` | `2026年11月26日` | `2026年11月26日` |
 
-- 영어 글에 `permalink` 를 빠뜨리면 `/posts/<주소>-en/` 으로 올라간다. 꼭 적는다 (`new-post.sh` 가 넣어 준다).
-- `ref` 가 같으면 `_layouts/default.html` 이 짝을 찾아 `hreflang="ko"`·`hreflang="en"`·`x-default`(한국어) 를 넣고, 머리의 `KO | EN` 링크도 그 글로 간다. 짝이 없으면 각각 `/`, `/en/` 홈으로 간다.
-- 홈 목록은 `lang` 으로 갈린다. `/` 는 `lang` 이 `en` 이 아닌 글, `/en/` 은 `lang: en` 인 글만 보여 준다.
-- `category` 는 홈의 `전체 / 개발 / 여행`(`All / Dev / Travel`) 필터와 `article:section` 에 쓰인다. 한국어 글에 `Dev` 를 적으면 필터에 안 걸리니 언어별로 값을 맞춘다.
+- 한국어가 아닌 글에 `permalink` 를 빠뜨리면 `/posts/<주소>-<lang>/` 으로 올라간다. 꼭 적는다 (`new-post.sh` 가 넣어 준다).
+- `ref` 가 같으면 `_layouts/default.html` 이 짝을 찾아 `hreflang="ko"·"en"·"ja"·"zh"` 와 `x-default`(한국어, 없으면 있는 것 중 첫 번째), `og:locale`(+alternate) 을 넣고, 머리의 언어 링크도 그 글로 간다.
+- `<html lang>` 은 `ko` / `en` / `ja` / `zh-CN` 이다. giscus 댓글 언어도 같은 값(`ko`/`en`/`ja`/`zh-CN`)을 쓴다.
+- 홈 목록과 왼쪽 글 목록, `Ctrl+K` 검색은 지금 보고 있는 언어의 글만 보여 준다 (`search.json` 은 모든 언어를 담고 `main.js` 가 `lang` 으로 거른다). `category` 는 언어별 값을 맞춰야 홈의 분류 필터에 걸린다.
+- 글 안에서 다른 글을 가리킬 때는 그 언어의 주소를 쓴다 — `[lite-oc](/ja/posts/lite-oc/)`, `[lite-oc](/zh/posts/lite-oc/)`.
+- 그림·머메이드 도형에 글자가 박혀 있으면 언어별로 따로 만들어야 한다. sqlc 글처럼 영어판 도형을 그대로 쓰고 설명(alt·figcaption)만 번역한 경우도 있다.
 
 영어 글 머리 예:
 
@@ -102,9 +108,13 @@ flowchart LR
 ```bash
 python3 scripts/make-og.py --out img/og/kafka-retry.png --title "카프카 재시도 정리" --kicker "개발 · 2026.11.27"
 python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retries" --kicker "Dev · 2026.11.27" --lang en
+python3 scripts/make-og.py --out img/og/kafka-retry-ja.png --lang ja --title "Kafka のリトライ" --kicker "開発 · 2026.11.27"
+python3 scripts/make-og.py --out img/og/kafka-retry-zh.png --lang zh --title "Kafka 重试" --kicker "开发 · 2026.11.27"
 ```
 
-- 1200×630 PNG. 제목이 그림 안에 그려지므로 메신저가 어떻게 잘라도 제목이 보인다. 글꼴은 `scripts/fonts/` (Bagel Fat One·Pretendard, OFL).
+- 1200×630 PNG. 제목이 그림 안에 그려지므로 메신저가 어떻게 잘라도 제목이 보인다. 글꼴은 `scripts/fonts/` (Bagel Fat One·Pretendard, OFL — 한국어·영어).
+- 일본어·중국어는 `NotoSansJP-Bold-subset.ttf`·`NotoSansSC-Bold-subset.ttf`(OFL) 를 쓴다. 사이트에 실린 일본어·중국어 글과 화면 문구에 나온 글자만 담은 부분집합이라 각 300~400KB 다. 제목에 없는 글자가 나오면 스크립트가 글리프를 확인해 시스템 Noto Sans CJK 로 넘어가고, 그것도 없으면 경고를 찍는다(두부 방지). 부분집합을 넓히려면 fontTools 로 다시 만든다: `pyftsubset "NotoSansJP[wght].ttf" --text-file=<글자 모음> --output-file=scripts/fonts/NotoSansJP-Bold-subset.ttf`.
+- 일본어·중국어는 띄어쓰기가 없어서 제목을 단어(가타카나·라틴 문자 연속) 단위로 끊고, `・`·`、` 같은 금칙 글자가 줄 첫머리로 나가지 않게 한다. 마지막 줄이나 중간 줄에 한두 글자만 남으면 한 단계 작은 크기로 다시 잡는다.
 - 긴 제목은 알아서 줄을 나누고 글자를 줄인다. `--lang en` 이면 카드 아래 브랜드 문구가 영어가 된다.
 - `scripts/new-post.sh` 로 글을 만들면 카드까지 같이 만들어진다 (Pillow 필요: `pip install pillow`). 카드 문구는 나중에 직접 고쳐도 된다.
 
@@ -123,7 +133,7 @@ python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retrie
 | 기능 | 어떻게 동작하나 |
 |---|---|
 | 코드 복사 | `main.js` 가 `.prose pre` 마다 우측 상단에 `복사` 버튼을 붙인다. 머메이드 그림은 제외. 누르면 `복사됨 ✓` 로 잠깐 바뀐다 |
-| 라이트/다크 | 머리 `KO | EN` 옆 해/달 버튼. 고른 값은 `localStorage('theme')` 에 남고, 안 고르면 OS 설정을 따른다. `<head>` 인라인 스크립트가 `data-theme` 을 먼저 세팅해 깜빡임이 없다 |
+| 라이트/다크 | 머리 `KO | EN | JA | ZH` 옆 해/달 버튼. 고른 값은 `localStorage('theme')` 에 남고, 안 고르면 OS 설정을 따른다. `<head>` 인라인 스크립트가 `data-theme` 을 먼저 세팅해 깜빡임이 없다 |
 | 글 검색 | `/search.json` 색인을 `Ctrl+K`·`Cmd+K` 또는 머리 검색 버튼으로 연다. 제목·요약·본문 앞부분을 실시간으로 거르고 화살표·Enter·Esc 로 움직인다 |
 | 읽기 진행률 | 글 화면 머리 아래 3px 노란 선. 스크롤에 따라 0→100% |
 | 댓글 | `_config.yml` 의 `giscus` 블록이 `enabled: true` 일 때 글 하단에 giscus 위젯. 테마 전환을 `postMessage` 로 따라간다 |
@@ -153,8 +163,8 @@ python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retrie
 
 | 주소 | 하는 일 |
 |---|---|
-| `/online/tsid/` · `/en/online/tsid/` | TSID 생성·대량 생성, 10진수/Base32 Crockford 변환, 시각·노드·카운터 분해 |
-| `/online/openapi-diff/` · `/en/online/openapi-diff/` | OpenAPI 3.x 스펙 두 개를 비교해 Breaking / 안전한 변경을 엔드포인트별로 |
+| `/online/tsid/` · `/en/…` · `/ja/…` · `/zh/…` | TSID 생성·대량 생성, 10진수/Base32 Crockford 변환, 시각·노드·카운터 분해 |
+| `/online/openapi-diff/` · `/en/…` · `/ja/…` · `/zh/…` | OpenAPI 3.x 스펙 두 개를 비교해 Breaking / 안전한 변경을 엔드포인트별로 |
 
 두 페이지 모두 `layout: tool` 을 쓰고 frontmatter 에 `tools: true` 를 두면 `tool.css` 가 붙는다. 계산은 브라우저에서만 하고, 스펙은 어디로도 보내지 않는다.
 
@@ -162,18 +172,18 @@ python3 scripts/make-og.py --out img/og/kafka-retry-en.png --title "Kafka retrie
 
 | 파일 | 하는 일 |
 |---|---|
-| `_posts/` | 글 (`YYYY-MM-DD-<주소>.md`, 영어는 `-en.md`) |
+| `_posts/` | 글 (`YYYY-MM-DD-<주소>.md`, 다른 언어는 `-en.md`·`-ja.md`·`-zh.md`) |
 | `index.html` | 첫 화면 (히어로, 글 목록, 분류 필터, 공개 저장소) |
-| `en/index.html` | 영어 첫 화면 (`All / Dev / Travel`) |
+| `en/index.html` · `ja/index.html` · `zh/index.html` | 영어·일본어·중국어 첫 화면 (`All / Dev / Travel`, `すべて / 開発 / 旅行`, `全部 / 开发 / 旅行`) |
 | `_layouts/default.html` | 공통 머리·메뉴·바닥. `og:*`·`twitter:*`·`hreflang`·JSON-LD 생성 |
 | `_layouts/post.html` | 글 화면 틀 (분류 링크, 이전·다음 글) |
-| `style.css`, `main.js` | 모양, 애니메이션·탭·크게 보기, 머메이드 그림 |
+| `style.css`, `main.js` | 모양, 애니메이션·탭·크게 보기, 머메이드 그림, 언어별 문구 |
 | `img/og/` | 페이지별 링크 미리보기 카드(1200×630). `img/og.png` 는 사이트 기본 카드 |
 | `img/<주소>/` | 글에 넣는 사진·그림 |
 | `scripts/new-post.sh` | 새 글 파일 + 카드 생성 |
-| `scripts/make-og.py` | 카드 그림 생성. 글꼴은 `scripts/fonts/` |
+| `scripts/make-og.py` | 카드 그림 생성(`--lang ko/en/ja/zh`). 글꼴은 `scripts/fonts/` |
 | `search.json` | `Ctrl+K` 검색 색인 (글 + `search_include: true` 인 페이지) |
-| `tool.css`, `tool-tsid.js`, `tool-openapi-diff.js` | 온라인 도구 화면과 계산 |
+| `tool.css`, `tool-tsid.js`, `tool-openapi-diff.js` | 온라인 도구 화면과 계산(문구는 `ko/en/ja/zh`) |
 | `_config.yml` | 주소 규칙(`permalink: /posts/:slug/`), 기본 언어, 검색 등록 확인 코드, 플러그인 |
 | `manifest.webmanifest`, `sw.js`, `offline.html` | 홈 화면 앱(PWA)·오프라인 캐시, 오프라인 안내 페이지 |
 | `service-worker.js` | 옛 서비스 워커 정리용 껍데기(새 워커는 `sw.js`) |

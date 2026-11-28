@@ -1,0 +1,68 @@
+---
+layout: tool
+lang: ja
+ref: online-openapi-diff
+title: "OpenAPI 変更検出"
+summary: "OpenAPI 3.x のスペックを 2 つ入れると、契約を壊す変更(Breaking)と安全な変更を分けてエンドポイントごとに表示します。JSON・YAML・ファイルのアップロードに対応し、比較はブラウザ内だけで行います。"
+permalink: /ja/online/openapi-diff/
+category: ツール
+tools: true
+search_include: true
+image: /img/og/online-openapi-diff-ja.png
+---
+
+<section class="tcard" aria-labelledby="od-input-title">
+  <h2 id="od-input-title"><span class="num">1</span>スペックを 2 つ入れる</h2>
+  <div class="tool-split">
+    <div class="field">
+      <label for="spec-before">Before · 以前のスペック</label>
+      <textarea id="spec-before" spellcheck="false" placeholder="openapi: 3.0.3 … (JSON または YAML)"></textarea>
+      <div class="btnrow">
+        <button class="tbtn ghost" type="button" data-sample="before">サンプルを読み込む</button>
+        <label class="tbtn ghost">ファイル<input type="file" id="file-before" accept=".json,.yaml,.yml,application/json,application/yaml" hidden></label>
+        <span class="out-sub" id="meta-before"></span>
+      </div>
+    </div>
+    <div class="field">
+      <label for="spec-after">After · 変更後のスペック</label>
+      <textarea id="spec-after" spellcheck="false" placeholder="openapi: 3.0.3 … (JSON または YAML)"></textarea>
+      <div class="btnrow">
+        <button class="tbtn ghost" type="button" data-sample="after">サンプルを読み込む</button>
+        <label class="tbtn ghost">ファイル<input type="file" id="file-after" accept=".json,.yaml,.yml,application/json,application/yaml" hidden></label>
+        <span class="out-sub" id="meta-after"></span>
+      </div>
+    </div>
+  </div>
+  <div class="btnrow">
+    <button class="tbtn primary" id="btn-diff" type="button">比較する</button>
+    <button class="tbtn ghost" id="btn-swap" type="button">左右を入れ替え</button>
+    <button class="tbtn ghost" id="btn-clear" type="button">クリア</button>
+  </div>
+  <p class="tool-msg" id="diff-msg"></p>
+</section>
+
+<section class="tcard" aria-labelledby="od-sum-title">
+  <h2 id="od-sum-title"><span class="num">2</span>まとめ</h2>
+  <div class="diff-summary" id="diff-summary"></div>
+  <div class="filters" id="diff-filters" role="group" aria-label="変更の種類で絞り込む"></div>
+</section>
+
+<section class="tcard" aria-labelledby="od-list-title">
+  <h2 id="od-list-title"><span class="num">3</span>エンドポイントごとの変更</h2>
+  <div class="diff-groups" id="diff-groups">
+    <p class="diff-empty">スペックを入れて <b>比較する</b> を押すと、ここに結果が出ます。</p>
+  </div>
+</section>
+
+<p class="tool-note">
+  <b>判定基準</b> — クライアントを直さないと壊れる変更を Breaking とみなします。
+  <ul>
+    <li>Breaking: エンドポイント・レスポンスコードの削除、必須パラメーターの追加、パラメーターが任意から必須への変更、リクエスト・レスポンススキーマの型変更、リクエストボディへの必須フィールド追加、レスポンスフィールドの削除、リクエスト enum 値の削除、レスポンス enum 値の追加。</li>
+    <li>安全な変更: 新しいエンドポイント・任意パラメーター・任意フィールドの追加、レスポンスフィールドの追加、リクエスト enum 値の追加、任意に緩めたパラメーター、deprecated の付与。</li>
+    <li><code>$ref</code> はドキュメント内で展開してから比較し、同じ名前のパラメーターは <code>in</code> と名前で対応付けます。メディアタイプは <code>application/json</code> を優先します。</li>
+    <li>スペックはどこにも送信されません。ファイルもブラウザ内だけで読みます。</li>
+  </ul>
+</p>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
+<script src="/tool-openapi-diff.js" defer></script>

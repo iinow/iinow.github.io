@@ -1,0 +1,57 @@
+---
+layout: default
+lang: zh
+ref: home
+permalink: /zh/
+title: 做出来，走出去，记下来
+tagline: Joonha 的开发与日常记录
+summary: 从开发记录到旅行和日常小事，这里是 Joonha 记下想记住的事情的博客。
+image: /img/og/home-zh.png
+image_alt: iinow — 做出来，走出去，记下来
+---
+{%- assign posts_zh = site.posts | where: 'lang', 'zh' -%}
+<section class="hero">
+  <div class="hero-text">
+    <h1>做出来，走出去，记下来</h1>
+    <p class="lead">我是后端开发者 Joonha。从开发时留下的记录，到旅行和日常里的小事，我把想记住的东西写在这里。</p>
+    <p class="hero-links">
+      <a class="btn" href="#posts">阅读文章</a>
+      <a class="plain" href="https://github.com/iinow">查看 GitHub</a>
+    </p>
+  </div>
+</section>
+
+<section class="list" id="posts">
+  <h2>文章</h2>
+  <div class="filter" role="group" aria-label="按分类筛选文章" data-all="全部">
+    <button type="button" data-cat="全部" class="on" aria-pressed="true">全部</button>
+    <button type="button" data-cat="开发" aria-pressed="false">开发</button>
+    <button type="button" data-cat="旅行" aria-pressed="false">旅行</button>
+  </div>
+  <ul>
+    {%- for post in posts_zh %}
+    <li data-cat="{{ post.category }}">
+      <a href="{{ post.url }}">
+        <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+        <span class="lt">{{ post.title | escape }}{% if post.category %}<span class="cat" data-cat="{{ post.category }}">{{ post.category }}</span>{% endif %}</span>
+        {%- if post.summary %}
+        <span class="ls">{{ post.summary | strip_html | truncate: 110 }}</span>
+        {%- endif %}
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+
+<section class="repos" id="repos">
+  <h2>公开仓库</h2>
+  <ul>
+    <li><a href="https://github.com/iinow/ex-langgraph"><span class="rn">ex-langgraph</span><span class="rl">Go</span><span class="ry">2026</span></a></li>
+    <li><a href="https://github.com/iinow/typescript-batch-csv"><span class="rn">typescript-batch-csv</span><span class="rl">TypeScript</span><span class="ry">2026</span></a></li>
+    <li><a href="https://github.com/iinow/spring-elastic-apm"><span class="rn">spring-elastic-apm</span><span class="rl">Java</span><span class="ry">2025</span></a></li>
+    <li><a href="https://github.com/iinow/kafka"><span class="rn">kafka</span><span class="rl">Kotlin</span><span class="ry">2025</span></a></li>
+    <li><a href="https://github.com/iinow/spring-security-oauth-study"><span class="rn">spring-security-oauth-study</span><span class="rl">Java</span><span class="ry">2023</span></a></li>
+    <li><a href="https://github.com/iinow/oidc-demo"><span class="rn">oidc-demo</span><span class="rl">Java</span><span class="ry">2023</span></a></li>
+  </ul>
+  <p><a class="plain" href="https://github.com/iinow?tab=repositories">查看全部仓库</a></p>
+</section>

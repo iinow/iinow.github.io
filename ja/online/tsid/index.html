@@ -1,0 +1,119 @@
+---
+layout: tool
+lang: ja
+ref: online-tsid
+title: "TSID 生成ツール"
+summary: "64 ビットの TSID を作り、10 進数・Base32 Crockford・時刻・ノード・カウンターに戻して確認できます。まとめて生成したり、ほかで作った TSID を貼り付けたりもできます。計算はすべてブラウザ内で完結します。"
+permalink: /ja/online/tsid/
+category: ツール
+tools: true
+search_include: true
+image: /img/og/online-tsid-ja.png
+---
+
+<div class="tool-grid">
+  <section class="tcard" aria-labelledby="tsid-gen-title">
+    <h2 id="tsid-gen-title"><span class="num">1</span>TSID を 1 つ作る</h2>
+    <div class="field-row">
+      <div class="field">
+        <label for="tsid-node-bits">ノードビット</label>
+        <select id="tsid-node-bits">
+          <option value="0">0 ビット · ノードなし</option>
+          <option value="4">4 ビット · ノード 16 個</option>
+          <option value="8">8 ビット · ノード 256 個</option>
+          <option value="10" selected>10 ビット · ノード 1024 個 (既定)</option>
+          <option value="12">12 ビット · ノード 4096 個</option>
+          <option value="16">16 ビット · ノード 65536 個</option>
+          <option value="20">20 ビット · ノード 1048576 個</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tsid-node">ノード ID</label>
+        <input id="tsid-node" type="number" min="0" step="1" value="1" inputmode="numeric">
+      </div>
+    </div>
+    <p class="tool-msg" id="tsid-gen-msg"></p>
+    <div class="btnrow">
+      <button class="tbtn primary" id="btn-generate" type="button">TSID を生成</button>
+      <span class="out-sub" id="tsid-node-hint">0 – 1023</span>
+    </div>
+
+    <div class="out big" data-result="gen">
+      <div class="out-row"><span class="out-label">UInt64 · 10 進数</span><button class="copy-mini" type="button" data-copy-field="uint">コピー</button></div>
+      <div class="out-value xl mono" data-field="uint">-</div>
+      <div class="out-row"><span class="out-label">Int64 · 符号付き 10 進数</span><button class="copy-mini" type="button" data-copy-field="int">コピー</button></div>
+      <div class="out-value mono" data-field="int">-</div>
+      <div class="out-row"><span class="out-label">Base32 Crockford</span><button class="copy-mini" type="button" data-copy-field="base32">コピー</button></div>
+      <div class="out-value mono" data-field="base32">-</div>
+      <p class="out-sub" data-field="iso">-</p>
+    </div>
+
+    <div class="bits" aria-hidden="true">
+      <span class="b-time" data-bit="time">時刻 42</span>
+      <span class="b-node" data-bit="node">ノード 10</span>
+      <span class="b-counter" data-bit="counter">カウンター 12</span>
+    </div>
+    <p class="bits-legend"><span><i class="i-time"></i>2020-01-01 UTC からの経過 ms</span><span><i class="i-node"></i>ノード ID</span><span><i class="i-counter"></i>同じ ms 内の順番</span></p>
+  </section>
+
+  <section class="tcard" aria-labelledby="tsid-dec-title">
+    <h2 id="tsid-dec-title"><span class="num">2</span>読み解く · 変換</h2>
+    <div class="field">
+      <label for="decode-input">TSID (10 進数または Base32)</label>
+      <input id="decode-input" type="text" spellcheck="false" autocomplete="off" placeholder="例: 732489223423423423 または 0JMVQ049NFN6K">
+    </div>
+    <div class="btnrow">
+      <button class="tbtn" id="btn-decode" type="button">デコード</button>
+      <button class="tbtn ghost" id="btn-decode-gen" type="button">直前の値を使う</button>
+    </div>
+    <p class="tool-msg" id="decode-msg"></p>
+
+    <div class="out big" data-result="dec">
+      <div class="out-row"><span class="out-label">時刻 (ISO 8601)</span></div>
+      <div class="out-value mono" data-field="iso">-</div>
+      <div class="out-row"><span class="out-label">UInt64 · 10 進数</span><button class="copy-mini" type="button" data-copy-field="uint">コピー</button></div>
+      <div class="out-value mono" data-field="uint">-</div>
+      <div class="out-row"><span class="out-label">Base32 Crockford</span><button class="copy-mini" type="button" data-copy-field="base32">コピー</button></div>
+      <div class="out-value mono" data-field="base32">-</div>
+      <div class="out-row"><span class="out-label">ノード / カウンター</span></div>
+      <div class="out-value mono" data-field="parts">-</div>
+      <p class="out-sub" data-field="ts">-</p>
+    </div>
+  </section>
+</div>
+
+<section class="tcard" aria-labelledby="tsid-bulk-title">
+  <h2 id="tsid-bulk-title"><span class="num">3</span>まとめて生成</h2>
+  <div class="field-row">
+    <div class="field">
+      <label for="bulk-count">個数 (最大 1000)</label>
+      <input id="bulk-count" type="number" min="1" max="1000" step="1" value="20" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="bulk-format">表示形式</label>
+      <select id="bulk-format">
+        <option value="base32" selected>Base32 Crockford</option>
+        <option value="uint">UInt64 10 進数</option>
+        <option value="int">Int64 10 進数</option>
+      </select>
+    </div>
+  </div>
+  <div class="btnrow">
+    <button class="tbtn primary" id="btn-bulk" type="button">まとめて生成</button>
+    <button class="tbtn ghost" id="btn-bulk-copy" type="button">リスト全体をコピー</button>
+    <span class="out-sub" id="bulk-count-label">-</span>
+  </div>
+  <div class="bulk-list" id="bulk-list"></div>
+</section>
+
+<p class="tool-note">
+  <b>構造</b> — TSID は 64 ビットの整数 1 つです。上の 42 ビットは 2020-01-01T00:00:00Z から経過したミリ秒で、残りの 22 ビットをノードとカウンターに分けます。ノードに 10 ビットを使うとカウンターは 12 ビットになり、同じミリ秒に 4096 個まで順番に作れます。このページはノードに割り当てた分だけカウンターを減らし、カウンターがあふれたら次のミリ秒に進みます。
+  <ul>
+    <li>Base32 Crockford は 64 ビットを 13 文字で表す表記です。<code>I</code>・<code>L</code> は <code>1</code>、<code>O</code> は <code>0</code> として読み、大文字小文字は区別しません。</li>
+    <li>デコードは上で選んだノードビットを基準にノードとカウンターを分けます。別の設定で作った TSID は、ノードビットを合わせないとノード・カウンターが正しく出ません。</li>
+    <li>Int64 は同じビットを符号付き整数として読んだ値です。最上位ビットが 1 なら負の数に見えます。</li>
+    <li>入力がこのブラウザの外に出ることはありません。再読み込みすると直前に作った値も消えます。</li>
+  </ul>
+</p>
+
+<script src="/tool-tsid.js" defer></script>

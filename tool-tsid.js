@@ -1,32 +1,67 @@
-// TSID 생성기 (/online/tsid/, /en/online/tsid/)
+// TSID 생성기 (/online/tsid/, /en/online/tsid/, /ja/online/tsid/, /zh/online/tsid/)
 // 64비트 = 42비트 시각(2020-01-01 UTC부터 ms) + 22비트(노드 + 카운터)
 ;(function () {
   'use strict'
 
-  const EN = (document.documentElement.getAttribute('lang') || '').toLowerCase().startsWith('en')
-  const T = EN
-    ? {
-        copy: 'Copy',
-        copied: 'Copied ✓',
-        badNumber: 'Enter a whole number.',
-        nodeRange: (n) => 'Node ID must be between 0 and ' + n + '.',
-        badTsid: 'Not a TSID. Enter a decimal integer or 13 Base32 characters.',
-        tooBig: 'That value does not fit in 64 bits.',
-        negativeOk: 'Read as a signed Int64; converted to UInt64 first.',
-        generated: 'Generated.',
-        count: (n) => n + ' generated',
-      }
-    : {
-        copy: '복사',
-        copied: '복사됨 ✓',
-        badNumber: '정수만 넣을 수 있습니다.',
-        nodeRange: (n) => '노드 ID는 0 – ' + n + ' 사이여야 합니다.',
-        badTsid: 'TSID가 아닙니다. 10진수 정수나 Base32 13글자를 넣어 주세요.',
-        tooBig: '64비트에 담기지 않는 값입니다.',
-        negativeOk: 'Int64 음수로 읽어 UInt64로 되돌렸습니다.',
-        generated: '생성했습니다.',
-        count: (n) => n + '개 생성',
-      }
+  const LANG = (() => {
+    const l = (document.documentElement.getAttribute('lang') || 'ko').toLowerCase()
+    if (l.startsWith('zh')) return 'zh'
+    if (l.startsWith('ja')) return 'ja'
+    if (l.startsWith('en')) return 'en'
+    return 'ko'
+  })()
+  const T = {
+    ko: {
+      copy: '복사',
+      copied: '복사됨 ✓',
+      badNumber: '정수만 넣을 수 있습니다.',
+      nodeRange: (n) => '노드 ID는 0 – ' + n + ' 사이여야 합니다.',
+      badTsid: 'TSID가 아닙니다. 10진수 정수나 Base32 13글자를 넣어 주세요.',
+      tooBig: '64비트에 담기지 않는 값입니다.',
+      negativeOk: 'Int64 음수로 읽어 UInt64로 되돌렸습니다.',
+      generated: '생성했습니다.',
+      count: (n) => n + '개 생성',
+    },
+    en: {
+      copy: 'Copy',
+      copied: 'Copied ✓',
+      badNumber: 'Enter a whole number.',
+      nodeRange: (n) => 'Node ID must be between 0 and ' + n + '.',
+      badTsid: 'Not a TSID. Enter a decimal integer or 13 Base32 characters.',
+      tooBig: 'That value does not fit in 64 bits.',
+      negativeOk: 'Read as a signed Int64; converted to UInt64 first.',
+      generated: 'Generated.',
+      count: (n) => n + ' generated',
+    },
+    ja: {
+      copy: 'コピー',
+      copied: 'コピーしました ✓',
+      badNumber: '整数を入力してください。',
+      nodeRange: (n) => 'ノード ID は 0 – ' + n + ' の間で入力してください。',
+      badTsid: 'TSID ではありません。10 進数の整数か Base32 の 13 文字を入れてください。',
+      tooBig: '64 ビットに収まらない値です。',
+      negativeOk: 'Int64 の負数として読み、UInt64 に戻しました。',
+      generated: '生成しました。',
+      count: (n) => n + ' 件生成',
+    },
+    zh: {
+      copy: '复制',
+      copied: '已复制 ✓',
+      badNumber: '请输入整数。',
+      nodeRange: (n) => '节点 ID 必须在 0 – ' + n + ' 之间。',
+      badTsid: '不是 TSID。请输入十进制整数或 13 位 Base32。',
+      tooBig: '该值超出 64 位范围。',
+      negativeOk: '按 Int64 负数读取，已转回 UInt64。',
+      generated: '已生成。',
+      count: (n) => n + ' 个已生成',
+    },
+  }[LANG]
+  const W = {
+    ko: { node: '노드', counter: '카운터', time: '시각 42', tsidTime: 'TSID 시각 ms ' },
+    en: { node: 'node', counter: 'counter', time: 'time 42', tsidTime: 'TSID time ms ' },
+    ja: { node: 'ノード', counter: 'カウンター', time: '時刻 42', tsidTime: 'TSID 時刻 ms ' },
+    zh: { node: '节点', counter: '计数器', time: '时间 42', tsidTime: 'TSID 时间 ms ' },
+  }[LANG]
 
   const EPOCH = 1577836800000 // 2020-01-01T00:00:00.000Z
   const TOTAL_RANDOM_BITS = 22
@@ -118,10 +153,10 @@
     put('base32', toBase32(data.id))
     put('iso', data.iso)
     if (root.querySelector('[data-field="parts"]')) {
-      put('parts', (EN ? 'node ' : '노드 ') + data.node.toString() + ' / ' + (EN ? 'counter ' : '카운터 ') + data.count.toString())
+      put('parts', W.node + ' ' + data.node.toString() + ' / ' + W.counter + ' ' + data.count.toString())
     }
     if (root.querySelector('[data-field="ts"]')) {
-      put('ts', (EN ? 'TSID time ms ' : 'TSID 시각 ms ') + data.ts.toString() + ' · Unix ms ' + data.unix)
+      put('ts', W.tsidTime + data.ts.toString() + ' · Unix ms ' + data.unix)
     }
   }
 
@@ -175,12 +210,12 @@
     const node = bar.querySelector('[data-bit="node"]')
     const count = bar.querySelector('[data-bit="counter"]')
     time.style.flex = '42 0 0'
-    time.textContent = (EN ? 'time 42' : '시각 42')
+    time.textContent = W.time
     node.style.flex = nb + ' 0 0'
-    node.textContent = (EN ? 'node ' : '노드 ') + nb
+    node.textContent = W.node + ' ' + nb
     node.hidden = nb === 0
     count.style.flex = cb + ' 0 0'
-    count.textContent = (EN ? 'counter ' : '카운터 ') + cb
+    count.textContent = W.counter + ' ' + cb
   }
 
   const syncNodeField = () => {

@@ -1,0 +1,68 @@
+---
+layout: tool
+lang: zh
+ref: online-openapi-diff
+title: "OpenAPI 变更检测"
+summary: "放入两份 OpenAPI 3.x 规范，就能按端点列出会破坏契约的变更（Breaking）和安全的变更。支持 JSON、YAML 和文件上传，比较只在浏览器里进行。"
+permalink: /zh/online/openapi-diff/
+category: 工具
+tools: true
+search_include: true
+image: /img/og/online-openapi-diff-zh.png
+---
+
+<section class="tcard" aria-labelledby="od-input-title">
+  <h2 id="od-input-title"><span class="num">1</span>放入两份规范</h2>
+  <div class="tool-split">
+    <div class="field">
+      <label for="spec-before">Before · 旧规范</label>
+      <textarea id="spec-before" spellcheck="false" placeholder="openapi: 3.0.3 … (JSON 或 YAML)"></textarea>
+      <div class="btnrow">
+        <button class="tbtn ghost" type="button" data-sample="before">载入示例</button>
+        <label class="tbtn ghost">文件<input type="file" id="file-before" accept=".json,.yaml,.yml,application/json,application/yaml" hidden></label>
+        <span class="out-sub" id="meta-before"></span>
+      </div>
+    </div>
+    <div class="field">
+      <label for="spec-after">After · 新规范</label>
+      <textarea id="spec-after" spellcheck="false" placeholder="openapi: 3.0.3 … (JSON 或 YAML)"></textarea>
+      <div class="btnrow">
+        <button class="tbtn ghost" type="button" data-sample="after">载入示例</button>
+        <label class="tbtn ghost">文件<input type="file" id="file-after" accept=".json,.yaml,.yml,application/json,application/yaml" hidden></label>
+        <span class="out-sub" id="meta-after"></span>
+      </div>
+    </div>
+  </div>
+  <div class="btnrow">
+    <button class="tbtn primary" id="btn-diff" type="button">比较</button>
+    <button class="tbtn ghost" id="btn-swap" type="button">左右互换</button>
+    <button class="tbtn ghost" id="btn-clear" type="button">清空</button>
+  </div>
+  <p class="tool-msg" id="diff-msg"></p>
+</section>
+
+<section class="tcard" aria-labelledby="od-sum-title">
+  <h2 id="od-sum-title"><span class="num">2</span>汇总</h2>
+  <div class="diff-summary" id="diff-summary"></div>
+  <div class="filters" id="diff-filters" role="group" aria-label="按变更类型筛选"></div>
+</section>
+
+<section class="tcard" aria-labelledby="od-list-title">
+  <h2 id="od-list-title"><span class="num">3</span>按端点查看变更</h2>
+  <div class="diff-groups" id="diff-groups">
+    <p class="diff-empty">放入规范并点击 <b>比较</b>，结果会显示在这里。</p>
+  </div>
+</section>
+
+<p class="tool-note">
+  <b>判定标准</b> — 客户端不修改就会失效的变更视为 Breaking。
+  <ul>
+    <li>Breaking: 删除端点或响应码、新增必填参数、参数从可选变为必填、请求/响应结构的类型变更、请求体新增必填字段、删除响应字段、删除请求 enum 值、新增响应 enum 值。</li>
+    <li>安全变更: 新增端点、可选参数、可选字段，新增响应字段，新增请求 enum 值，参数放宽为可选，标记 deprecated。</li>
+    <li><code>$ref</code> 在文档内展开后比较，同名参数按 <code>in</code> 和名称配对。媒体类型优先看 <code>application/json</code>。</li>
+    <li>规范不会发送到任何地方，文件也只在浏览器中读取。</li>
+  </ul>
+</p>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
+<script src="/tool-openapi-diff.js" defer></script>

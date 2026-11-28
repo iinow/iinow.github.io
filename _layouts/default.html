@@ -1,26 +1,177 @@
 <!DOCTYPE html>
 {%- assign lang = page.lang | default: site.lang | default: 'ko' -%}
-{%- assign is_en = false -%}
-{%- if lang == 'en' -%}{%- assign is_en = true -%}{%- endif -%}
+{%- assign html_lang = lang -%}
+{%- if lang == 'zh' -%}{%- assign html_lang = 'zh-CN' -%}{%- endif -%}
 {%- assign home = '/' -%}
-{%- if is_en -%}{%- assign home = '/en/' -%}{%- endif -%}
-{%- if is_en -%}
-  {%- assign side_posts = site.posts | where: 'lang', 'en' -%}
+{%- if lang == 'en' -%}{%- assign home = '/en/' -%}{%- endif -%}
+{%- if lang == 'ja' -%}{%- assign home = '/ja/' -%}{%- endif -%}
+{%- if lang == 'zh' -%}{%- assign home = '/zh/' -%}{%- endif -%}
+{%- assign tools_base = '' -%}
+{%- if lang == 'en' -%}{%- assign tools_base = '/en' -%}{%- endif -%}
+{%- if lang == 'ja' -%}{%- assign tools_base = '/ja' -%}{%- endif -%}
+{%- if lang == 'zh' -%}{%- assign tools_base = '/zh' -%}{%- endif -%}
+{%- assign tsid_url = tools_base | append: '/online/tsid/' -%}
+{%- assign openapi_url = tools_base | append: '/online/openapi-diff/' -%}
+{%- if lang == 'ko' -%}
+  {%- assign side_posts = site.posts | where_exp: 'p', "p.lang != 'en' and p.lang != 'ja' and p.lang != 'zh'" -%}
 {%- else -%}
-  {%- assign side_posts = site.posts | where_exp: 'p', "p.lang != 'en'" -%}
+  {%- assign side_posts = site.posts | where: 'lang', lang -%}
 {%- endif -%}
+
+{%- case lang -%}
+{%- when 'en' -%}
+  {%- assign t_skip = 'Skip to content' -%}
+  {%- assign t_menu_close = 'Collapse menu' -%}
+  {%- assign t_menu_open = 'Expand menu' -%}
+  {%- assign t_home_label = 'iinow, home' -%}
+  {%- assign t_search = 'Search' -%}
+  {%- assign t_search_posts = 'Search posts' -%}
+  {%- assign t_theme_dark = 'Switch to dark mode' -%}
+  {%- assign t_theme_light = 'Switch to light mode' -%}
+  {%- assign t_language = 'Language' -%}
+  {%- assign t_menu = 'Menu' -%}
+  {%- assign t_site_menu = 'Site menu' -%}
+  {%- assign t_home = 'Home' -%}
+  {%- assign t_posts = 'Posts' -%}
+  {%- assign t_repos = 'Repositories' -%}
+  {%- assign t_contact = 'Contact' -%}
+  {%- assign t_tools = 'Online tools' -%}
+  {%- assign t_tsid = 'TSID Generator' -%}
+  {%- assign t_openapi = 'OpenAPI Diff' -%}
+  {%- assign t_rss = 'Subscribe via RSS' -%}
+  {%- assign t_close = 'Close' -%}
+  {%- assign t_view_larger = 'View larger' -%}
+  {%- assign t_search_ph = 'Search posts and tools' -%}
+  {%- assign t_search_input = 'Search posts' -%}
+  {%- assign t_search_close = 'Close search' -%}
+  {%- assign t_search_status = 'Type to search' -%}
+  {%- assign t_search_results = 'Search results' -%}
+  {%- assign t_move = 'move' -%}
+  {%- assign t_open = 'open' -%}
+  {%- assign t_esc = 'close' -%}
+  {%- assign t_post_count = side_posts.size | append: ' post' -%}
+  {%- if side_posts.size != 1 -%}{%- assign t_post_count = t_post_count | append: 's' -%}{%- endif -%}
+{%- when 'ja' -%}
+  {%- assign t_skip = '本文へスキップ' -%}
+  {%- assign t_menu_close = 'メニューを閉じる' -%}
+  {%- assign t_menu_open = 'メニューを開く' -%}
+  {%- assign t_home_label = 'iinow ホームへ' -%}
+  {%- assign t_search = '検索' -%}
+  {%- assign t_search_posts = '記事を検索' -%}
+  {%- assign t_theme_dark = 'ダークモードに切り替え' -%}
+  {%- assign t_theme_light = 'ライトモードに切り替え' -%}
+  {%- assign t_language = '言語' -%}
+  {%- assign t_menu = 'メニュー' -%}
+  {%- assign t_site_menu = 'サイトメニュー' -%}
+  {%- assign t_home = 'ホーム' -%}
+  {%- assign t_posts = '記事一覧' -%}
+  {%- assign t_repos = '公開リポジトリ' -%}
+  {%- assign t_contact = '連絡先' -%}
+  {%- assign t_tools = 'オンラインツール' -%}
+  {%- assign t_tsid = 'TSID 生成ツール' -%}
+  {%- assign t_openapi = 'OpenAPI 変更検出' -%}
+  {%- assign t_rss = 'RSS 購読' -%}
+  {%- assign t_close = '閉じる' -%}
+  {%- assign t_view_larger = '拡大表示' -%}
+  {%- assign t_search_ph = '記事とツールを検索' -%}
+  {%- assign t_search_input = '検索キーワード' -%}
+  {%- assign t_search_close = '検索を閉じる' -%}
+  {%- assign t_search_status = '検索語を入力してください' -%}
+  {%- assign t_search_results = '検索結果' -%}
+  {%- assign t_move = '移動' -%}
+  {%- assign t_open = '開く' -%}
+  {%- assign t_esc = '閉じる' -%}
+  {%- assign t_post_count = '記事 ' | append: side_posts.size | append: ' 件' -%}
+{%- when 'zh' -%}
+  {%- assign t_skip = '跳到正文' -%}
+  {%- assign t_menu_close = '收起菜单' -%}
+  {%- assign t_menu_open = '展开菜单' -%}
+  {%- assign t_home_label = 'iinow 首页' -%}
+  {%- assign t_search = '搜索' -%}
+  {%- assign t_search_posts = '搜索文章' -%}
+  {%- assign t_theme_dark = '切换到深色模式' -%}
+  {%- assign t_theme_light = '切换到浅色模式' -%}
+  {%- assign t_language = '语言' -%}
+  {%- assign t_menu = '菜单' -%}
+  {%- assign t_site_menu = '站点菜单' -%}
+  {%- assign t_home = '首页' -%}
+  {%- assign t_posts = '文章列表' -%}
+  {%- assign t_repos = '公开仓库' -%}
+  {%- assign t_contact = '联系' -%}
+  {%- assign t_tools = '在线工具' -%}
+  {%- assign t_tsid = 'TSID 生成器' -%}
+  {%- assign t_openapi = 'OpenAPI 变更检测' -%}
+  {%- assign t_rss = 'RSS 订阅' -%}
+  {%- assign t_close = '关闭' -%}
+  {%- assign t_view_larger = '放大查看' -%}
+  {%- assign t_search_ph = '搜索文章和工具' -%}
+  {%- assign t_search_input = '搜索关键词' -%}
+  {%- assign t_search_close = '关闭搜索' -%}
+  {%- assign t_search_status = '请输入搜索词' -%}
+  {%- assign t_search_results = '搜索结果' -%}
+  {%- assign t_move = '移动' -%}
+  {%- assign t_open = '打开' -%}
+  {%- assign t_esc = '关闭' -%}
+  {%- assign t_post_count = '文章 ' | append: side_posts.size | append: ' 篇' -%}
+{%- else -%}
+  {%- assign t_skip = '본문으로 건너뛰기' -%}
+  {%- assign t_menu_close = '메뉴 접기' -%}
+  {%- assign t_menu_open = '메뉴 펼치기' -%}
+  {%- assign t_home_label = 'iinow 처음으로' -%}
+  {%- assign t_search = '검색' -%}
+  {%- assign t_search_posts = '글 검색' -%}
+  {%- assign t_theme_dark = '다크 모드로 전환' -%}
+  {%- assign t_theme_light = '라이트 모드로 전환' -%}
+  {%- assign t_language = '언어' -%}
+  {%- assign t_menu = '메뉴' -%}
+  {%- assign t_site_menu = '전체 메뉴' -%}
+  {%- assign t_home = '처음' -%}
+  {%- assign t_posts = '글 목록' -%}
+  {%- assign t_repos = '공개 저장소' -%}
+  {%- assign t_contact = '연락' -%}
+  {%- assign t_tools = '온라인 도구' -%}
+  {%- assign t_tsid = 'TSID 생성기' -%}
+  {%- assign t_openapi = 'OpenAPI 변경 감지' -%}
+  {%- assign t_rss = 'RSS 구독' -%}
+  {%- assign t_close = '닫기' -%}
+  {%- assign t_view_larger = '크게 보기' -%}
+  {%- assign t_search_ph = '글과 도구 찾기' -%}
+  {%- assign t_search_input = '글 검색어' -%}
+  {%- assign t_search_close = '검색 닫기' -%}
+  {%- assign t_search_status = '검색어를 입력하세요' -%}
+  {%- assign t_search_results = '검색 결과' -%}
+  {%- assign t_move = '이동' -%}
+  {%- assign t_open = '열기' -%}
+  {%- assign t_esc = '닫기' -%}
+  {%- assign t_post_count = '글 ' | append: side_posts.size | append: '개' -%}
+{%- endcase -%}
+
+{%- case lang -%}
+{%- when 'en' -%}{%- assign og_locale = 'en_US' -%}
+{%- when 'ja' -%}{%- assign og_locale = 'ja_JP' -%}
+{%- when 'zh' -%}{%- assign og_locale = 'zh_CN' -%}
+{%- else -%}{%- assign og_locale = 'ko_KR' -%}
+{%- endcase -%}
+
 {%- assign all_docs = site.pages | concat: site.posts -%}
-{%- assign alt_ko = nil -%}{%- assign alt_en = nil -%}
+{%- assign alt_ko = nil -%}{%- assign alt_en = nil -%}{%- assign alt_ja = nil -%}{%- assign alt_zh = nil -%}
 {%- if page.ref -%}
   {%- assign same_ref = all_docs | where: 'ref', page.ref -%}
   {%- for d in same_ref -%}
     {%- assign dlang = d.lang | default: 'ko' -%}
-    {%- if dlang == 'en' -%}{%- assign alt_en = d -%}{%- else -%}{%- assign alt_ko = d -%}{%- endif -%}
+    {%- case dlang -%}
+      {%- when 'en' -%}{%- assign alt_en = d -%}
+      {%- when 'ja' -%}{%- assign alt_ja = d -%}
+      {%- when 'zh' -%}{%- assign alt_zh = d -%}
+      {%- else -%}{%- assign alt_ko = d -%}
+    {%- endcase -%}
   {%- endfor -%}
 {%- endif -%}
 {%- assign ko_url = alt_ko.url | default: '/' -%}
 {%- assign en_url = alt_en.url | default: '/en/' -%}
-<html lang="{{ lang }}">
+{%- assign ja_url = alt_ja.url | default: '/ja/' -%}
+{%- assign zh_url = alt_zh.url | default: '/zh/' -%}
+<html lang="{{ html_lang }}">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-R9M0ZHQR66"></script>
@@ -59,16 +210,29 @@
 {%- if alt_en %}
 <link rel="alternate" hreflang="en" href="{{ alt_en.url | absolute_url }}">
 {%- endif %}
-{%- if alt_ko and alt_en %}
-<link rel="alternate" hreflang="x-default" href="{{ alt_ko.url | absolute_url }}">
+{%- if alt_ja %}
+<link rel="alternate" hreflang="ja" href="{{ alt_ja.url | absolute_url }}">
+{%- endif %}
+{%- if alt_zh %}
+<link rel="alternate" hreflang="zh" href="{{ alt_zh.url | absolute_url }}">
+{%- endif %}
+{%- assign xdefault = alt_ko.url | default: alt_en.url | default: alt_ja.url | default: alt_zh.url -%}
+{%- if xdefault %}
+<link rel="alternate" hreflang="x-default" href="{{ xdefault | absolute_url }}">
 {%- endif %}
 <meta property="og:site_name" content="{{ site.title }}">
-<meta property="og:locale" content="{% if is_en %}en_US{% else %}ko_KR{% endif %}">
-{%- if is_en %}{% if alt_ko %}
-<meta property="og:locale:alternate" content="ko_KR">
-{%- endif %}{% else %}{% if alt_en %}
-<meta property="og:locale:alternate" content="en_US">
-{%- endif %}{% endif %}
+<meta property="og:locale" content="{{ og_locale }}">
+{%- assign alt_list = '' -%}
+{%- if alt_ko -%}{%- assign alt_list = alt_list | append: 'ko_KR ' -%}{%- endif -%}
+{%- if alt_en -%}{%- assign alt_list = alt_list | append: 'en_US ' -%}{%- endif -%}
+{%- if alt_ja -%}{%- assign alt_list = alt_list | append: 'ja_JP ' -%}{%- endif -%}
+{%- if alt_zh -%}{%- assign alt_list = alt_list | append: 'zh_CN ' -%}{%- endif -%}
+{%- assign alt_codes = alt_list | split: ' ' -%}
+{%- for code in alt_codes -%}
+{%- if code != '' and code != og_locale %}
+<meta property="og:locale:alternate" content="{{ code }}">
+{%- endif -%}
+{%- endfor %}
 <meta property="og:title" content="{{ og_title | escape }}">
 <meta property="og:description" content="{{ og_desc | escape }}">
 <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
@@ -104,7 +268,7 @@
   "description": {{ desc_raw | jsonify }},
   "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
   "dateModified": {{ page.last_modified_at | default: page.date | date_to_xmlschema | jsonify }},
-  "inLanguage": "{{ lang }}",
+  "inLanguage": {{ html_lang | jsonify }},
   "image": {{ img | jsonify }},
   "mainEntityOfPage": {{ page.url | absolute_url | jsonify }},
   "author": { "@type": "Person", "name": {{ site.author | jsonify }}, "url": "https://github.com/iinow" },
@@ -119,7 +283,7 @@
   "name": {{ site.title | jsonify }},
   "description": {{ site.description | jsonify }},
   "url": {{ page.url | absolute_url | jsonify }},
-  "inLanguage": "{{ lang }}",
+  "inLanguage": {{ html_lang | jsonify }},
   "author": { "@type": "Person", "name": {{ site.author | jsonify }}, "url": "https://github.com/iinow", "sameAs": ["https://github.com/iinow", "https://devnot.tistory.com", "https://www.instagram.com/iinow.o/"] }
 }
 </script>
@@ -154,56 +318,60 @@
 {%- endif %}
 </head>
 <body>
-<a class="skip" href="#main">{% if is_en %}Skip to content{% else %}본문으로 건너뛰기{% endif %}</a>
+<a class="skip" href="#main">{{ t_skip }}</a>
 
 {%- if page.layout == 'post' %}
 <div class="read-progress" id="read-progress" aria-hidden="true"><span class="read-progress-fill"></span></div>
 {%- endif %}
 
 <header class="top">
-  <button class="burger" id="burger" type="button" aria-label="{% if is_en %}Collapse menu{% else %}메뉴 접기{% endif %}" data-label-open="{% if is_en %}Expand menu{% else %}메뉴 펼치기{% endif %}" data-label-close="{% if is_en %}Collapse menu{% else %}메뉴 접기{% endif %}" aria-expanded="true" aria-controls="side">
+  <button class="burger" id="burger" type="button" aria-label="{{ t_menu_close | escape }}" data-label-open="{{ t_menu_open | escape }}" data-label-close="{{ t_menu_close | escape }}" aria-expanded="true" aria-controls="side">
     <span></span><span></span><span></span>
   </button>
-  <a class="logo" href="{{ home }}" aria-label="{% if is_en %}iinow, home{% else %}iinow 처음으로{% endif %}">iinow</a>
+  <a class="logo" href="{{ home }}" aria-label="{{ t_home_label | escape }}">iinow</a>
   <div class="top-tools">
-    <button class="icon-btn search-btn" id="search-open" type="button" aria-haspopup="dialog" aria-controls="search" aria-label="{% if is_en %}Search posts{% else %}글 검색{% endif %}">
+    <button class="icon-btn search-btn" id="search-open" type="button" aria-haspopup="dialog" aria-controls="search" aria-label="{{ t_search_posts | escape }}">
       <svg class="ico" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.6 15.6 4.4 4.4"/></svg>
-      <span class="icon-btn-label">{% if is_en %}Search{% else %}검색{% endif %}</span>
+      <span class="icon-btn-label">{{ t_search }}</span>
       <kbd class="shortcut" id="search-shortcut">Ctrl K</kbd>
     </button>
-    <button class="icon-btn theme-btn" id="theme-toggle" type="button" aria-pressed="false" aria-label="{% if is_en %}Switch to dark mode{% else %}다크 모드로 전환{% endif %}" data-label-dark="{% if is_en %}Switch to dark mode{% else %}다크 모드로 전환{% endif %}" data-label-light="{% if is_en %}Switch to light mode{% else %}라이트 모드로 전환{% endif %}">
+    <button class="icon-btn theme-btn" id="theme-toggle" type="button" aria-pressed="false" aria-label="{{ t_theme_dark | escape }}" data-label-dark="{{ t_theme_dark | escape }}" data-label-light="{{ t_theme_light | escape }}">
       <svg class="ico ico-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 14.6A8.6 8.6 0 0 1 9.4 3.6a8.6 8.6 0 1 0 11 11Z"/></svg>
       <svg class="ico ico-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M4.3 4.3l1.6 1.6M18.1 18.1l1.6 1.6M2.6 12h2.2M19.2 12h2.2M4.3 19.7l1.6-1.6M18.1 5.9l1.6-1.6"/></svg>
     </button>
   </div>
-  <nav class="lang" aria-label="{% if is_en %}Language{% else %}언어{% endif %}">
-    <a href="{{ ko_url }}" lang="ko" hreflang="ko"{% unless is_en %} aria-current="true"{% endunless %}>KO</a>
+  <nav class="lang" aria-label="{{ t_language | escape }}">
+    <a href="{{ ko_url }}" lang="ko" hreflang="ko"{% if lang == 'ko' %} aria-current="true"{% endif %}>KO</a>
     <span class="sep" aria-hidden="true">|</span>
-    <a href="{{ en_url }}" lang="en" hreflang="en"{% if is_en %} aria-current="true"{% endif %}>EN</a>
+    <a href="{{ en_url }}" lang="en" hreflang="en"{% if lang == 'en' %} aria-current="true"{% endif %}>EN</a>
+    <span class="sep" aria-hidden="true">|</span>
+    <a href="{{ ja_url }}" lang="ja" hreflang="ja"{% if lang == 'ja' %} aria-current="true"{% endif %}>JA</a>
+    <span class="sep" aria-hidden="true">|</span>
+    <a href="{{ zh_url }}" lang="zh-CN" hreflang="zh"{% if lang == 'zh' %} aria-current="true"{% endif %}>ZH</a>
   </nav>
 </header>
 
 <div class="side-backdrop" id="side-backdrop"></div>
-<aside class="side" id="side" aria-label="{% if is_en %}Menu{% else %}메뉴{% endif %}">
-  <nav aria-label="{% if is_en %}Site menu{% else %}전체 메뉴{% endif %}">
+<aside class="side" id="side" aria-label="{{ t_menu | escape }}">
+  <nav aria-label="{{ t_site_menu | escape }}">
     <ul class="side-main">
-      <li><a href="{{ home }}"{% if page.url == home %} aria-current="page"{% endif %}>{% if is_en %}Home{% else %}처음{% endif %}</a></li>
-      <li><a href="{{ home }}#posts">{% if is_en %}Posts{% else %}글 목록{% endif %}</a></li>
-      <li><a href="{{ home }}#repos">{% if is_en %}Repositories{% else %}공개 저장소{% endif %}</a></li>
-      <li><a href="#contact">{% if is_en %}Contact{% else %}연락{% endif %}</a></li>
+      <li><a href="{{ home }}"{% if page.url == home %} aria-current="page"{% endif %}>{{ t_home }}</a></li>
+      <li><a href="{{ home }}#posts">{{ t_posts }}</a></li>
+      <li><a href="{{ home }}#repos">{{ t_repos }}</a></li>
+      <li><a href="#contact">{{ t_contact }}</a></li>
     </ul>
-    <h2>{% if is_en %}Online tools{% else %}온라인 도구{% endif %}</h2>
+    <h2>{{ t_tools }}</h2>
     <ul class="side-tools">
-      <li><a href="{% if is_en %}/en/online/tsid/{% else %}/online/tsid/{% endif %}"{% if page.url == '/online/tsid/' or page.url == '/en/online/tsid/' %} aria-current="page"{% endif %}>TSID {% if is_en %}Generator{% else %}생성기{% endif %}</a></li>
-      <li><a href="{% if is_en %}/en/online/openapi-diff/{% else %}/online/openapi-diff/{% endif %}"{% if page.url == '/online/openapi-diff/' or page.url == '/en/online/openapi-diff/' %} aria-current="page"{% endif %}>OpenAPI {% if is_en %}Diff{% else %}변경 감지{% endif %}</a></li>
+      <li><a href="{{ tsid_url }}"{% if page.url == tsid_url %} aria-current="page"{% endif %}>{{ t_tsid }}</a></li>
+      <li><a href="{{ openapi_url }}"{% if page.url == openapi_url %} aria-current="page"{% endif %}>{{ t_openapi }}</a></li>
     </ul>
-    <h2>{% if is_en %}{{ side_posts | size }} post{% if side_posts.size != 1 %}s{% endif %}{% else %}글 {{ side_posts | size }}개{% endif %}</h2>
+    <h2>{{ t_post_count }}</h2>
     <ul class="side-posts">
       {%- for post in side_posts %}
       <li><a href="{{ post.url }}"{% if page.url == post.url %} aria-current="page"{% endif %}><time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>{{ post.title | escape }}</a></li>
       {%- endfor %}
     </ul>
-    <p class="side-foot"><a href="/feed.xml">{% if is_en %}Subscribe via RSS{% else %}RSS 구독{% endif %}</a></p>
+    <p class="side-foot"><a href="/feed.xml">{{ t_rss }}</a></p>
   </nav>
 </aside>
 
@@ -214,7 +382,7 @@
 
 <footer id="contact">
   <div class="foot-in">
-  <h2>{% if is_en %}Contact{% else %}연락{% endif %}</h2>
+  <h2>{{ t_contact }}</h2>
   <ul>
     <li><a href="mailto:dev.iinow.o@gmail.com"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="5" width="18.4" height="14" rx="2.6"/><path d="M3.7 6.7 12 12.9l8.3-6.2"/></svg><span>dev.iinow.o@gmail.com</span></a></li>
     <li><a href="https://github.com/iinow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>github.com/iinow</span></a></li>
@@ -226,21 +394,21 @@
 </footer>
 </div>
 
-<dialog id="search" class="search" aria-label="{% if is_en %}Search posts{% else %}글 검색{% endif %}">
+<dialog id="search" class="search" aria-label="{{ t_search_posts | escape }}">
   <div class="search-in">
     <div class="search-row">
       <svg class="search-ico" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.6 15.6 4.4 4.4"/></svg>
-      <input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="{% if is_en %}Search posts and tools{% else %}글과 도구 찾기{% endif %}" aria-label="{% if is_en %}Search posts{% else %}글 검색어{% endif %}" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list">
-      <button type="button" class="search-close" id="search-close" aria-label="{% if is_en %}Close search{% else %}검색 닫기{% endif %}">Esc</button>
+      <input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="{{ t_search_ph | escape }}" aria-label="{{ t_search_input | escape }}" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list">
+      <button type="button" class="search-close" id="search-close" aria-label="{{ t_search_close | escape }}">Esc</button>
     </div>
-    <p class="search-status" id="search-status" role="status" aria-live="polite">{% if is_en %}Type to search{% else %}검색어를 입력하세요{% endif %}</p>
-    <ul class="search-results" id="search-results" role="listbox" aria-label="{% if is_en %}Search results{% else %}검색 결과{% endif %}"></ul>
-    <p class="search-hint"><span><kbd>↑</kbd><kbd>↓</kbd> {% if is_en %}move{% else %}이동{% endif %}</span><span><kbd>Enter</kbd> {% if is_en %}open{% else %}열기{% endif %}</span><span><kbd>Esc</kbd> {% if is_en %}close{% else %}닫기{% endif %}</span></p>
+    <p class="search-status" id="search-status" role="status" aria-live="polite">{{ t_search_status }}</p>
+    <ul class="search-results" id="search-results" role="listbox" aria-label="{{ t_search_results | escape }}"></ul>
+    <p class="search-hint"><span><kbd>↑</kbd><kbd>↓</kbd> {{ t_move }}</span><span><kbd>Enter</kbd> {{ t_open }}</span><span><kbd>Esc</kbd> {{ t_esc }}</span></p>
   </div>
 </dialog>
 
-<dialog id="viewer" aria-label="{% if is_en %}View larger{% else %}크게 보기{% endif %}">
-  <form method="dialog"><button class="close" aria-label="{% if is_en %}Close{% else %}닫기{% endif %}">{% if is_en %}Close{% else %}닫기{% endif %}</button></form>
+<dialog id="viewer" aria-label="{{ t_view_larger | escape }}">
+  <form method="dialog"><button class="close" aria-label="{{ t_close | escape }}">{{ t_close }}</button></form>
   <img id="viewer-img" src="" alt="">
 </dialog>
 

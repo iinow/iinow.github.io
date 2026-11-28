@@ -1,14 +1,15 @@
 ---
 layout: default
 ---
-{%- assign is_en = false -%}
-{%- if page.lang == 'en' -%}{%- assign is_en = true -%}{%- endif -%}
+{%- assign lang = page.lang | default: 'ko' -%}
 {%- assign home = '/' -%}
-{%- if is_en -%}{%- assign home = '/en/' -%}{%- endif -%}
-{%- if is_en -%}
-  {%- assign pool = site.posts | where: 'lang', 'en' -%}
+{%- if lang == 'en' -%}{%- assign home = '/en/' -%}{%- endif -%}
+{%- if lang == 'ja' -%}{%- assign home = '/ja/' -%}{%- endif -%}
+{%- if lang == 'zh' -%}{%- assign home = '/zh/' -%}{%- endif -%}
+{%- if lang == 'ko' -%}
+  {%- assign pool = site.posts | where_exp: 'p', "p.lang != 'en' and p.lang != 'ja' and p.lang != 'zh'" -%}
 {%- else -%}
-  {%- assign pool = site.posts | where_exp: 'p', "p.lang != 'en'" -%}
+  {%- assign pool = site.posts | where: 'lang', lang -%}
 {%- endif -%}
 {%- assign older_post = nil -%}{%- assign newer_post = nil -%}{%- assign seen = false -%}
 {%- for p in pool -%}
@@ -20,9 +21,51 @@ layout: default
     {%- assign newer_post = p -%}
   {%- endif -%}
 {%- endfor -%}
+{%- case lang -%}
+{%- when 'en' -%}
+  {%- assign t_toc = 'On this page' -%}
+  {%- assign t_toc_aria = 'On this page' -%}
+  {%- assign t_more = 'More posts' -%}
+  {%- assign t_prev = 'Previous post' -%}
+  {%- assign t_next = 'Next post' -%}
+  {%- assign t_all = 'All posts' -%}
+  {%- assign t_comments = 'Comments' -%}
+  {%- assign giscus_lang = 'en' -%}
+  {%- assign date_fmt = '%b %-d, %Y' -%}
+{%- when 'ja' -%}
+  {%- assign t_toc = '目次' -%}
+  {%- assign t_toc_aria = 'このページの目次' -%}
+  {%- assign t_more = 'ほかの記事' -%}
+  {%- assign t_prev = '前の記事' -%}
+  {%- assign t_next = '次の記事' -%}
+  {%- assign t_all = '記事一覧へ' -%}
+  {%- assign t_comments = 'コメント' -%}
+  {%- assign giscus_lang = 'ja' -%}
+  {%- assign date_fmt = '%Y年%-m月%-d日' -%}
+{%- when 'zh' -%}
+  {%- assign t_toc = '目录' -%}
+  {%- assign t_toc_aria = '本页目录' -%}
+  {%- assign t_more = '更多文章' -%}
+  {%- assign t_prev = '上一篇' -%}
+  {%- assign t_next = '下一篇' -%}
+  {%- assign t_all = '返回文章列表' -%}
+  {%- assign t_comments = '评论' -%}
+  {%- assign giscus_lang = 'zh-CN' -%}
+  {%- assign date_fmt = '%Y年%-m月%-d日' -%}
+{%- else -%}
+  {%- assign t_toc = '목차' -%}
+  {%- assign t_toc_aria = '이 페이지의 목차' -%}
+  {%- assign t_more = '다른 글' -%}
+  {%- assign t_prev = '이전 글' -%}
+  {%- assign t_next = '다음 글' -%}
+  {%- assign t_all = '글 목록으로' -%}
+  {%- assign t_comments = '댓글' -%}
+  {%- assign giscus_lang = site.giscus.lang | default: 'ko' -%}
+  {%- assign date_fmt = '%Y년 %-m월 %-d일' -%}
+{%- endcase -%}
 <article class="post">
   <header class="post-head">
-    <p class="date"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{% if is_en %}{{ page.date | date: '%b %-d, %Y' }}{% else %}{{ page.date | date: '%Y년 %-m월 %-d일' }}{% endif %}</time>{%- if page.category %}<a class="cat" href="{{ home }}?cat={{ page.category | url_encode }}#posts">{{ page.category }}</a>{%- endif %}</p>
+    <p class="date"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: date_fmt }}</time>{%- if page.category %}<a class="cat" href="{{ home }}?cat={{ page.category | url_encode }}#posts">{{ page.category }}</a>{%- endif %}</p>
     <h1>{{ page.title | escape }}</h1>
     {%- if page.summary %}
     <p class="summary">{{ page.summary }}</p>
@@ -35,27 +78,27 @@ layout: default
     </div>
     <button class="toc-toggle" id="toc-toggle" type="button" aria-expanded="false" aria-controls="toc" hidden>
       <span class="toc-toggle-ico" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="M3.4 5.2h13.2M3.4 10h13.2M3.4 14.8h8.4"/></svg></span>
-      <span class="toc-toggle-text">{% if is_en %}On this page{% else %}목차{% endif %}</span>
+      <span class="toc-toggle-text">{{ t_toc }}</span>
     </button>
-    <nav class="toc" id="toc" aria-label="{% if is_en %}On this page{% else %}이 페이지의 목차{% endif %}" hidden>
-      <p class="toc-title">{% if is_en %}On this page{% else %}목차{% endif %}</p>
+    <nav class="toc" id="toc" aria-label="{{ t_toc_aria | escape }}" hidden>
+      <p class="toc-title">{{ t_toc }}</p>
       <ol class="toc-list"></ol>
     </nav>
   </div>
 
-  <nav class="pager" aria-label="{% if is_en %}More posts{% else %}다른 글{% endif %}">
+  <nav class="pager" aria-label="{{ t_more | escape }}">
     {%- if older_post %}
-    <a class="prev" href="{{ older_post.url }}"><span>{% if is_en %}Previous post{% else %}이전 글{% endif %}</span>{{ older_post.title | escape }}</a>
+    <a class="prev" href="{{ older_post.url }}"><span>{{ t_prev }}</span>{{ older_post.title | escape }}</a>
     {%- endif %}
     {%- if newer_post %}
-    <a class="next" href="{{ newer_post.url }}"><span>{% if is_en %}Next post{% else %}다음 글{% endif %}</span>{{ newer_post.title | escape }}</a>
+    <a class="next" href="{{ newer_post.url }}"><span>{{ t_next }}</span>{{ newer_post.title | escape }}</a>
     {%- endif %}
-    <a class="all" href="{{ home }}#posts">{% if is_en %}All posts{% else %}글 목록으로{% endif %}</a>
+    <a class="all" href="{{ home }}#posts">{{ t_all }}</a>
   </nav>
 
   {%- if site.giscus.enabled %}
   <section class="comments" id="comments">
-    <h2>{% if is_en %}Comments{% else %}댓글{% endif %}</h2>
+    <h2>{{ t_comments }}</h2>
     <div class="giscus"></div>
     <script src="https://giscus.app/client.js"
       data-repo="{{ site.giscus.repo }}"
@@ -68,7 +111,7 @@ layout: default
       data-emit-metadata="0"
       data-input-position="top"
       data-theme="preferred_color_scheme"
-      data-lang="{% if is_en %}en{% else %}{{ site.giscus.lang | default: 'ko' }}{% endif %}"
+      data-lang="{{ giscus_lang }}"
       data-loading="lazy"
       crossorigin="anonymous"
       async>
