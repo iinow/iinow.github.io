@@ -1117,8 +1117,8 @@
   onCompared = (before, after, breaking, safe) => {
     const beforeText = beforeEl.value
     const afterText = afterEl.value
-    // 처음에 채워 두는 샘플끼리의 비교는 이력에 남기지 않는다
-    if (beforeText === SAMPLE_BEFORE_TEXT && afterText === SAMPLE_AFTER_TEXT) return
+    // 한쪽이라도 처음에 채워 둔 샘플 그대로면 이력에 남기지 않는다
+    if (beforeText === SAMPLE_BEFORE_TEXT || afterText === SAMPLE_AFTER_TEXT) return
     const list = loadHist().filter((e) => !(e.before === beforeText && e.after === afterText))
     list.unshift({
       before: beforeText,
