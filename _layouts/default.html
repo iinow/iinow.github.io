@@ -13,7 +13,7 @@
 {%- assign tsid_url = tools_base | append: '/online/tsid/' -%}
 {%- assign openapi_url = tools_base | append: '/online/openapi-diff/' -%}
 {%- if lang == 'ko' -%}
-  {%- assign side_posts = site.posts | where_exp: 'p', "p.lang != 'en' and p.lang != 'ja' and p.lang != 'zh'" -%}
+  {%- assign side_posts = site.posts | where_exp: 'p', "p.lang != 'en'" | where_exp: 'p', "p.lang != 'ja'" | where_exp: 'p', "p.lang != 'zh'" -%}
 {%- else -%}
   {%- assign side_posts = site.posts | where: 'lang', lang -%}
 {%- endif -%}
