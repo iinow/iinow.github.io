@@ -567,6 +567,14 @@ dialog img { border-radius: 0.75rem; background: #fff; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
+@media (max-width: 520px) {
+  /* 좁은 화면: 언어 링크 네 개가 머리에 들어가도록 간격을 줄인다 */
+  .top { gap: 0.5rem; padding: 0 0.7rem; }
+  .lang { gap: 0; font-size: 0.8rem; }
+  .lang a { padding: 0.2rem 0.38rem; }
+  .lang .sep { display: none; }
+}
+
 @media (max-width: 760px) {
   .icon-btn { padding: 0 0.55rem; }
   .icon-btn-label, .icon-btn .shortcut { display: none; }
