@@ -1,0 +1,49 @@
+{%- comment -%}
+  홈 글 목록. 같은 글(ref 가 같은 글)은 한 줄로 묶고, 어떤 언어로 읽을 수 있는지 태그로 보여 준다.
+  제목·요약은 지금 화면 언어(include.lang)의 글을 쓰고, 그 언어 판이 없으면 한국어 → 영어 → 일본어 → 중국어 순으로 고른다.
+  홈(index.html)에서 include 로 부르며 lang 과 langs_label 을 넘긴다.
+{%- endcomment -%}
+{%- assign list_lang = include.lang | default: 'ko' -%}
+{%- assign seen = '|' -%}
+{%- for p in site.posts -%}
+  {%- assign key = p.ref | default: p.url -%}
+  {%- assign marker = '|' | append: key | append: '|' -%}
+  {%- if seen contains marker -%}{%- continue -%}{%- endif -%}
+  {%- assign seen = seen | append: key | append: '|' -%}
+
+  {%- assign u_ko = '' -%}{%- assign u_en = '' -%}{%- assign u_ja = '' -%}{%- assign u_zh = '' -%}
+  {%- assign post = p -%}
+  {%- assign pick = 9 -%}
+  {%- if p.ref -%}
+    {%- assign group = site.posts | where: 'ref', p.ref -%}
+  {%- else -%}
+    {%- assign group = site.posts | where: 'title', p.title -%}
+  {%- endif -%}
+  {%- for g in group -%}
+    {%- assign gl = g.lang | default: 'ko' -%}
+    {%- assign rank = 8 -%}
+    {%- case gl -%}
+      {%- when 'en' -%}{%- assign u_en = g.url -%}{%- assign rank = 2 -%}
+      {%- when 'ja' -%}{%- assign u_ja = g.url -%}{%- assign rank = 3 -%}
+      {%- when 'zh' -%}{%- assign u_zh = g.url -%}{%- assign rank = 4 -%}
+      {%- else -%}{%- assign u_ko = g.url -%}{%- assign rank = 1 -%}{%- assign gl = 'ko' -%}
+    {%- endcase -%}
+    {%- if gl == list_lang -%}{%- assign rank = 0 -%}{%- endif -%}
+    {%- if rank < pick -%}{%- assign pick = rank -%}{%- assign post = g -%}{%- endif -%}
+  {%- endfor %}
+    <li data-cat="{{ post.category }}">
+      <a href="{{ post.url }}">
+        <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+        <span class="lt">{{ post.title | escape }}{% if post.category %}<span class="cat" data-cat="{{ post.category }}">{{ post.category }}</span>{% endif %}</span>
+        {%- if post.summary %}
+        <span class="ls">{{ post.summary | strip_html | truncate: 110 }}</span>
+        {%- endif %}
+      </a>
+      <p class="langs" aria-label="{{ include.langs_label | escape }}">
+        {%- if u_ko != '' %}<a href="{{ u_ko }}" lang="ko" hreflang="ko" title="한국어"{% if post.url == u_ko %} aria-current="true"{% endif %}>KO</a>{% endif -%}
+        {%- if u_en != '' %}<a href="{{ u_en }}" lang="en" hreflang="en" title="English"{% if post.url == u_en %} aria-current="true"{% endif %}>EN</a>{% endif -%}
+        {%- if u_ja != '' %}<a href="{{ u_ja }}" lang="ja" hreflang="ja" title="日本語"{% if post.url == u_ja %} aria-current="true"{% endif %}>JA</a>{% endif -%}
+        {%- if u_zh != '' %}<a href="{{ u_zh }}" lang="zh-CN" hreflang="zh" title="中文"{% if post.url == u_zh %} aria-current="true"{% endif %}>ZH</a>{% endif -%}
+      </p>
+    </li>
+{%- endfor %}

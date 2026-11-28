@@ -9,7 +9,6 @@ summary: 開発の記録から旅や何気ない日常まで、覚えておき�
 image: /img/og/home-ja.png
 image_alt: iinow — 作って、出かけて、書き残す
 ---
-{%- assign posts_ja = site.posts | where: 'lang', 'ja' -%}
 <section class="hero">
   <div class="hero-text">
     <h1>作って、出かけて、書き残す</h1>
@@ -29,17 +28,7 @@ image_alt: iinow — 作って、出かけて、書き残す
     <button type="button" data-cat="旅行" aria-pressed="false">旅行</button>
   </div>
   <ul>
-    {%- for post in posts_ja %}
-    <li data-cat="{{ post.category }}">
-      <a href="{{ post.url }}">
-        <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
-        <span class="lt">{{ post.title | escape }}{% if post.category %}<span class="cat" data-cat="{{ post.category }}">{{ post.category }}</span>{% endif %}</span>
-        {%- if post.summary %}
-        <span class="ls">{{ post.summary | strip_html | truncate: 110 }}</span>
-        {%- endif %}
-      </a>
-    </li>
-    {%- endfor %}
+    {%- include post-list.html lang='ja' langs_label='読める言語' %}
   </ul>
 </section>
 

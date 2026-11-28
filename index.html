@@ -6,7 +6,6 @@ title: 만들고, 다니고, 적어 둡니다
 image: /img/og.png
 image_alt: iinow — 만들고, 다니고, 적어 둡니다
 ---
-{%- assign posts_ko = site.posts | where_exp: 'p', "p.lang != 'en'" -%}
 <section class="hero">
   <div class="hero-text">
     <h1>만들고, 다니고, 적어 둡니다</h1>
@@ -26,17 +25,7 @@ image_alt: iinow — 만들고, 다니고, 적어 둡니다
     <button type="button" data-cat="여행" aria-pressed="false">여행</button>
   </div>
   <ul>
-    {%- for post in posts_ko %}
-    <li data-cat="{{ post.category }}">
-      <a href="{{ post.url }}">
-        <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
-        <span class="lt">{{ post.title | escape }}{% if post.category %}<span class="cat" data-cat="{{ post.category }}">{{ post.category }}</span>{% endif %}</span>
-        {%- if post.summary %}
-        <span class="ls">{{ post.summary | strip_html | truncate: 110 }}</span>
-        {%- endif %}
-      </a>
-    </li>
-    {%- endfor %}
+    {%- include post-list.html lang='ko' langs_label='읽을 수 있는 언어' %}
   </ul>
 </section>
 

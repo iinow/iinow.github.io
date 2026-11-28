@@ -9,7 +9,6 @@ summary: 从开发记录到旅行和日常小事，这里是 Joonha 记下想记
 image: /img/og/home-zh.png
 image_alt: iinow — 做出来，走出去，记下来
 ---
-{%- assign posts_zh = site.posts | where: 'lang', 'zh' -%}
 <section class="hero">
   <div class="hero-text">
     <h1>做出来，走出去，记下来</h1>
@@ -29,17 +28,7 @@ image_alt: iinow — 做出来，走出去，记下来
     <button type="button" data-cat="旅行" aria-pressed="false">旅行</button>
   </div>
   <ul>
-    {%- for post in posts_zh %}
-    <li data-cat="{{ post.category }}">
-      <a href="{{ post.url }}">
-        <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
-        <span class="lt">{{ post.title | escape }}{% if post.category %}<span class="cat" data-cat="{{ post.category }}">{{ post.category }}</span>{% endif %}</span>
-        {%- if post.summary %}
-        <span class="ls">{{ post.summary | strip_html | truncate: 110 }}</span>
-        {%- endif %}
-      </a>
-    </li>
-    {%- endfor %}
+    {%- include post-list.html lang='zh' langs_label='可阅读的语言' %}
   </ul>
 </section>
 

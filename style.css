@@ -518,8 +518,14 @@ a.cat:hover { border-color: var(--ink); color: var(--ink); }
 .date .cat { margin-left: 0.5rem; font-weight: 700; }
 .list li[hidden] { display: none; }
 .list ul { margin-top: 1.5rem; border-top: 1px solid var(--line); }
-.list li a { display: grid; grid-template-columns: 7rem 1fr; gap: 0.25rem 1rem; padding: 1.1rem 0.5rem; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: background 0.15s, padding-left 0.15s; }
-.list li a:hover { background: var(--surface); padding-left: 1rem; }
+.list li { border-bottom: 1px solid var(--line); }
+.list li > a { display: grid; grid-template-columns: 7rem 1fr; gap: 0.25rem 1rem; padding: 1.1rem 0.5rem; color: var(--ink); text-decoration: none; transition: background 0.15s, padding-left 0.15s; }
+.list li > a:hover { background: var(--surface); padding-left: 1rem; }
+/* 같은 글의 언어 판 태그 (KO · EN · JA · ZH) */
+.langs { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: -0.55rem; padding: 0 0.5rem 0.95rem calc(8.5rem); }
+.langs a { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; line-height: 1.35; color: var(--muted); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 0.1rem 0.55rem; transition: color 0.15s, background 0.15s, border-color 0.15s; }
+.langs a:hover { color: var(--ink); border-color: var(--ink); }
+.langs a[aria-current] { color: var(--paper); background: var(--ink); border-color: var(--ink); }
 .list time { color: var(--muted); font-size: 0.95rem; font-variant-numeric: tabular-nums; padding-top: 0.2rem; }
 .lt { font-weight: 800; font-size: 1.2rem; line-height: 1.4; }
 .ls { grid-column: 2; color: var(--muted); font-size: 0.97rem; max-width: var(--text); }
@@ -554,7 +560,8 @@ dialog img { border-radius: 0.75rem; background: #fff; }
   .cloud { justify-content: center; }
   .arrow { transform: rotate(90deg); margin: 0.5rem 0; }
   .box { width: min(15rem, 100%); }
-  .list li a { grid-template-columns: 1fr; }
+  .list li > a { grid-template-columns: 1fr; }
+  .langs { padding-left: 0.5rem; }
   .ls { grid-column: 1; }
   .repos li a { grid-template-columns: 1fr auto; }
   .ry { display: none; }

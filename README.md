@@ -35,7 +35,8 @@ git add -A && git commit -m "글: 카프카 재시도" && git push
 - 한국어가 아닌 글에 `permalink` 를 빠뜨리면 `/posts/<주소>-<lang>/` 으로 올라간다. 꼭 적는다 (`new-post.sh` 가 넣어 준다).
 - `ref` 가 같으면 `_layouts/default.html` 이 짝을 찾아 `hreflang="ko"·"en"·"ja"·"zh"` 와 `x-default`(한국어, 없으면 있는 것 중 첫 번째), `og:locale`(+alternate) 을 넣고, 머리의 언어 링크도 그 글로 간다.
 - `<html lang>` 은 `ko` / `en` / `ja` / `zh-CN` 이다. giscus 댓글 언어도 같은 값(`ko`/`en`/`ja`/`zh-CN`)을 쓴다.
-- 홈 목록과 왼쪽 글 목록, `Ctrl+K` 검색은 지금 보고 있는 언어의 글만 보여 준다 (`search.json` 은 모든 언어를 담고 `main.js` 가 `lang` 으로 거른다). `category` 는 언어별 값을 맞춰야 홈의 분류 필터에 걸린다.
+- 홈 글 목록(`_includes/post-list.html`)은 `ref` 가 같은 글을 한 줄로 묶는다. 제목·요약은 그 화면 언어의 글을 쓰고(없으면 한국어 → 영어 → 일본어 → 중국어 순), 아래에 읽을 수 있는 언어를 `KO` `EN` `JA` `ZH` 태그로 보여 준다. 태그를 누르면 그 언어 판으로 간다.
+- 왼쪽 글 목록과 `Ctrl+K` 검색은 지금 보고 있는 언어의 글만 보여 준다 (`search.json` 은 모든 언어를 담고 `main.js` 가 `lang` 으로 거른다). `category` 는 언어별 값을 맞춰야 홈의 분류 필터에 걸린다.
 - 글 안에서 다른 글을 가리킬 때는 그 언어의 주소를 쓴다 — `[lite-oc](/ja/posts/lite-oc/)`, `[lite-oc](/zh/posts/lite-oc/)`.
 - 그림·머메이드 도형에 글자가 박혀 있으면 언어별로 따로 만들어야 한다. sqlc 글처럼 영어판 도형을 그대로 쓰고 설명(alt·figcaption)만 번역한 경우도 있다.
 

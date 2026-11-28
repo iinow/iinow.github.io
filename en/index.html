@@ -9,7 +9,6 @@ summary: Notes on building things, from development logs to trips and small ever
 image: /img/og/home-en.png
 image_alt: iinow — Build, travel, and write it down
 ---
-{%- assign posts_en = site.posts | where: 'lang', 'en' -%}
 <section class="hero">
   <div class="hero-text">
     <h1>Build, travel, and write it down</h1>
@@ -29,17 +28,7 @@ image_alt: iinow — Build, travel, and write it down
     <button type="button" data-cat="Travel" aria-pressed="false">Travel</button>
   </div>
   <ul>
-    {%- for post in posts_en %}
-    <li data-cat="{{ post.category }}">
-      <a href="{{ post.url }}">
-        <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
-        <span class="lt">{{ post.title | escape }}{% if post.category %}<span class="cat" data-cat="{{ post.category }}">{{ post.category }}</span>{% endif %}</span>
-        {%- if post.summary %}
-        <span class="ls">{{ post.summary | strip_html | truncate: 110 }}</span>
-        {%- endif %}
-      </a>
-    </li>
-    {%- endfor %}
+    {%- include post-list.html lang='en' langs_label='Available languages' %}
   </ul>
 </section>
 
